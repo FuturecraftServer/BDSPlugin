@@ -72,7 +72,7 @@ public:
 					return true;
 				}
 				Economy::GivePlayerMoney(param[1], willgive);
-				Economy::SetPlayerMoney(player->getNameTag(), Economy::GetPlayerMoney(player->getNameTag()) - willgive);
+				Economy::RemovePlayerMoney(player->getNameTag(), willgive);
 				player->sendMsg("成功给 §a§l" + param[1] + " §r金额 §a§l" + param[2]);
 				player->sendMsg("你的余额为: §l§a" + intToString(Economy::GetPlayerMoney(player->getNameTag())));
 				string sendoutuuid = NametoUuid[param[1]];
