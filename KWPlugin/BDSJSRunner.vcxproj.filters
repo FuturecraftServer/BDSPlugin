@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{4f8c011d-321f-4c99-b8ab-2f3b3ac89296}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{e7d98800-a04f-4483-9b2b-6beda82df92c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="SymbolInfo">
+      <UniqueIdentifier>{c76bd642-46f6-42a0-9c4b-bd429337dab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plugin">
+      <UniqueIdentifier>{e59ba9ce-cc82-478c-bf19-5d4901d853d6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GUI\Bstream.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\myPacket.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\varint.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\SimpleForm.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Symbol.hpp">
+      <Filter>SymbolInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="BDSAPI.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Prebuild.h">
+      <Filter>Other</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Mainhoosk.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Prebuild.cpp">
+      <Filter>Other</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.hpp">
+      <Filter>Plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerEvent.hpp">
+      <Filter>Plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\SimpleForm.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
