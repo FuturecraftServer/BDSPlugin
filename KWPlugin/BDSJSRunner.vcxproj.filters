@@ -17,6 +17,9 @@
     <Filter Include="Plugin">
       <UniqueIdentifier>{e59ba9ce-cc82-478c-bf19-5d4901d853d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Economy">
+      <UniqueIdentifier>{7181c447-0cef-4ac2-9a62-4ccc26e256f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUI\Bstream.h">
@@ -40,6 +43,9 @@
     <ClInclude Include="Prebuild.h">
       <Filter>Other</Filter>
     </ClInclude>
+    <ClInclude Include="CConfig.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Mainhoosk.cpp">
@@ -56,6 +62,12 @@
     </ClCompile>
     <ClCompile Include="GUI\SimpleForm.cpp">
       <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Economy.cpp">
+      <Filter>Economy</Filter>
+    </ClCompile>
+    <ClCompile Include="CConfig.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

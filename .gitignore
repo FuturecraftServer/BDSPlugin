@@ -33,3 +33,7 @@
 **/x64/**
 Release
 Debug
+.vs/**
+.vs/BDSJSRunner/v16/.suo
+.vs/KWPlugin/v16/.suo
+.vs/KWPlugin/v16/.suo

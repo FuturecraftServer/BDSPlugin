@@ -35,15 +35,6 @@ static std::string toDimenStr(int dimensionId) {
 	return u8"未知维度";
 }
 
-static VA p_spscqueue;
-
-// 执行后端指令
-static bool runcmd(std::string cmd) {
-	if (p_spscqueue != 0)
-		return SYMCALL(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e, p_spscqueue, cmd);
-	return false;
-}
-
 static VA p_level;
 
 static std::map<std::string, Player*> onlinePlayers;
@@ -477,13 +468,27 @@ THook2(_JS_ONATTACK, bool,
 }
 
 
+
 #pragma endregion
 
 
-
+// 获取BDS完整程序路径
+static char localpath[MAX_PATH] = { 0 };
+static std::string getLocalPath() {
+	if (!localpath[0]) {
+		GetModuleFileNameA(NULL, localpath, _countof(localpath));
+		for (int l = strlen(localpath); l >= 0; l--) {
+			if (localpath[l] == '\\') {
+				localpath[l] = localpath[l + 1] = localpath[l + 2] = 0;
+				break;
+			}
+		}
+	}
+	return std::string(localpath) + "\\";
+}
 
 void init() {
-	std::cout << u8"Init KWPlugin" << std::endl;
+	std::cout << u8"Init KWPlugin" << std::endl << "Path: " << getLocalPath();
 }
 
 void exit() {

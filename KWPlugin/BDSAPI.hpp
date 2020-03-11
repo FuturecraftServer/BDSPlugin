@@ -1,4 +1,11 @@
 #pragma once
+static VA p_spscqueue;
+// 执行后端指令
+static bool runcmd(std::string cmd) {
+	if (p_spscqueue != 0)
+		return SYMCALL(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e, p_spscqueue, cmd);
+	return false;
+}
 
 // 方块坐标结构体
 struct BPos3 {
@@ -130,8 +137,8 @@ struct Actor {
 		return SYMCALL(int,
 			MSSYM_B1QE15getEntityTypeIdB1AA5ActorB2AAA4UEBAB1QE12AW4ActorTypeB2AAA2XZ,
 			this);
-//		if (t == 1)		// 未知类型，可能是玩家
-//			return 319;
+		//		if (t == 1)		// 未知类型，可能是玩家
+		//			return 319;
 	}
 
 	// 获取实体名称
@@ -147,7 +154,7 @@ struct Mob : Actor {
 };
 struct Player : Actor {
 	// 取uuid
-	MCUUID * getUuid() {				// IDA ServerNetworkHandler::_createNewPlayer
+	MCUUID* getUuid() {				// IDA ServerNetworkHandler::_createNewPlayer
 		return (MCUUID*)((char*)this + 3192);
 	}
 
@@ -155,6 +162,39 @@ struct Player : Actor {
 	std::string& getXuid(VA level) {
 		return SYMCALL(std::string&, MSSYM_MD5_337bfad553c289ba4656ac43dcb60748,
 			level, (char*)this + 3192);
+	}
+
+
+	std::string static stringToUTF8(const std::string& str)
+	{
+		int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
+
+		wchar_t* pwBuf = new wchar_t[nwLen + 1];//一定要加1，不然会出现尾巴 
+		ZeroMemory(pwBuf, nwLen * 2 + 2);
+
+		::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
+
+		int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
+
+		char* pBuf = new char[nLen + 1];
+		ZeroMemory(pBuf, nLen + 1);
+
+		::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
+
+		std::string retStr(pBuf);
+
+		delete[]pwBuf;
+		delete[]pBuf;
+
+		pwBuf = NULL;
+		pBuf = NULL;
+
+		return retStr;
+	}
+
+	void sendMsg(std::string msg) {
+		msg = stringToUTF8(msg);
+		runcmd("tellraw " + this->getNameTag() + " { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");
 	}
 
 	// 重设服务器玩家名
