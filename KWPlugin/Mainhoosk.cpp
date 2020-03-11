@@ -37,9 +37,6 @@ static std::string toDimenStr(int dimensionId) {
 
 static VA p_level;
 
-static std::map<std::string, Player*> onlinePlayers;
-static std::map<std::string, std::string> NametoUuid;
-
 // 重设新名字
 static bool reNameByUuid(std::string uuid, std::string newName) {
 	bool ret = false;
@@ -472,23 +469,8 @@ THook2(_JS_ONATTACK, bool,
 #pragma endregion
 
 
-// 获取BDS完整程序路径
-static char localpath[MAX_PATH] = { 0 };
-static std::string getLocalPath() {
-	if (!localpath[0]) {
-		GetModuleFileNameA(NULL, localpath, _countof(localpath));
-		for (int l = strlen(localpath); l >= 0; l--) {
-			if (localpath[l] == '\\') {
-				localpath[l] = localpath[l + 1] = localpath[l + 2] = 0;
-				break;
-			}
-		}
-	}
-	return std::string(localpath) + "\\";
-}
-
 void init() {
-	std::cout << u8"Init KWPlugin" << std::endl << "Path: " << getLocalPath();
+	std::cout << u8"Init KWPlugin V1.0.0alpha (branch Economy)" << std::endl << "Path: " << getLocalPath();
 }
 
 void exit() {

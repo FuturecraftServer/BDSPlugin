@@ -1,32 +1,26 @@
 #pragma once
 #include "Prebuild.h"
-#include <string>
-#include "CConfig.h"
+#include "CConfig.cpp"
+//#include <string>
 
 
 class Economy
 {
 public:
 	int static GetPlayerMoney(std::string uuid) {
-		CConfig config;
-		config.SetFilePath("Economy");
-		string value = "";
-		string error = "";
-		config.GetValue("Money", uuid, value, error);
-		return atoi(value.c_str());
+		return CConfig::GetValueInt("Economy", "Money", uuid, 0);
 	}
 
 	int static GivePlayerMoney(std::string uuid, int count) {
-		CConfig config;
-		config.SetFilePath("Economy");
-		string value = "";
-		string error = "";
-		config.GetValue("Money", uuid, value, error);
-		int now=atoi(value.c_str()) + count;
-		config.ModifyValue("Money", uuid, intToString(now), error);
-		return now;		
+		int value = CConfig::GetValueInt("Economy", "Money", uuid, 0);
+		int now = value + count;
+		CConfig::SetValueString("Economy", "Money", uuid, intToString(now));
+		return now;
 	}
 
+	bool static SetPlayerMoney(std::string uuid, int count) {
+		return CConfig::SetValueString("Economy", "Money", uuid, intToString(count));
+	}
 
 	vector<string> static SplitStr(string strtem, char a)
 	{

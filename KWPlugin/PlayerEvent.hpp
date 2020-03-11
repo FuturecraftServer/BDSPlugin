@@ -42,12 +42,9 @@ public:
 	}
 
 	void static Exit(Player* player) {
-		std::cout << "Player: " << player->getUuid() << std::endl << "Exit" << std::endl;
 	}
 
 	bool static Attack(Player* player, Actor* actor) {
-		Economy::GetPlayerMoney(player->getUuid()->toString());
-		std::cout << "Player: " << player->getUuid() << std::endl << "Attack: " << actor->getNameTag() << "(" << actor->getNameTag() << ")" << std::endl;
 		return true;
 	}
 };
