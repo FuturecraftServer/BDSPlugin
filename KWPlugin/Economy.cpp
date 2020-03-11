@@ -22,6 +22,13 @@ public:
 		return CConfig::SetValueString("Economy", "Money", uuid, intToString(count));
 	}
 
+	int static RemovePlayerMoney(std::string uuid, int count) {
+		int value = CConfig::GetValueInt("Economy", "Money", uuid, 0);
+		int now = value - count;
+		CConfig::SetValueString("Economy", "Money", uuid, intToString(now));
+		return now;
+	}
+
 	vector<string> static SplitStr(string strtem, char a)
 	{
 		vector<string> strvec;

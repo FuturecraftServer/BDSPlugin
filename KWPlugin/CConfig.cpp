@@ -22,19 +22,21 @@ static std::string getLocalPath() {
 class CConfig {
 public:
 	string static GetValueString(string filepath, string section, string key, string defvalue = "") {
-		LPSTR value = new char[6];
-		filepath = getLocalPath() + filepath + ".ini";
-		GetPrivateProfileString(section.c_str(), key.c_str(), defvalue.c_str(), value, 6, filepath.c_str());
+		LPSTR value = new char[256];
+		filepath = getLocalPath() + "Plugin\\" + filepath + ".ini";
+		GetPrivateProfileString(section.c_str(), key.c_str(), defvalue.c_str(), value, 256, filepath.c_str());
+		//cout << endl << u8"File Path: " << filepath << endl << u8"Section: " << section << endl << "Key: " << key << endl << "Value: " << value << endl;
 		return value;
 	}
 
 	int static GetValueInt(string filepath, string section, string key, int defvalue = 0) {
-		filepath = getLocalPath() + filepath + ".ini";
+		filepath = getLocalPath() + "Plugin\\" + filepath + ".ini";
 		return GetPrivateProfileInt(section.c_str(), key.c_str(), defvalue, filepath.c_str());
 	}
 
 	bool static SetValueString(string filepath, string section, string key, string value = "") {
-		filepath = getLocalPath() + filepath + ".ini";
+		filepath = getLocalPath() + "Plugin\\" + filepath + ".ini";
+		//cout << u8"File Path: " << filepath << endl << u8"Section: " << section << endl << "Key: " << key << endl << "Value: " << value << endl;
 		return WritePrivateProfileString(section.c_str(), key.c_str(), value.c_str(), filepath.c_str());
 	}
 };

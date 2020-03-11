@@ -6,6 +6,8 @@
 #include "BDSAPI.hpp"
 #include "Economy.cpp"
 
+#include <time.h>
+
 static std::map<std::string, Player*> onlinePlayers;
 static std::map<std::string, std::string> NametoUuid;
 using namespace std;
@@ -32,7 +34,7 @@ public:
 
 	string static intToString(int v)
 	{
-		char buf[32] = { 0 };
+		char buf[64] = { 0 };
 		snprintf(buf, sizeof(buf), "%u", v);
 
 		string str = buf;
@@ -60,7 +62,7 @@ public:
 			if (param.size() != 3) {
 				player->sendMsg("用法: /pay <玩家名> <金额>");
 				return true;
-			}			
+			}
 			int willgive = atoi(param[2].c_str());
 			if (Economy::GetPlayerMoney(player->getNameTag()) < willgive) {
 				player->sendMsg("你的余额为: §l§c" + intToString(Economy::GetPlayerMoney(player->getNameTag())));
@@ -72,7 +74,7 @@ public:
 					return true;
 				}
 				Economy::GivePlayerMoney(param[1], willgive);
-				Economy::SetPlayerMoney(player->getNameTag(), Economy::GetPlayerMoney(player->getNameTag()) - willgive);
+				Economy::RemovePlayerMoney(player->getNameTag(), willgive);
 				player->sendMsg("成功给 §a§l" + param[1] + " §r金额 §a§l" + param[2]);
 				player->sendMsg("你的余额为: §l§a" + intToString(Economy::GetPlayerMoney(player->getNameTag())));
 				string sendoutuuid = NametoUuid[param[1]];
@@ -80,6 +82,57 @@ public:
 					onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getNameTag() + " 给你转账 §l§a" + param[2]);
 					onlinePlayers[sendoutuuid]->sendMsg("你当前余额为: §l§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getNameTag())));
 				}
+			}
+		}
+		else if (param[0] == "/tpa") {
+			if (param.size() != 2) {
+				player->sendMsg("用法: /tpa <玩家名>");
+				return true;
+			}
+			string sendoutuuid = NametoUuid[param[1]];
+			if (sendoutuuid != "") {//玩家在线
+				CConfig::SetValueString("TPA", param[1], "from", player->getNameTag());
+				CConfig::SetValueString("TPA", param[1], "time", intToString(time(NULL)));
+				onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getNameTag() + " 请求tpa到你这里 §l§a");
+				onlinePlayers[sendoutuuid]->sendMsg("输入 §l§a/tpayes §r即可同意请求");
+				onlinePlayers[sendoutuuid]->sendMsg("输入 §l§c/tpano §r即可不同意请求");
+				onlinePlayers[sendoutuuid]->sendMsg("该请求 §l§a60秒 §r后过期,到时候可以忽略");
+				player->sendMsg("发送请求§l§a成功!§r在60秒内对方可以接受你的请求");
+			}
+			else {
+				player->sendMsg("玩家: " + param[1] + " 不在线!");
+				return true;
+			}
+		}
+		else if (param[0] == "/tpayes") {
+			if (atoi(CConfig::GetValueString("TPA", player->getNameTag(), "time", "NaN").c_str()) < time(NULL) - 61)
+			{
+
+				player->sendMsg("§l§c所有请求已过期!");
+				return true;
+			}
+			string from = CConfig::GetValueString("TPA", player->getNameTag(), "from", "");
+			string sendoutuuid = NametoUuid[from];
+			if (sendoutuuid != "") {//玩家在线
+				CConfig::SetValueString("TPA", player->getNameTag(), "time", intToString(0));
+				runcmd("tp " + from + " " + player->getNameTag());
+				onlinePlayers[sendoutuuid]->sendMsg("成功TPA到" + player->getNameTag());
+				player->sendMsg("玩家 " + from + " 已成功TPA到此处");
+			}
+			else {
+				player->sendMsg("§l§c请求发起者已下线!");
+			}
+		}
+		else if (param[0] == "/tpano") {
+			string from = CConfig::GetValueString("TPA", player->getNameTag(), "from", "");
+			string sendoutuuid = NametoUuid[from];
+			if (sendoutuuid != "") {//玩家在线
+				CConfig::SetValueString("TPA", player->getNameTag(), "time", intToString(0));
+				onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getNameTag() + " 拒绝了你的TPA请求");
+				player->sendMsg("成功拒绝 " + from + " 的TPA请求");
+			}
+			else {
+				player->sendMsg("§l§c请求发起者已下线!");
 			}
 		}
 		else {
@@ -103,7 +156,7 @@ public:
 				string sendoutuuid = NametoUuid[param[1]];
 				if (sendoutuuid != "") {//玩家在线
 					onlinePlayers[sendoutuuid]->sendMsg("管理员 给你转账 §l§a" + param[2]);
-					onlinePlayers[sendoutuuid]->sendMsg("你当前余额为: §l§a" + Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getNameTag()));
+					onlinePlayers[sendoutuuid]->sendMsg("你当前余额为: §l§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getNameTag())));
 				}
 			}
 			else {
