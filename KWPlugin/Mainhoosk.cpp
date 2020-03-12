@@ -470,7 +470,7 @@ THook2(_JS_ONATTACK, bool,
 
 
 void init() {
-	std::cout << u8"Init KWPlugin V1.0.0alpha (branch Economy)" << std::endl << "Path: " << getLocalPath();
+	std::cout << u8"Init KWPlugin V1.0.1alpha (branch Economy)" << std::endl << "Path: " << getLocalPath();
 }
 
 void exit() {
