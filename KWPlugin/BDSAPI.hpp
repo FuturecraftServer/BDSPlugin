@@ -17,6 +17,12 @@ struct BPos3 {
 		sprintf_s(str, "{\"x\":%d,\"y\":%d,\"z\":%d}", x, y, z);
 		return std::string(str);
 	}
+
+	std::string toNormalString() {
+		char str[256];
+		sprintf_s(str, "%d %d %d", x, y, z);
+		return std::string(str);
+	}
 };
 
 struct BlockLegacy {

@@ -18,8 +18,8 @@ public:
 	}
 
 	bool static ReadyOpenBox(Player* player, BlockSource* blocksource, BlockPos* blockposition) {
+		if ()
 		return true;
-
 	}
 
 	bool static ReadyOpenBusket(Player* player, BlockSource* blocksource, BlockPos* blockposition) {

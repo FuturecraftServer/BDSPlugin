@@ -66,5 +66,8 @@
     <ClCompile Include="CConfig.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="LockBox.cpp">
+      <Filter>Plugin</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
