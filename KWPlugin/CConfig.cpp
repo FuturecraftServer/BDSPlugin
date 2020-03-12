@@ -1,3 +1,4 @@
+#pragma once
 #include "Prebuild.h"
 #include <string>
 #include <stringapiset.h>

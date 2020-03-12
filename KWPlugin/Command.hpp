@@ -5,12 +5,13 @@
 #include <algorithm>// std::replace_if
 #include "BDSAPI.hpp"
 #include "Economy.cpp"
-
+#include "LockBox.cpp"
 #include <time.h>
 
 static std::map<std::string, Player*> onlinePlayers;
 static std::map<std::string, std::string> NametoUuid;
 using namespace std;
+
 class Command {
 public:
 
@@ -134,6 +135,10 @@ public:
 			else {
 				player->sendMsg("§l§c请求发起者已下线!");
 			}
+		}
+		else if (param[0] == "/lock") {
+			LockBox::RequestLockBox(player);
+			player->sendMsg("请点击要锁的箱子!");
 		}
 		else {
 			return false;

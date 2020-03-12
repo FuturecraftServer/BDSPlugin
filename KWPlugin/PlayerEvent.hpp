@@ -9,6 +9,7 @@ public:
 	}
 
 	bool static PlaceBlock(Player* player, const Block* block, BlockPos* position) {
+
 		return true;
 	}
 
@@ -18,7 +19,14 @@ public:
 	}
 
 	bool static ReadyOpenBox(Player* player, BlockSource* blocksource, BlockPos* blockposition) {
-		if ()
+		if (LockBox::HavePermission(player, blockposition)) {
+			player->sendMsg("您没有权限打开此箱子!");
+			return false;
+		}
+		if (LockBox::isRequestLockBox(player)) {
+			LockBox::SetPermission(player, blockposition);
+			player->sendMsg("您已成功上锁!");
+		}
 		return true;
 	}
 
@@ -37,7 +45,7 @@ public:
 	}
 
 	bool static Command(Player* player, std::string command) {
-		if (Command::onPlayerSendCommand(command,player)) return false; //问为什么,要拦截下来他本来的Process
+		if (Command::onPlayerSendCommand(command, player)) return false; //问为什么,要拦截下来他本来的Process
 		return true;
 	}
 

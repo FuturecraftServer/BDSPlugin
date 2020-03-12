@@ -1,4 +1,5 @@
 #pragma once
+#include "Prebuild.h"
 static VA p_spscqueue;
 // ÷¥––∫Û∂À÷∏¡Ó
 static bool runcmd(std::string cmd) {
@@ -18,9 +19,9 @@ struct BPos3 {
 		return std::string(str);
 	}
 
-	std::string toNormalString() {
+	std::string toNormalString(int xp = 0, int yp = 0, int zp = 0) {
 		char str[256];
-		sprintf_s(str, "%d %d %d", x, y, z);
+		sprintf_s(str, "%d %d %d", x + xp, y + yp, z + zp);
 		return std::string(str);
 	}
 };

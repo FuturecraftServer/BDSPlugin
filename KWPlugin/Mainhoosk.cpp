@@ -203,8 +203,6 @@ THook2(_JS_ONUSEITEM, bool,
 THook2(_JS_ONPLACEDBLOCK, __int64,
 	MSSYM_MD5_949c4cd05bf2b86d54fb93fe7569c2b8,
 	void* _this, Player* pPlayer, const Block* pBlk, BlockPos* pBlkpos, bool _bool) {
-
-	//todo Preverse Method
 	return PlayerEvent::PlaceBlock(pPlayer, pBlk, pBlkpos) ? original(_this, pPlayer, pBlk, pBlkpos, _bool) : NULL;
 }
 
@@ -470,7 +468,7 @@ THook2(_JS_ONATTACK, bool,
 
 
 void init() {
-	std::cout << u8"Init KWPlugin V1.0.1alpha (branch Economy)" << std::endl << "Path: " << getLocalPath();
+	std::cout << u8"Init KWPlugin V1.0.1alpha (branch LockBox)" << std::endl << "Path: " << getLocalPath();
 }
 
 void exit() {
