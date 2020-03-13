@@ -199,13 +199,37 @@ THook2(_JS_ONUSEITEM, bool,
 	return PlayerEvent::UseItem(pPlayer, item, pBlkpos, pBlk) ? original(_this, item, pBlkpos, a4, v5, pBlk) : false;
 }
 
+//玩家放置方块
+THook2(_JS_ONPLACEDBLOCK, __int64,
+	MSSYM_B1QE21checkBlockPermissionsB1AE11BlockSourceB2AAA4QEAAB1UE10NAEAVActorB2AAE12AEBVBlockPosB2AAE14EAEBVItemStackB3AAUA1NB1AA1Z,
+	BlockSource* _this, Player* actor, BlockPos* pBlkpos, unsigned __int8 p4, ItemStack* item, bool p1) {
+	bool ret = PlayerEvent::PlaceBlock(actor, item->getId(), pBlkpos);
+	if (ret)
+		return original(_this, actor, pBlkpos, p4, item, p1);
+	else {
+		cout << "Try to be canceled" << endl;
+		return false;
+	}
+}
+/*
 // 玩家放置方块
 THook2(_JS_ONPLACEDBLOCK, __int64,
-	MSSYM_MD5_949c4cd05bf2b86d54fb93fe7569c2b8,
+	MSSYM_B1QE21checkBlockPermissionsB1AE11BlockSourceB2AAA4QEAAB1UE10NAEAVActorB2AAE12AEBVBlockPosB2AAE14EAEBVItemStackB3AAUA1NB1AA1Z,
 	void* _this, Player* pPlayer, const Block* pBlk, BlockPos* pBlkpos, bool _bool) {
-	return PlayerEvent::PlaceBlock(pPlayer, pBlk, pBlkpos) ? original(_this, pPlayer, pBlk, pBlkpos, _bool) : NULL;
+	bool ret = PlayerEvent::PlaceBlock(pPlayer, pBlk, pBlkpos);
+	if (ret)
+		return original(_this, pPlayer, pBlk, pBlkpos, _bool);
+	else {
+		cout << "Try to be canceled" << endl;
+		return false;
+	}
 }
+*/
 
+//禁止大箱子
+THook(bool, MSSYM_B1QE11canPairWithB1AE15ChestBlockActorB2AAA4QEAAB1UE15NPEAVBlockActorB2AAE15AEAVBlockSourceB3AAAA1Z) {
+	return false;
+}
 // 玩家破坏方块
 THook2(_JS_ONDESTROYBLOCK, bool,
 	MSSYM_B2QUE20destroyBlockInternalB1AA8GameModeB2AAA4AEAAB1UE13NAEBVBlockPosB2AAA1EB1AA1Z,
@@ -213,7 +237,7 @@ THook2(_JS_ONDESTROYBLOCK, bool,
 	auto pPlayer = *reinterpret_cast<Player**>(reinterpret_cast<VA>(_this) + 8);
 	auto pBlockSource = *(BlockSource**)(*((__int64*)_this + 1) + 840i64);
 	auto pBlk = pBlockSource->getBlock(pBlkpos);
-	return PlayerEvent::BreakBlock(pPlayer, pBlk, pBlockSource) ? original(_this, pBlkpos) : false;
+	return PlayerEvent::BreakBlock(pPlayer, pBlk, pBlockSource, pBlkpos) ? original(_this, pBlkpos) : false;
 }
 
 // 玩家开箱准备

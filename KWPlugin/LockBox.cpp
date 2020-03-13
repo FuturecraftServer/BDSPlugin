@@ -18,6 +18,7 @@ public:
 	}
 
 	void static SetPermission(Player* player, BlockPos* blockpos) {
+		CConfig::SetValueString("LockBox", "Request", player->getNameTag(), "false");
 		CConfig::SetValueString("LockBox", blockpos->getPosition()->toNormalString(), "owner", player->getNameTag());
 	}
 
@@ -31,9 +32,10 @@ public:
 	}
 
 	bool static CheckDropper(Player* player, BlockPos* blockpos) {
-		auto pBlockSource = (BlockSource*)*((__int64*)player + 105);
-		string positon = blockpos->getPosition()->toNormalString(0, -1, 0);
-		string owner = CConfig::GetValueString("LockBox", blockpos->getPosition()->toNormalString(), "owner", "NaN");
+		//Ö±½Ó½ûµô!
+		return  false;
+		string position = blockpos->getPosition()->toNormalString(0, 2, 0);
+		string owner = CConfig::GetValueString("LockBox", position, "owner", "NaN");
 		if (owner == "NaN") return true;
 		if (player->getNameTag() == owner) {
 			return true;
