@@ -7,6 +7,7 @@
 #include "Economy.cpp"
 #include "LockBox.cpp"
 #include <time.h>
+#include "Guild.cpp"
 
 static std::map<std::string, Player*> onlinePlayers;
 static std::map<std::string, std::string> NametoUuid;
@@ -139,6 +140,57 @@ public:
 		else if (param[0] == "/lock") {
 			LockBox::RequestLockBox(player);
 			player->sendMsg("请点击要锁的箱子!");
+		}
+		else if (param[0] == "/g") {
+			if (param[1] == "join") {
+				if (Guild::isInGuild(player->getNameTag())) {
+					player->sendMsg("你当前已在公会中, 输入 /g exit 来退出当前公会");
+					return true;
+				}
+				if (param.size() == 3) {
+					if (Guild::isGuildSet(param[2])) {
+						Guild::RequestJoin(param[2], player->getNameTag());
+						string sendoutuuid = NametoUuid[Guild::GetAdmin(param[2])];
+						if (sendoutuuid != "") {//玩家在线						
+							onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getNameTag() + " 请求加入公会 " + param[2]);
+							onlinePlayers[sendoutuuid]->sendMsg("输入 §l§a/g accept §r即可同意请求");
+							player->sendMsg("成功发送请求给公会管理员!");
+							return true;
+
+						}
+						else {
+							player->sendMsg("§l§c公会管理员已下线! 在线后可通过 §l§a/g accept §r同意请求");
+							return true;
+
+						}
+					}
+					else {
+						player->sendMsg("公会不存在!");
+					}
+				}
+				else {
+					player->sendMsg("用法: /g join <公会名>");
+				}
+			}
+			if (param[1] == "accept") {
+				Guild::AccecptJoin(Guild::PlayerInWhich(player->getNameTag()), player);
+			}
+			if (param[1] == "create") {
+				if (Guild::isInGuild(player->getNameTag())) {
+					player->sendMsg("你已经在公会了!");
+					player->sendMsg("可以输入 /g exit 来退出当前公会");
+				}
+				else {
+					if (param.size() == 3) {
+						Guild::CreateGuild(param[2],player->getNameTag());
+						player->sendMsg("成功创建公会!");
+					}
+					else {
+						player->sendMsg("用法: /g create <公会名> ");
+
+					}
+				}
+			}
 		}
 		else {
 			return false;

@@ -20,6 +20,9 @@
     <Filter Include="Economy">
       <UniqueIdentifier>{7181c447-0cef-4ac2-9a62-4ccc26e256f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Guild">
+      <UniqueIdentifier>{fc4558a5-aa09-4c5a-8a42-6320d7fa75a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUI\Bstream.h">
@@ -68,6 +71,9 @@
     </ClCompile>
     <ClCompile Include="LockBox.cpp">
       <Filter>Plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="Guild.cpp">
+      <Filter>Guild</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
