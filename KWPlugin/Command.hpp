@@ -91,25 +91,31 @@ public:
 				player->sendMsg("用法: /tpa <玩家名>");
 				return true;
 			}
-			string sendoutuuid = NametoUuid[param[1]];
-			if (sendoutuuid != "") {//玩家在线
-				CConfig::SetValueString("TPA", param[1], "from", player->getNameTag());
-				CConfig::SetValueString("TPA", param[1], "time", intToString(time(NULL)));
-				onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getNameTag() + " 请求tpa到你这里 §l§a");
-				onlinePlayers[sendoutuuid]->sendMsg("输入 §l§a/tpayes §r即可同意请求");
-				onlinePlayers[sendoutuuid]->sendMsg("输入 §l§c/tpano §r即可不同意请求");
-				onlinePlayers[sendoutuuid]->sendMsg("该请求 §l§a60秒 §r后过期,到时候可以忽略");
-				player->sendMsg("发送请求§l§a成功!§r在60秒内对方可以接受你的请求");
+			if (Economy::GetPlayerMoney(player->getNameTag()) <= 0) {
+				string sendoutuuid = NametoUuid[param[1]];
+				if (sendoutuuid != "") {//玩家在线
+					CConfig::SetValueString("TPA", param[1], "from", player->getNameTag());
+					CConfig::SetValueString("TPA", param[1], "time", intToString(time(NULL)));
+					onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getNameTag() + " 请求tpa到你这里 §l§a");
+					onlinePlayers[sendoutuuid]->sendMsg("输入 §l§a/tpayes §r即可同意请求");
+					onlinePlayers[sendoutuuid]->sendMsg("输入 §l§c/tpano §r即可不同意请求");
+					onlinePlayers[sendoutuuid]->sendMsg("该请求 §l§a60秒 §r后过期,到时候可以忽略");
+					player->sendMsg("发送请求§l§a成功!§r在60秒内对方可以接受你的请求");
+				}
+				else {
+					player->sendMsg("玩家: " + param[1] + " 不在线!");
+					return true;
+				}
 			}
 			else {
-				player->sendMsg("玩家: " + param[1] + " 不在线!");
-				return true;
+				Economy::GivePlayerMoney(player->getNameTag(),1);
+				player->sendMsg("你的余额不足以使用tpa");
 			}
+
 		}
 		else if (param[0] == "/tpayes") {
 			if (atoi(CConfig::GetValueString("TPA", player->getNameTag(), "time", "NaN").c_str()) < time(NULL) - 61)
 			{
-
 				player->sendMsg("§l§c所有请求已过期!");
 				return true;
 			}
@@ -182,13 +188,23 @@ public:
 				}
 				else {
 					if (param.size() == 3) {
-						Guild::CreateGuild(param[2],player->getNameTag());
+						if (Economy::RemovePlayerMoney(player->getNameTag(), 100));
+						Guild::CreateGuild(param[2], player->getNameTag());
 						player->sendMsg("成功创建公会!");
 					}
 					else {
 						player->sendMsg("用法: /g create <公会名> ");
 
 					}
+				}
+			}
+			if (param[1] == "exit") {
+				if (Guild::isAdmin(player->getNameTag(), Guild::PlayerInWhich(player->getNameTag()))) {
+					Guild::RemoveGuild(Guild::PlayerInWhich(player->getNameTag()), player);
+					Guild::ExitGuild(Guild::PlayerInWhich(player->getNameTag()), player);
+				}
+				else {
+					Guild::ExitGuild(Guild::PlayerInWhich(player->getNameTag()), player);
 				}
 			}
 		}

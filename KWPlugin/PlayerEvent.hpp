@@ -9,7 +9,6 @@ public:
 	}
 
 	bool static PlaceBlock(Player* player, short blockid, BlockPos* position) {
-		cout << blockid << endl;
 		if (blockid == 410) {
 			if (!LockBox::CheckDropper(player, position)) {
 				player->sendMsg("您无法在此处放置漏斗,因为附近有上锁的箱子");
@@ -20,7 +19,7 @@ public:
 		return true;
 	}
 
-	bool static BreakBlock(Player* player, const Block* block, BlockSource* blocksource,BlockPos* blockpos) {
+	bool static BreakBlock(Player* player, const Block* block, BlockSource* blocksource, BlockPos* blockpos) {
 		if (block->getLegacyBlock()->getBlockItemID() == 54) {
 			if (!LockBox::HavePermission(player, blockpos)) {
 				player->sendMsg("您没有权限破坏此箱子!");
@@ -56,6 +55,18 @@ public:
 	}
 
 	void static Spawn(Player* player) {
+		//if (Guild::isInGuild(player->getNameTag())) player->reName("[" + Guild::PlayerInWhich(player->getNameTag()) + "] " + player->getNameTag());
+	}
+
+	// 重设新名字
+	static bool reNameByUuid(std::string uuid, std::string newName) {
+		bool ret = false;
+		Player* taget = onlinePlayers[uuid];
+		if (taget != NULL) {
+			taget->reName(newName);
+			ret = true;
+		}
+		return ret;
 	}
 
 	bool static Command(Player* player, std::string command) {
@@ -68,5 +79,17 @@ public:
 
 	bool static Attack(Player* player, Actor* actor) {
 		return true;
+	}
+
+	bool static Chat(Player* player, string* chat) {
+		string nametag = player->getNameTag();
+		if (Guild::isInGuild(nametag)) {
+			cout << "[" + Guild::getPlayerGuildName(nametag) + "]<" + nametag + "> " + *chat << endl;
+			runcmd("tellraw @a {\"rawtext\":[{\"text\":\"[" + Guild::getPlayerGuildName(nametag) + "]<" + nametag + "> " + *chat + "\"}]}");
+		}
+		else {
+			cout << "<" + nametag + "> " + *chat << endl;
+			runcmd("tellraw @a {\"rawtext\":[{\"text\":\"<" + nametag + "> " + *chat + "\"}]}");
+		}
 	}
 };

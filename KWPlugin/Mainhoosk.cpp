@@ -207,7 +207,6 @@ THook2(_JS_ONPLACEDBLOCK, __int64,
 	if (ret)
 		return original(_this, actor, pBlkpos, p4, item, p1);
 	else {
-		cout << "Try to be canceled" << endl;
 		return false;
 	}
 }
@@ -407,26 +406,14 @@ THook2(_JS_ONCHAT, void,
 }
 
 // 输入文本
-/*TODO
- * Unkonwn Usage
 THook2(JS_ONINPUTTEXT, void,
 	MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkIdentifierB2AAE14AEBVTextPacketB3AAAA1Z,
 	VA _this, VA id, TextPacket* tp) {
-	Json::Value jv;
-	Player* p = SYMCALL(Player*, MSSYM_B2QUE15getServerPlayerB1AE20ServerNetworkHandlerB2AAE20AEAAPEAVServerPlayerB2AAE21AEBVNetworkIdentifierB2AAA1EB1AA1Z,
+	Player* player = SYMCALL(Player*, MSSYM_B2QUE15getServerPlayerB1AE20ServerNetworkHandlerB2AAE20AEAAPEAVServerPlayerB2AAE21AEBVNetworkIdentifierB2AAA1EB1AA1Z,
 		_this, id, *((char*)tp + 16));
-	if (p != NULL) {
-		addPlayerInfo(jv, p);
-	}
-	jv["msg"] = tp->toString();
-	bool ret = runScriptCallBackListener(ActEvent.ONINPUTTEXT, ActMode::BEFORE, toJsonString(jv));
-	if (ret) {
-		original(_this, id, tp);
-		jv["result"] = ret;
-		runScriptCallBackListener(ActEvent.ONINPUTTEXT, ActMode::AFTER, toJsonString(jv));
-	}
+	PlayerEvent::Chat(player, &tp->toString());
 }
-*/
+
 // 输入指令
 THook2(_JS_ONINPUTCOMMAND, void,
 	MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkIdentifierB2AAE24AEBVCommandRequestPacketB3AAAA1Z,
