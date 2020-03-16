@@ -1,10 +1,9 @@
 #pragma once
 #include "Prebuild.h"
-#include <string>
-#include <stringapiset.h>
-#include <WinBase.h>
-using namespace std;
+#include "SimpleIni/SimpleIni.h"
+#include <windows.h>
 
+using namespace std;
 // 获取BDS完整程序路径
 static char localpath[MAX_PATH] = { 0 };
 static std::string getLocalPath() {
@@ -23,21 +22,30 @@ static std::string getLocalPath() {
 class CConfig {
 public:
 	string static GetValueString(string filepath, string section, string key, string defvalue = "") {
-		LPSTR value = new char[256];
 		filepath = getLocalPath() + "Plugin\\" + filepath + ".ini";
-		GetPrivateProfileString(section.c_str(), key.c_str(), defvalue.c_str(), value, 256, filepath.c_str());
-		//cout << endl << u8"File Path: " << filepath << endl << u8"Section: " << section << endl << "Key: " << key << endl << "Value: " << value << endl;
-		return value;
+		CSimpleIniA ini;
+		ini.SetUnicode();
+		ini.LoadFile(filepath.c_str());
+		return ini.GetValue(section.c_str(), key.c_str(), defvalue.c_str());
 	}
+
 
 	int static GetValueInt(string filepath, string section, string key, int defvalue = 0) {
 		filepath = getLocalPath() + "Plugin\\" + filepath + ".ini";
-		return GetPrivateProfileInt(section.c_str(), key.c_str(), defvalue, filepath.c_str());
+		CSimpleIniA ini;
+		ini.SetUnicode();
+		ini.LoadFile(filepath.c_str());
+		return ini.GetLongValue(section.c_str(), key.c_str(), defvalue);
 	}
 
 	bool static SetValueString(string filepath, string section, string key, string value = "") {
 		filepath = getLocalPath() + "Plugin\\" + filepath + ".ini";
 		//cout << u8"File Path: " << filepath << endl << u8"Section: " << section << endl << "Key: " << key << endl << "Value: " << value << endl;
-		return WritePrivateProfileString(section.c_str(), key.c_str(), value.c_str(), filepath.c_str());
+		CSimpleIniA ini;
+		ini.SetUnicode();
+		ini.LoadFile(filepath.c_str());
+		ini.SetValue(section.c_str(), key.c_str(), value.c_str());
+		ini.SaveFile(filepath.c_str());
+		return true;
 	}
 };

@@ -1,3 +1,4 @@
+#pragma once
 #include "Prebuild.h"
 #include "BDSAPI.hpp"
 
@@ -8,8 +9,8 @@
 #include <mutex>
 #include "GUI/SimpleForm.h"
 
-#include "Command.hpp"
-#include "PlayerEvent.hpp"
+#include "Command.cpp"
+#include "PlayerEvent.cpp"
 
 
 static bool runcmd(std::string);
@@ -199,17 +200,29 @@ THook2(_JS_ONUSEITEM, bool,
 	return PlayerEvent::UseItem(pPlayer, item, pBlkpos, pBlk) ? original(_this, item, pBlkpos, a4, v5, pBlk) : false;
 }
 
+
+//玩家操作物品栏`
+THook(void, MSSYM_B1QE14dropFramedItemB1AE19ItemFrameBlockActorB2AAE20QEAAXAEAVBlockSourceB3AAUA1NB1AA1Z,
+	void* _this, BlockSource* blk, char* v3) {
+	auto real_this = reinterpret_cast<void*>(reinterpret_cast<VA>(_this) - 248);
+	auto pBlkpos = reinterpret_cast<BlockActor*>(real_this)->getPosition();
+	auto player = *reinterpret_cast<Player**>(reinterpret_cast<VA>(_this) + 8);
+	PlayerEvent::BreakItemFrame(player, pBlkpos);
+}
+
 //玩家放置方块
-THook2(_JS_ONPLACEDBLOCK, __int64,
-	MSSYM_B1QE21checkBlockPermissionsB1AE11BlockSourceB2AAA4QEAAB1UE10NAEAVActorB2AAE12AEBVBlockPosB2AAE14EAEBVItemStackB3AAUA1NB1AA1Z,
-	BlockSource* _this, Player* actor, BlockPos* pBlkpos, unsigned __int8 p4, ItemStack* item, bool p1) {
-	bool ret = PlayerEvent::PlaceBlock(actor, item->getId(), pBlkpos);
+THook2(_JS_ONPLACEDBLOCK, void,
+	MSSYM_B1QE23sendBlockPlacedByPlayerB1AE21BlockEventCoordinatorB2AAE15QEAAXAEAVPlayerB2AAA9AEBVBlockB2AAE12AEBVBlockPosB3AAUA1NB1AA1Z,
+	void* _this, Player* pPlayer, const Block* pBlk, BlockPos* pBlkpos) {
+	bool ret = PlayerEvent::PlaceBlock(pPlayer, pBlk->getLegacyBlock()->getBlockItemID(), pBlkpos);
 	if (ret)
-		return original(_this, actor, pBlkpos, p4, item, p1);
+		return original(_this, pPlayer, pBlk, pBlkpos);
 	else {
-		return false;
+		runcmd("setblock " + pBlkpos->getPosition()->toNormalString() + " air");
+		return;
 	}
 }
+
 /*
 // 玩家放置方块
 THook2(_JS_ONPLACEDBLOCK, __int64,
@@ -433,6 +446,19 @@ THook2(_JS_ONCREATEPLAYER, Player*,
 	onlinePlayers[uuid] = pPlayer;
 	NametoUuid[pPlayer->getNameTag()] = uuid;
 	return pPlayer;
+}
+
+//漏斗的Tick
+THook(void,
+	MSSYM_B1QA4tickB1AE16HopperBlockActorB2AAE20UEAAXAEAVBlockSourceB3AAAA1Z,
+	BlockActor* _this, BlockSource* blocksource) {
+	BlockPos* Blkpos = (BlockPos*)((char*)_this + 44);
+	if (LockBox::CheckDropper(Blkpos)) {
+		original(_this, blocksource);
+	}
+	else {
+		return;
+	}
 }
 
 // 玩家离开游戏

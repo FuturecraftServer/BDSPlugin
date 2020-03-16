@@ -95,6 +95,11 @@ struct Vec3 {
 		sprintf_s(str, "{\"x\":%.2f,\"y\":%.2f,\"z\":%.2f}", x, y, z);
 		return std::string(str);
 	}
+
+	std::string toNormalString(int xp = 0, int yp = 0, int zp = 0) {
+		return std::to_string((int)x) + " " + std::to_string((int)y) + " " + std::to_string((int)z);
+	}
+
 };
 
 struct Actor {

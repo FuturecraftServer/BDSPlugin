@@ -1,21 +1,35 @@
+#pragma once
 #include "Prebuild.h"
 #include "BDSAPI.hpp"
-#include "Command.hpp"
+#include "Command.cpp"
+#include "RPG.cpp"
+#include "Land.cpp"
 
 class PlayerEvent {
 public:
-	bool static UseItem(Player* player, ItemStack* item, BlockPos* pBlkpos, Block* pBlk) {
+	bool static UseItem(Player* player, ItemStack* item, BlockPos* blockpos, Block* pBlk) {
 		return true;
 	}
 
+
+	bool static BreakItemFrame(Player* player, BlockPos* position) {
+		cout << "Player: " << player << " Break" << position->getPosition()->toNormalString() << endl;
+		return false;
+	}
+
 	bool static PlaceBlock(Player* player, short blockid, BlockPos* position) {
-		if (blockid == 410) {
+		/*
+		if (blockid == 154) {
 			if (!LockBox::CheckDropper(player, position)) {
 				player->sendMsg("您无法在此处放置漏斗,因为附近有上锁的箱子");
 				return false;
 			}
 		}
-
+		*/
+		if (!Land::canLandModifyBlock(Land::BlockChunckId(position->getPosition()), player)) {
+			player->sendMsg("你无法破坏此领地的方块!");
+			return false;
+		}
 		return true;
 	}
 
@@ -26,11 +40,28 @@ public:
 				return false;
 			}
 		}
+		if (!Land::canLandModifyBlock(Land::BlockChunckId(blockpos->getPosition()), player)) return false;
 		return true;
 
 	}
 
 	bool static ReadyOpenBox(Player* player, BlockSource* blocksource, BlockPos* blockposition) {
+		if (AwardBox::isRequestSetBox(player)) {
+			AwardBox::SetAwardBox(blockposition, player);
+			player->sendMsg("Box Setted!");
+			return false;
+		}
+		if (AwardBox::isRequestTP(player)) {
+			AwardBox::SetTP(blockposition, player);
+			player->sendMsg("TP Setted!");
+			return false;
+		}
+		if (AwardBox::isAwardBox(blockposition)) {
+			int aw = AwardBox::getAward(blockposition, player);
+			Economy::GivePlayerMoney(player->getNameTag(), aw);
+			player->sendMsg("您已获得 " + std::to_string(aw));
+			return false;
+		}
 		if (!LockBox::HavePermission(player, blockposition)) {
 			player->sendMsg("您没有权限打开此箱子!");
 			return false;
@@ -55,7 +86,11 @@ public:
 	}
 
 	void static Spawn(Player* player) {
-		//if (Guild::isInGuild(player->getNameTag())) player->reName("[" + Guild::PlayerInWhich(player->getNameTag()) + "] " + player->getNameTag());
+		if (RPG::isNewPlayer(player->getNameTag())) {
+			Economy::SetPlayerMoney(player->getNameTag(), 100);
+			player->sendMsg("欢迎来到 FutureCraft 终日世界! 目前已给你转账 100 金币! 开始你的生存吧!");
+			player->sendMsg("官方QQ群号: 626714017  群里有玩法手册哦~");
+		}
 	}
 
 	// 重设新名字
@@ -78,10 +113,18 @@ public:
 	}
 
 	bool static Attack(Player* player, Actor* actor) {
+		if (actor->getEntityTypeId() == 1)
+			if (Land::canLandPvP(Land::PlayerChunckId(actor->getPos()), player, (Player*)actor)) {
+				return true;
+			}
+			else {
+				player->sendMsg("你无法在此领地攻击他!");
+				return false;
+			}
 		return true;
 	}
 
-	bool static Chat(Player* player, string* chat) {
+	void static Chat(Player* player, string* chat) {
 		string nametag = player->getNameTag();
 		if (Guild::isInGuild(nametag)) {
 			cout << "[" + Guild::getPlayerGuildName(nametag) + "]<" + nametag + "> " + *chat << endl;

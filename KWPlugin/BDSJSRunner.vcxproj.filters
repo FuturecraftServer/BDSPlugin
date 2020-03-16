@@ -23,6 +23,12 @@
     <Filter Include="Guild">
       <UniqueIdentifier>{fc4558a5-aa09-4c5a-8a42-6320d7fa75a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SimpleIni">
+      <UniqueIdentifier>{c48a25ca-977d-48f5-b14c-a559b9e2a728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RPG">
+      <UniqueIdentifier>{9783898f-f4c1-487d-80f0-cb9ae7f4a241}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUI\Bstream.h">
@@ -46,6 +52,12 @@
     <ClInclude Include="Prebuild.h">
       <Filter>Other</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleIni\SimpleIni.h">
+      <Filter>SimpleIni</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleIni\ConvertUTF.h">
+      <Filter>SimpleIni</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Mainhoosk.cpp">
@@ -53,12 +65,6 @@
     </ClCompile>
     <ClCompile Include="Prebuild.cpp">
       <Filter>Other</Filter>
-    </ClCompile>
-    <ClCompile Include="Command.hpp">
-      <Filter>Plugin</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerEvent.hpp">
-      <Filter>Plugin</Filter>
     </ClCompile>
     <ClCompile Include="GUI\SimpleForm.cpp">
       <Filter>GUI</Filter>
@@ -75,5 +81,87 @@
     <ClCompile Include="Guild.cpp">
       <Filter>Guild</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleIni\snippets.cpp">
+      <Filter>SimpleIni</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleIni\test1.cpp">
+      <Filter>SimpleIni</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleIni\testsi.cpp">
+      <Filter>SimpleIni</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleIni\ConvertUTF.c">
+      <Filter>SimpleIni</Filter>
+    </ClCompile>
+    <ClCompile Include="RPG.cpp">
+      <Filter>RPG</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.cpp">
+      <Filter>Plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="Land.cpp">
+      <Filter>RPG</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerEvent.cpp">
+      <Filter>Plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="AwardBox.cpp">
+      <Filter>RPG</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SimpleIni\ini.syn">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\Makefile">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\package.cmd">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\README.md">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\simpleini.doxy">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\simpleini.dsp">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\simpleini.dsw">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\SimpleIni.sln">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\SimpleIni.vcproj">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\test.cmd">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\test1-expected.ini">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\test1-input.ini">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\testsi-EUCJP.ini">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\testsi-SJIS.ini">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\testsi-UTF8.ini">
+      <Filter>SimpleIni</Filter>
+    </None>
+    <None Include="SimpleIni\.travis.yml">
+      <Filter>SimpleIni</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="SimpleIni\LICENCE.txt">
+      <Filter>SimpleIni</Filter>
+    </Text>
   </ItemGroup>
 </Project>

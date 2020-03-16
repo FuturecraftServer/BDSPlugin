@@ -8,6 +8,9 @@
 #include "LockBox.cpp"
 #include <time.h>
 #include "Guild.cpp"
+#include "RPG.cpp"
+#include "Land.cpp"
+#include "AwardBox.cpp"
 
 static std::map<std::string, Player*> onlinePlayers;
 static std::map<std::string, std::string> NametoUuid;
@@ -36,11 +39,7 @@ public:
 
 	string static intToString(int v)
 	{
-		char buf[64] = { 0 };
-		snprintf(buf, sizeof(buf), "%u", v);
-
-		string str = buf;
-		return str;
+		return std::to_string(v);
 	}
 
 	bool static onConsoleSendCommand(std::string cmd) {
@@ -91,7 +90,7 @@ public:
 				player->sendMsg("用法: /tpa <玩家名>");
 				return true;
 			}
-			if (Economy::GetPlayerMoney(player->getNameTag()) <= 0) {
+			if (Economy::GetPlayerMoney(player->getNameTag()) >= 1) {
 				string sendoutuuid = NametoUuid[param[1]];
 				if (sendoutuuid != "") {//玩家在线
 					CConfig::SetValueString("TPA", param[1], "from", player->getNameTag());
@@ -108,7 +107,7 @@ public:
 				}
 			}
 			else {
-				Economy::GivePlayerMoney(player->getNameTag(),1);
+				Economy::GivePlayerMoney(player->getNameTag(), 1);
 				player->sendMsg("你的余额不足以使用tpa");
 			}
 
@@ -188,9 +187,13 @@ public:
 				}
 				else {
 					if (param.size() == 3) {
-						if (Economy::RemovePlayerMoney(player->getNameTag(), 100));
-						Guild::CreateGuild(param[2], player->getNameTag());
-						player->sendMsg("成功创建公会!");
+						if (Economy::GetPlayerMoney(player->getNameTag()) >= 50) {
+							Guild::CreateGuild(param[2], player->getNameTag());
+							player->sendMsg("成功创建公会!");
+						}
+						else {
+							player->sendMsg("你的余额不足!");
+						}
 					}
 					else {
 						player->sendMsg("用法: /g create <公会名> ");
@@ -208,10 +211,52 @@ public:
 				}
 			}
 		}
+		else if (param[0] == "/chunck" && isAdmin(player)) {
+			player->sendMsg("当前在 " + Land::PlayerChunckId(player->getPos()));
+		}
+		else if (param[0] == "/l") {
+			if (param[1] == "buy") {
+				if (Economy::GetPlayerMoney(player->getNameTag()) >= 25) {
+					if (Land::isLandOwned(Land::PlayerChunckId(player->getPos()))) {
+						player->sendMsg("领地已被购买! 你可以输入 §a/l info§r 查看详细信息");
+					}
+					else {
+						Land::GiveLand(Land::PlayerChunckId(player->getPos()), Guild::getPlayerGuildName(player->getNameTag()));
+						Economy::RemovePlayerMoney(player->getNameTag(), 25);
+						player->sendMsg("您已成功购买领地! 领地编号" + Land::PlayerChunckId(player->getPos()));
+					}
+				}
+				else {
+					player->sendMsg("你的余额不足以购买!");
+				}
+			}
+			if (param[1] == "info") {
+				if (!Land::isLandOwned(Land::PlayerChunckId(player->getPos()))) {
+					player->sendMsg("当前领地暂未被购买 输入 §a/l buy§r 购买此领地");
+				}
+				else {
+					string chuck = Land::PlayerChunckId(player->getPos());
+					player->sendMsg("领地编号: " + chuck);
+					player->sendMsg("领地公会: " + Land::getLandOwner(chuck));
+				}
+			}
+		}
+		else if (param[0] == "/ab" && isAdmin(player)) {
+			if (param[1] != "tp") {
+				AwardBox::RequestSet(player, param[1], param[2] == "once" ? true : false);
+			}
+			else {
+				AwardBox::RequestTP(player);
+			}
+		}
 		else {
 			return false;
 		}
 		return true;
+	}
+
+	bool static isAdmin(Player* player) {
+		return Guild::isInGuild(player->getNameTag(), u8"FutureCraft管理员");
 	}
 
 	bool static ProcessConsoleCommand(vector<string> param) {

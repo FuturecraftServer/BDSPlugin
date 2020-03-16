@@ -31,18 +31,19 @@ public:
 		}
 	}
 
-	bool static CheckDropper(Player* player, BlockPos* blockpos) {
-		//Ö±½Ó½ûµô!
-		return  false;
-		string position = blockpos->getPosition()->toNormalString(0, 2, 0);
+	bool static CheckDropper(BlockPos* blockpos) {
+		string position = blockpos->getPosition()->toNormalString(0, 1, 0);
 		string owner = CConfig::GetValueString("LockBox", position, "owner", "NaN");
 		if (owner == "NaN") return true;
+		return false;
+		/*
 		if (player->getNameTag() == owner) {
 			return true;
 		}
 		else {
 			return false;
 		}
+		*/
 	}
 
 	void static RequestLockBox(Player* player) {

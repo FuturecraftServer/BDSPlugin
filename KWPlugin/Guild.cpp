@@ -7,7 +7,9 @@ using namespace std;
 class Guild {
 public:
 	string static getPlayerGuildName(string player) {
-		return CConfig::GetValueString("Guild", "Player", player, "NaN");
+		string ret = CConfig::GetValueString("Guild", "Player", player, "NaN");
+
+		return ret;
 	}
 
 	bool static isInGuild(string player, string guild = "NaN") {
@@ -31,7 +33,8 @@ public:
 	}
 
 	bool static isGuildSet(string name) {
-		return CConfig::GetValueString("Guild", name, "admin", "NaN") == "NaN" ? false : true;
+		bool ret = CConfig::GetValueString("Guild", name, "admin", "NaN") == "NaN" ? false : true;
+		return ret;
 	}
 
 	string static PlayerInWhich(string player) {

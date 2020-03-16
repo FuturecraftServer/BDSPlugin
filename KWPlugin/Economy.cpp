@@ -49,11 +49,7 @@ public:
 
 	static string intToString(int v)
 	{
-		char buf[32] = { 0 };
-		snprintf(buf, sizeof(buf), "%u", v);
-
-		string str = buf;
-		return str;
+		return std::to_string(v);
 	}
 private:
 
