@@ -2,6 +2,7 @@
 #include "Prebuild.h"
 #include "SimpleIni/SimpleIni.h"
 #include <windows.h>
+#include <fstream>
 
 using namespace std;
 // 获取BDS完整程序路径
@@ -47,5 +48,9 @@ public:
 		ini.SetValue(section.c_str(), key.c_str(), value.c_str());
 		ini.SaveFile(filepath.c_str());
 		return true;
+	}
+
+	string static GetPluginPath() {
+		return getLocalPath() + "Plugin\\";
 	}
 };

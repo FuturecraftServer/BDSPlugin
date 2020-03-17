@@ -3,6 +3,7 @@
 #include "CConfig.cpp"
 #include "BDSAPI.hpp"
 #include "Guild.cpp"
+#include "Economy.cpp"
 using namespace std;
 class Land {
 public:
@@ -15,14 +16,17 @@ public:
 	}
 
 	bool static canLandPvP(string landid, Player* attacker, Player* attackon) {
-		if (CConfig::GetValueInt("Land", landid, "pvp", 0) == 1) return true;
+		if (CConfig::GetValueInt("Land", landid, "protectnew", 0) == 1 && Economy::GetPlayerMoney(attackon->getNameTag()) >= 50) {
+			return true;
+		}
+		if (CConfig::GetValueInt("Land", landid, "pvp", 1) == 0) return false;
 		if (Guild::isInGuild(attackon->getNameTag(), CConfig::GetValueString("Land", landid, "guild", "FutureCraftπ‹¿Ì‘±"))) return false;
 		return true;
 	}
 
 	void static GiveLand(string landid, string guild) {
 		CConfig::SetValueString("Land", landid, "guild", guild);
-		CConfig::SetValueString("Land", landid, "pvp", "0");
+		//CConfig::SetValueString("Land", landid, "pvp", "0");
 		CConfig::SetValueString("Land", landid, "modblock", "0");
 	}
 

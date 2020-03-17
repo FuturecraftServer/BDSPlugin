@@ -163,34 +163,23 @@ THook2(_JS_ONSERVERCMDOUTPUT, VA,
 }
 */
 
-/*
- * TODO: Unfinished
 // 玩家选择表单
-THook2(_JS_ONFORMSELECT, void,
+THook( void,
 	MSSYM_MD5_8b7f7560f9f8353e6e9b16449ca999d2,
 	VA _this, VA id, VA handle, ModalFormResponsePacket** fp) {
 	ModalFormResponsePacket* fmp = *fp;
 	Player* p = SYMCALL(Player*, MSSYM_B2QUE15getServerPlayerB1AE20ServerNetworkHandlerB2AAE20AEAAPEAVServerPlayerB2AAE21AEBVNetworkIdentifierB2AAA1EB1AA1Z,
 		handle, id, *(char*)((VA)fmp + 16));
 	if (p != NULL) {
-		/*
 		UINT fid = fmp->getFormId();
 		if (destroyForm(fid)) {
-			jv["uuid"] = p->getUuid()->toString();
-			jv["formid"] = fid;
-			jv["selected"] = fmp->getSelectStr();		// 特别鸣谢：sysca11
-			bool ret = runScriptCallBackListener(ActEvent.ONFORMSELECT, ActMode::BEFORE, toJsonString(jv));
-			if (ret) {
-				original(_this, id, handle, fp);
-				jv["result"] = ret;
-				runScriptCallBackListener(ActEvent.ONFORMSELECT, ActMode::AFTER, toJsonString(jv));
-			}
+			PlayerEvent::SelectForm(p, fid, fmp->getSelectStr());
 			return;
-		}*//*
+		}
 	}
 	original(_this, id, handle, fp);
 }
-*/
+
 
 // 玩家操作物品
 THook2(_JS_ONUSEITEM, bool,
@@ -297,35 +286,16 @@ THook2(_JS_ONSETSLOT, void,
 	LevelContainerManagerModel* _this, int a2, ContainerItemStack* a3) {
 	int slot = a2;
 	ContainerItemStack* pItemStack = a3;
-	auto nid = pItemStack->getId();
-	auto naux = pItemStack->getAuxValue();
-	auto nsize = pItemStack->getStackSize();
-	auto nname = std::string(pItemStack->getName());
-
 	auto pPlayer = _this->getPlayer();
-	VA v3 = *((VA*)_this + 1);				// IDA LevelContainerManagerModel::_getContainer
-	BlockSource* bs = *(BlockSource**)(*(VA*)(v3 + 848) + 72i64);
+	//VA v3 = *((VA*)_this + 1);				// IDA LevelContainerManagerModel::_getContainer
+	//BlockSource* bs = *(BlockSource**)(*(VA*)(v3 + 848) + 72i64);
 	BlockPos* pBlkpos = (BlockPos*)((char*)_this + 176);
-	Block* pBlk = bs->getBlock(pBlkpos);
-	original(_this, slot, pItemStack);
-	/*
-	Json::Value jv;
-	jv["itemid"] = nid;
-	jv["itemcount"] = nsize;
-	jv["itemname"] = std::string(nname);
-	jv["itemaux"] = naux;
-	addPlayerInfo(jv, pPlayer);
-	jv["position"] = toJson(pBlkpos->getPosition()->toJsonString());
-	jv["blockid"] = pBlk->getLegacyBlock()->getBlockItemID();
-	jv["blockname"] = pBlk->getLegacyBlock()->getFullName();
-	jv["slot"] = slot;
-	bool ret = runScriptCallBackListener(ActEvent.ONSETSLOT, ActMode::BEFORE, toJsonString(jv));
-	if (ret) {
+	if (PlayerEvent::ChestInput(pPlayer, pItemStack, pBlkpos)) {
 		original(_this, slot, pItemStack);
-		jv["result"] = ret;
-		runScriptCallBackListener(ActEvent.ONSETSLOT, ActMode::AFTER, toJsonString(jv));
 	}
-	*/
+	else {
+		return;
+	}
 }
 
 // 玩家切换维度

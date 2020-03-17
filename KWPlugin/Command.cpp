@@ -11,6 +11,7 @@
 #include "RPG.cpp"
 #include "Land.cpp"
 #include "AwardBox.cpp"
+#include "ChestShop.cpp"
 
 static std::map<std::string, Player*> onlinePlayers;
 static std::map<std::string, std::string> NametoUuid;
@@ -248,6 +249,17 @@ public:
 			else {
 				AwardBox::RequestTP(player);
 			}
+		}
+		else if (param[0] == "/cs" && isAdmin(player)) {
+			ChestShop::RequestSetChestShop(player);
+			player->sendMsg("请点击ChestShop");
+		}
+		else if (param[0] == "/buy") {
+			ChestShop::sendBuyForm(player);
+		}
+		else if (param[0] == "/maincity") {
+			runcmd("tp " + player->getNameTag() + " 399 70 -61");
+			player->sendMsg("您已成功回城");
 		}
 		else {
 			return false;

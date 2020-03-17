@@ -179,6 +179,7 @@
   <ItemGroup>
     <ClCompile Include="AwardBox.cpp" />
     <ClCompile Include="CConfig.cpp" />
+    <ClCompile Include="ChestShop.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="Economy.cpp" />
     <ClCompile Include="Guild.cpp" />

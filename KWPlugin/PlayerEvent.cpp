@@ -4,6 +4,7 @@
 #include "Command.cpp"
 #include "RPG.cpp"
 #include "Land.cpp"
+#include "ChestShop.cpp"
 
 class PlayerEvent {
 public:
@@ -11,6 +12,30 @@ public:
 		return true;
 	}
 
+	void static SelectForm(Player* player, UINT fid, string selected) {
+		if (ChestShop::isRequestBuyForm(player)) {
+			ChestShop::realbuy(player, atoi(selected.c_str()));
+		}
+	}
+
+	bool static ChestInput(Player* player, ItemStack* item, BlockPos* blkpos) {
+		if (item->getId() == 0) return true;
+		if (ChestShop::isChestShop(blkpos)) {
+			int ret = ChestShop::SellItem(item, player, item->getStackSize());
+			if (ret == 1) {
+				return false;
+			}
+			else if (ret == -1) {
+				player->sendMsg("暂不支持售出 " + item->getName() + " * " + std::to_string(item->getStackSize()));
+				return true;
+			}
+			else if (ret == 2) {
+				player->sendMsg("您所售出的数量不足");
+				return true;
+			}
+		}
+		return true;
+	}
 
 	bool static BreakItemFrame(Player* player, BlockPos* position) {
 		cout << "Player: " << player << " Break" << position->getPosition()->toNormalString() << endl;
@@ -46,6 +71,10 @@ public:
 	}
 
 	bool static ReadyOpenBox(Player* player, BlockSource* blocksource, BlockPos* blockposition) {
+		if (ChestShop::isRequestSetChestShop(player)) {
+			ChestShop::setChestShop(player, blockposition);
+			player->sendMsg("Set Done!");
+		}
 		if (AwardBox::isRequestSetBox(player)) {
 			AwardBox::SetAwardBox(blockposition, player);
 			player->sendMsg("Box Setted!");
@@ -61,6 +90,10 @@ public:
 			Economy::GivePlayerMoney(player->getNameTag(), aw);
 			player->sendMsg("您已获得 " + std::to_string(aw));
 			return false;
+		}
+
+		if (ChestShop::isChestShop(blockposition)) {
+			return true;
 		}
 		if (!LockBox::HavePermission(player, blockposition)) {
 			player->sendMsg("您没有权限打开此箱子!");
@@ -87,9 +120,12 @@ public:
 
 	void static Spawn(Player* player) {
 		if (RPG::isNewPlayer(player->getNameTag())) {
-			Economy::SetPlayerMoney(player->getNameTag(), 100);
-			player->sendMsg("欢迎来到 FutureCraft 终日世界! 目前已给你转账 100 金币! 开始你的生存吧!");
+			Economy::SetPlayerMoney(player->getNameTag(), 10);
+			player->sendMsg("欢迎来到 FutureCraft 终日世界! 目前已给你转账 10 金币! 开始你的生存吧!");
 			player->sendMsg("官方QQ群号: 626714017  群里有玩法手册哦~");
+		}
+		if (Economy::GetPlayerMoney(player->getNameTag()) >= 50) {
+			player->sendMsg("你的金币数大于50,新手城将不再提供保护. 快去探索新世界吧!");
 		}
 	}
 

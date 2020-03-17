@@ -108,6 +108,9 @@
     <ClCompile Include="AwardBox.cpp">
       <Filter>RPG</Filter>
     </ClCompile>
+    <ClCompile Include="ChestShop.cpp">
+      <Filter>Plugin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleIni\ini.syn">
