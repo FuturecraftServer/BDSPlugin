@@ -50,7 +50,7 @@ public:
 	}
 
 	void static AccecptJoin(string name, Player* player) {
-		if (isAdmin(player->getNameTag(), name)) {
+		if (isAdmin(player->getRealNameTag(), name)) {
 			string requester = CConfig::GetValueString("Guild", "Request", name, "NaN");
 			if (requester == "NaN") {
 				player->sendMsg("没有请求!");
@@ -74,13 +74,13 @@ public:
 	}
 
 	void static RemoveGuild(string name, Player* player) {
-		if (isAdmin(player->getNameTag(), name)) CConfig::SetValueString("Guild", name, "admin", "NaN");
+		if (isAdmin(player->getRealNameTag(), name)) CConfig::SetValueString("Guild", name, "admin", "NaN");
 		player->sendMsg("成功解散公会!");
 	}
 
 	void static ExitGuild(string name, Player* player) {
-		if (PlayerInWhich(player->getNameTag()) != "NaN") {
-			CConfig::SetValueString("Guild", "Player", player->getNameTag(), "NaN");
+		if (PlayerInWhich(player->getRealNameTag()) != "NaN") {
+			CConfig::SetValueString("Guild", "Player", player->getRealNameTag(), "NaN");
 			player->sendMsg("成功退出公会!");
 		}
 		else {

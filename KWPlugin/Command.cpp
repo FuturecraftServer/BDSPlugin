@@ -20,22 +20,28 @@ using namespace std;
 class Command {
 public:
 
-	vector<string> static SplitStr(string strtem, char a)
+	vector<string> static SplitStr(string str, char a)
 	{
-		vector<string> strvec;
-
-		string::size_type pos1, pos2;
-		pos2 = strtem.find(a);
-		pos1 = 0;
-		while (string::npos != pos2)
-		{
-			strvec.push_back(strtem.substr(pos1, pos2 - pos1));
-
-			pos1 = pos2 + 1;
-			pos2 = strtem.find(a, pos1);
+		vector<string> ret;
+		int size = str.size();
+		bool quoate = false;
+		string temp = "";
+		for (int i = 0; i <= size; i++) {
+			if (str[i] == '"') {
+				quoate = !quoate;
+				temp += str[i];
+				continue;
+			}
+			if (str[i] == a && quoate == false) {
+				ret.push_back(temp);
+				temp = "";
+			}
+			else {
+				temp += str[i];
+			}
 		}
-		strvec.push_back(strtem.substr(pos1));
-		return strvec;
+		ret.push_back(temp);
+		return ret;
 	}
 
 	string static intToString(int v)
@@ -58,7 +64,7 @@ public:
 
 	bool static ProcessCommand(vector<string> param, Player* player) {
 		if (param[0] == "/money") {
-			player->sendMsg("你的余额为: §l§a" + intToString(Economy::GetPlayerMoney(player->getNameTag())));
+			player->sendMsg("你的余额为: §l§a" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
 		}
 		else if (param[0] == "/pay") {
 			if (param.size() != 3) {
@@ -66,8 +72,8 @@ public:
 				return true;
 			}
 			int willgive = atoi(param[2].c_str());
-			if (Economy::GetPlayerMoney(player->getNameTag()) < willgive) {
-				player->sendMsg("你的余额为: §l§c" + intToString(Economy::GetPlayerMoney(player->getNameTag())));
+			if (Economy::GetPlayerMoney(player->getRealNameTag()) < willgive) {
+				player->sendMsg("你的余额为: §l§c" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
 				player->sendMsg("不足以支付 §l§c" + param[2]);
 			}
 			else {
@@ -76,13 +82,13 @@ public:
 					return true;
 				}
 				Economy::GivePlayerMoney(param[1], willgive);
-				Economy::RemovePlayerMoney(player->getNameTag(), willgive);
+				Economy::RemovePlayerMoney(player->getRealNameTag(), willgive);
 				player->sendMsg("成功给 §a§l" + param[1] + " §r金额 §a§l" + param[2]);
-				player->sendMsg("你的余额为: §l§a" + intToString(Economy::GetPlayerMoney(player->getNameTag())));
+				player->sendMsg("你的余额为: §l§a" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
 				string sendoutuuid = NametoUuid[param[1]];
 				if (sendoutuuid != "") {//玩家在线
-					onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getNameTag() + " 给你转账 §l§a" + param[2]);
-					onlinePlayers[sendoutuuid]->sendMsg("你当前余额为: §l§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getNameTag())));
+					onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getRealNameTag() + " 给你转账 §l§a" + param[2]);
+					onlinePlayers[sendoutuuid]->sendMsg("你当前余额为: §l§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getRealNameTag())));
 				}
 			}
 		}
@@ -91,12 +97,12 @@ public:
 				player->sendMsg("用法: /tpa <玩家名>");
 				return true;
 			}
-			if (Economy::GetPlayerMoney(player->getNameTag()) >= 1) {
+			if (Economy::GetPlayerMoney(player->getRealNameTag()) >= 1) {
 				string sendoutuuid = NametoUuid[param[1]];
 				if (sendoutuuid != "") {//玩家在线
-					CConfig::SetValueString("TPA", param[1], "from", player->getNameTag());
+					CConfig::SetValueString("TPA", param[1], "from", player->getRealNameTag());
 					CConfig::SetValueString("TPA", param[1], "time", intToString(time(NULL)));
-					onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getNameTag() + " 请求tpa到你这里 §l§a");
+					onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getRealNameTag() + " 请求tpa到你这里 §l§a");
 					onlinePlayers[sendoutuuid]->sendMsg("输入 §l§a/tpayes §r即可同意请求");
 					onlinePlayers[sendoutuuid]->sendMsg("输入 §l§c/tpano §r即可不同意请求");
 					onlinePlayers[sendoutuuid]->sendMsg("该请求 §l§a60秒 §r后过期,到时候可以忽略");
@@ -108,23 +114,23 @@ public:
 				}
 			}
 			else {
-				Economy::GivePlayerMoney(player->getNameTag(), 1);
+				Economy::GivePlayerMoney(player->getRealNameTag(), 1);
 				player->sendMsg("你的余额不足以使用tpa");
 			}
 
 		}
 		else if (param[0] == "/tpayes") {
-			if (atoi(CConfig::GetValueString("TPA", player->getNameTag(), "time", "NaN").c_str()) < time(NULL) - 61)
+			if (atoi(CConfig::GetValueString("TPA", player->getRealNameTag(), "time", "NaN").c_str()) < time(NULL) - 61)
 			{
 				player->sendMsg("§l§c所有请求已过期!");
 				return true;
 			}
-			string from = CConfig::GetValueString("TPA", player->getNameTag(), "from", "");
+			string from = CConfig::GetValueString("TPA", player->getRealNameTag(), "from", "");
 			string sendoutuuid = NametoUuid[from];
 			if (sendoutuuid != "") {//玩家在线
-				CConfig::SetValueString("TPA", player->getNameTag(), "time", intToString(0));
-				runcmd("tp " + from + " " + player->getNameTag());
-				onlinePlayers[sendoutuuid]->sendMsg("成功TPA到" + player->getNameTag());
+				CConfig::SetValueString("TPA", player->getRealNameTag(), "time", intToString(0));
+				runcmd("tp " + from + " " + player->getRealNameTag());
+				onlinePlayers[sendoutuuid]->sendMsg("成功TPA到" + player->getRealNameTag());
 				player->sendMsg("玩家 " + from + " 已成功TPA到此处");
 			}
 			else {
@@ -132,11 +138,11 @@ public:
 			}
 		}
 		else if (param[0] == "/tpano") {
-			string from = CConfig::GetValueString("TPA", player->getNameTag(), "from", "");
+			string from = CConfig::GetValueString("TPA", player->getRealNameTag(), "from", "");
 			string sendoutuuid = NametoUuid[from];
 			if (sendoutuuid != "") {//玩家在线
-				CConfig::SetValueString("TPA", player->getNameTag(), "time", intToString(0));
-				onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getNameTag() + " 拒绝了你的TPA请求");
+				CConfig::SetValueString("TPA", player->getRealNameTag(), "time", intToString(0));
+				onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getRealNameTag() + " 拒绝了你的TPA请求");
 				player->sendMsg("成功拒绝 " + from + " 的TPA请求");
 			}
 			else {
@@ -149,16 +155,16 @@ public:
 		}
 		else if (param[0] == "/g") {
 			if (param[1] == "join") {
-				if (Guild::isInGuild(player->getNameTag())) {
+				if (Guild::isInGuild(player->getRealNameTag())) {
 					player->sendMsg("你当前已在公会中, 输入 /g exit 来退出当前公会");
 					return true;
 				}
 				if (param.size() == 3) {
 					if (Guild::isGuildSet(param[2])) {
-						Guild::RequestJoin(param[2], player->getNameTag());
+						Guild::RequestJoin(param[2], player->getRealNameTag());
 						string sendoutuuid = NametoUuid[Guild::GetAdmin(param[2])];
 						if (sendoutuuid != "") {//玩家在线						
-							onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getNameTag() + " 请求加入公会 " + param[2]);
+							onlinePlayers[sendoutuuid]->sendMsg("玩家: " + player->getRealNameTag() + " 请求加入公会 " + param[2]);
 							onlinePlayers[sendoutuuid]->sendMsg("输入 §l§a/g accept §r即可同意请求");
 							player->sendMsg("成功发送请求给公会管理员!");
 							return true;
@@ -179,17 +185,17 @@ public:
 				}
 			}
 			if (param[1] == "accept") {
-				Guild::AccecptJoin(Guild::PlayerInWhich(player->getNameTag()), player);
+				Guild::AccecptJoin(Guild::PlayerInWhich(player->getRealNameTag()), player);
 			}
 			if (param[1] == "create") {
-				if (Guild::isInGuild(player->getNameTag())) {
+				if (Guild::isInGuild(player->getRealNameTag())) {
 					player->sendMsg("你已经在公会了!");
 					player->sendMsg("可以输入 /g exit 来退出当前公会");
 				}
 				else {
 					if (param.size() == 3) {
-						if (Economy::GetPlayerMoney(player->getNameTag()) >= 50) {
-							Guild::CreateGuild(param[2], player->getNameTag());
+						if (Economy::GetPlayerMoney(player->getRealNameTag()) >= 50) {
+							Guild::CreateGuild(param[2], player->getRealNameTag());
 							player->sendMsg("成功创建公会!");
 						}
 						else {
@@ -203,12 +209,12 @@ public:
 				}
 			}
 			if (param[1] == "exit") {
-				if (Guild::isAdmin(player->getNameTag(), Guild::PlayerInWhich(player->getNameTag()))) {
-					Guild::RemoveGuild(Guild::PlayerInWhich(player->getNameTag()), player);
-					Guild::ExitGuild(Guild::PlayerInWhich(player->getNameTag()), player);
+				if (Guild::isAdmin(player->getRealNameTag(), Guild::PlayerInWhich(player->getRealNameTag()))) {
+					Guild::RemoveGuild(Guild::PlayerInWhich(player->getRealNameTag()), player);
+					Guild::ExitGuild(Guild::PlayerInWhich(player->getRealNameTag()), player);
 				}
 				else {
-					Guild::ExitGuild(Guild::PlayerInWhich(player->getNameTag()), player);
+					Guild::ExitGuild(Guild::PlayerInWhich(player->getRealNameTag()), player);
 				}
 			}
 		}
@@ -217,13 +223,13 @@ public:
 		}
 		else if (param[0] == "/l") {
 			if (param[1] == "buy") {
-				if (Economy::GetPlayerMoney(player->getNameTag()) >= 25) {
+				if (Economy::GetPlayerMoney(player->getRealNameTag()) >= 25) {
 					if (Land::isLandOwned(Land::PlayerChunckId(player->getPos()))) {
 						player->sendMsg("领地已被购买! 你可以输入 §a/l info§r 查看详细信息");
 					}
 					else {
-						Land::GiveLand(Land::PlayerChunckId(player->getPos()), Guild::getPlayerGuildName(player->getNameTag()));
-						Economy::RemovePlayerMoney(player->getNameTag(), 25);
+						Land::GiveLand(Land::PlayerChunckId(player->getPos()), Guild::getPlayerGuildName(player->getRealNameTag()));
+						Economy::RemovePlayerMoney(player->getRealNameTag(), 25);
 						player->sendMsg("您已成功购买领地! 领地编号" + Land::PlayerChunckId(player->getPos()));
 					}
 				}
@@ -258,8 +264,11 @@ public:
 			ChestShop::sendBuyForm(player);
 		}
 		else if (param[0] == "/maincity") {
-			runcmd("tp " + player->getNameTag() + " 399 70 -61");
+			runcmd("tp " + player->getRealNameTag() + " 399 70 -61");
 			player->sendMsg("您已成功回城");
+		}
+		else if (param[0] == "/qd") {
+			Economy::DailySign(player);
 		}
 		else {
 			return false;
@@ -268,7 +277,7 @@ public:
 	}
 
 	bool static isAdmin(Player* player) {
-		return Guild::isInGuild(player->getNameTag(), u8"FutureCraft管理员");
+		return Guild::isInGuild(player->getRealNameTag(), u8"FutureCraft管理员");
 	}
 
 	bool static ProcessConsoleCommand(vector<string> param) {
@@ -286,7 +295,7 @@ public:
 				string sendoutuuid = NametoUuid[param[1]];
 				if (sendoutuuid != "") {//玩家在线
 					onlinePlayers[sendoutuuid]->sendMsg("管理员 给你转账 §l§a" + param[2]);
-					onlinePlayers[sendoutuuid]->sendMsg("你当前余额为: §l§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getNameTag())));
+					onlinePlayers[sendoutuuid]->sendMsg("你当前余额为: §l§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getRealNameTag())));
 				}
 			}
 			else {

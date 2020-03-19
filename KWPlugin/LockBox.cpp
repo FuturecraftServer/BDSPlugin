@@ -9,7 +9,7 @@ public:
 	bool static HavePermission(Player* player, BlockPos* blockpos) {
 		string owner = CConfig::GetValueString("LockBox", blockpos->getPosition()->toNormalString(), "owner", "NaN");
 		if (owner == "NaN") return true;
-		if (player->getNameTag() == owner) {
+		if (player->getRealNameTag() == owner) {
 			return true;
 		}
 		else {
@@ -18,12 +18,12 @@ public:
 	}
 
 	void static SetPermission(Player* player, BlockPos* blockpos) {
-		CConfig::SetValueString("LockBox", "Request", player->getNameTag(), "false");
-		CConfig::SetValueString("LockBox", blockpos->getPosition()->toNormalString(), "owner", player->getNameTag());
+		CConfig::SetValueString("LockBox", "Request", player->getRealNameTag(), "false");
+		CConfig::SetValueString("LockBox", blockpos->getPosition()->toNormalString(), "owner", player->getRealNameTag());
 	}
 
 	bool static isRequestLockBox(Player* player) {
-		if (CConfig::GetValueString("LockBox", "Request", player->getNameTag(), "false") == "true") {
+		if (CConfig::GetValueString("LockBox", "Request", player->getRealNameTag(), "false") == "true") {
 			return true;
 		}
 		else {
@@ -37,7 +37,7 @@ public:
 		if (owner == "NaN") return true;
 		return false;
 		/*
-		if (player->getNameTag() == owner) {
+		if (player->getRealNameTag() == owner) {
 			return true;
 		}
 		else {
@@ -47,7 +47,7 @@ public:
 	}
 
 	void static RequestLockBox(Player* player) {
-		CConfig::SetValueString("LockBox", "Request", player->getNameTag(), "true");
+		CConfig::SetValueString("LockBox", "Request", player->getRealNameTag(), "true");
 	}
 private:
 

@@ -17,7 +17,7 @@ public:
 			if (count >= CConfig::GetValueInt("ChestShop", std::to_string(item->getId()), "count", -1)) {
 				int rc = count / CConfig::GetValueInt("ChestShop", std::to_string(item->getId()), "count", 64);
 				int rprice = rc * price;
-				Economy::GivePlayerMoney(player->getNameTag(), rprice);
+				Economy::GivePlayerMoney(player->getRealNameTag(), rprice);
 				player->sendMsg("成功售出 " + item->getName() + " * " + std::to_string(item->getStackSize()) + " = " + std::to_string(rprice));
 				return 1;
 			}
@@ -32,16 +32,16 @@ public:
 	}
 
 	void static setChestShop(Player* player, BlockPos* bp) {
-		CConfig::SetValueString("ChestShop", "Request", player->getNameTag(), "false");
+		CConfig::SetValueString("ChestShop", "Request", player->getRealNameTag(), "false");
 		CConfig::SetValueString("ChestShop", "Chest", bp->getPosition()->toNormalString(), "1");
 	}
 
 	void static RequestSetChestShop(Player* player) {
-		CConfig::SetValueString("ChestShop", "Request", player->getNameTag(), "true");
+		CConfig::SetValueString("ChestShop", "Request", player->getRealNameTag(), "true");
 	}
 
 	bool static isRequestSetChestShop(Player* player) {
-		return CConfig::GetValueString("ChestShop", "Request", player->getNameTag(), "false") == "true";
+		return CConfig::GetValueString("ChestShop", "Request", player->getRealNameTag(), "false") == "true";
 	}
 
 	void static sendBuyForm(Player* player) {
@@ -50,23 +50,23 @@ public:
 		tmp << in.rdbuf();
 		std::string str = tmp.str();
 		UINT fid = sendCustomForm(player, (char*)str.c_str());
-		CConfig::SetValueString("ChestShop", "SellForm", player->getNameTag(), std::to_string(fid));
+		CConfig::SetValueString("ChestShop", "SellForm", player->getRealNameTag(), std::to_string(fid));
 	}
 
 	bool static isRequestBuyForm(Player* player) {
-		return CConfig::GetValueString("ChestShop", "SellForm", player->getNameTag(), "NaN") != "NaN";
+		return CConfig::GetValueString("ChestShop", "SellForm", player->getRealNameTag(), "NaN") != "NaN";
 	}
 
 	bool static realbuy(Player* player, int select) {
 		string id = CConfig::GetValueString("ChestShop", "SellList", std::to_string(select), "-1");
-		if (id == "-1") return false;
+		if (id == "-1" || select == -1) return false;
 		int price = CConfig::GetValueInt("ChestShop", id, "buy", 0);
-		if (Economy::GetPlayerMoney(player->getNameTag()) < price) {
+		if (Economy::GetPlayerMoney(player->getRealNameTag()) < price) {
 			player->sendMsg("您的余额不足以购买!");
 			return false;
 		}
-		Economy::RemovePlayerMoney(player->getNameTag(),price);
-		runcmd("give " + player->getNameTag() + " " + CConfig::GetValueString("ChestShop", id, "id", "dirt") + " " + CConfig::GetValueString("ChestShop", id, "count", "64"));
+		Economy::RemovePlayerMoney(player->getRealNameTag(),price);
+		runcmd("give " + player->getRealNameTag() + " " + CConfig::GetValueString("ChestShop", id, "id", "dirt") + " " + CConfig::GetValueString("ChestShop", id, "count", "64"));
 	}
 
 	static UINT sendCustomForm(Player* player, char* json) {

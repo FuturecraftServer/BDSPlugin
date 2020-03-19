@@ -202,6 +202,7 @@
     <ClCompile Include="SimpleIni\snippets.cpp" />
     <ClCompile Include="SimpleIni\test1.cpp" />
     <ClCompile Include="SimpleIni\testsi.cpp" />
+    <ClCompile Include="War.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleIni\.travis.yml" />

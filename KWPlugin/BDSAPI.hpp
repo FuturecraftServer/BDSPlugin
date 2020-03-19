@@ -113,6 +113,7 @@ struct Actor {
 		return SYMCALL(std::string&,
 			MSSYM_MD5_7044ab83168b0fd345329e6566fd47fd,
 			this);
+		//return ;
 	}
 
 	// 获取生物当前所处维度ID
@@ -165,6 +166,8 @@ struct Actor {
 struct Mob : Actor {
 };
 struct Player : Actor {
+
+	
 	// 取uuid
 	MCUUID* getUuid() {				// IDA ServerNetworkHandler::_createNewPlayer
 		return (MCUUID*)((char*)this + 3192);
@@ -206,8 +209,19 @@ struct Player : Actor {
 
 	void sendMsg(std::string msg) {
 		msg = stringToUTF8(msg);
-		runcmd("tellraw " + this->getNameTag() + " { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");
+		runcmd("tellraw " + this->getRealNameTag() + " { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");
 	}
+
+	std::string getRealNameTag() {
+		std::string name = this->getNameTag();
+		if (name.find(' ') != name.npos) {
+			return "\"" + name + "\"";
+		}
+		else {
+			return name;
+		}
+	}
+
 
 	// 重设服务器玩家名
 	void reName(std::string name) {

@@ -16,11 +16,11 @@ public:
 	}
 
 	bool static canLandPvP(string landid, Player* attacker, Player* attackon) {
-		if (CConfig::GetValueInt("Land", landid, "protectnew", 0) == 1 && Economy::GetPlayerMoney(attackon->getNameTag()) >= 50) {
+		if (CConfig::GetValueInt("Land", landid, "protectnew", 0) == 1 && Economy::GetPlayerMoney(attackon->getRealNameTag()) >= 50) {
 			return true;
 		}
 		if (CConfig::GetValueInt("Land", landid, "pvp", 1) == 0) return false;
-		if (Guild::isInGuild(attackon->getNameTag(), CConfig::GetValueString("Land", landid, "guild", "FutureCraft管理员"))) return false;
+		if (Guild::isInGuild(attackon->getRealNameTag(), CConfig::GetValueString("Land", landid, "guild", "FutureCraft管理员"))) return false;
 		return true;
 	}
 
@@ -31,7 +31,7 @@ public:
 	}
 
 	bool static canLandModifyBlock(string landid, Player* breaker) {
-		if (Guild::isInGuild(breaker->getNameTag(), CConfig::GetValueString("Land", landid, "guild", "FutureCraft管理员")) || CConfig::GetValueInt("Land", landid, "modblock", 0) == 1 || !Land::isLandOwned(landid)) return true;
+		if (Guild::isInGuild(breaker->getRealNameTag(), CConfig::GetValueString("Land", landid, "guild", "FutureCraft管理员")) || CConfig::GetValueInt("Land", landid, "modblock", 0) == 1 || !Land::isLandOwned(landid)) return true;
 		return false;
 	}
 

@@ -27,13 +27,13 @@ public:
 		time(&now);      //获取系统日期和时间
 		localtime_s(&t, &now);   //获取当地日期和时间
 		strftime(tick, _countof(tick), "%Y%m%d", &t);
-		if (CConfig::GetValueString("Economy", "sign", player->getNameTag(), "0") == tick) {
+		if (CConfig::GetValueString("Economy", "sign", player->getRealNameTag(), "0") == tick) {
 			player->sendMsg("你今天已经签过到了!");
 			return;
 		}
 		else {
-			GivePlayerMoney(player->getNameTag(), 1);
-			CConfig::SetValueString("Economy", "sign", player->getNameTag(), tick);
+			GivePlayerMoney(player->getRealNameTag(), 1);
+			CConfig::SetValueString("Economy", "sign", player->getRealNameTag(), tick);
 			player->sendMsg("签到成功! 1 金币 Get~");
 		}
 	}

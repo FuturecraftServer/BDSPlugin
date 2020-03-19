@@ -163,8 +163,16 @@ THook2(_JS_ONSERVERCMDOUTPUT, VA,
 }
 */
 
+//玩家点火
+THook(bool,
+	MSSYM_B2QUA5useOnB1AE17FlintAndSteelItemB2AAA4MEBAB1UE14NAEAVItemStackB2AAA9AEAVActorB2AAA9VBlockPosB2AAA4EMMMB1AA1Z,
+	__int64 a1, const ItemStack* a2, BlockSource* a3, BlockPos* bp) {
+	Player* player = (Player*)a3;
+	return PlayerEvent::PlaceFire(player, bp) ? original(a1, a2, a3, bp) : false;
+}
+
 // 玩家选择表单
-THook( void,
+THook(void,
 	MSSYM_MD5_8b7f7560f9f8353e6e9b16449ca999d2,
 	VA _this, VA id, VA handle, ModalFormResponsePacket** fp) {
 	ModalFormResponsePacket* fmp = *fp;
@@ -414,7 +422,7 @@ THook2(_JS_ONCREATEPLAYER, Player*,
 	auto pPlayer = original(a1, a2, a3);
 	auto uuid = pPlayer->getUuid()->toString();
 	onlinePlayers[uuid] = pPlayer;
-	NametoUuid[pPlayer->getNameTag()] = uuid;
+	NametoUuid[pPlayer->getRealNameTag()] = uuid;
 	return pPlayer;
 }
 
@@ -436,7 +444,7 @@ THook2(_JS_ONPLAYERLEFT, void,
 	MSSYM_B2QUE12onPlayerLeftB1AE20ServerNetworkHandlerB2AAE21AEAAXPEAVServerPlayerB3AAUA1NB1AA1Z,
 	VA _this, Player* pPlayer, char v3) {
 	auto uuid = pPlayer->getUuid()->toString();
-	NametoUuid.erase(pPlayer->getNameTag());
+	NametoUuid.erase(pPlayer->getRealNameTag());
 	onlinePlayers[uuid] = NULL;
 	onlinePlayers.erase(uuid);
 	PlayerEvent::Exit(pPlayer);

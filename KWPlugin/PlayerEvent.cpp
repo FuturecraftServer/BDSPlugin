@@ -12,7 +12,19 @@ public:
 		return true;
 	}
 
+	bool static PlaceFire(Player* player, BlockPos* blockpos) {
+		if (Guild::isInGuild(player->getRealNameTag(), Land::getLandOwner(Land::BlockChunckId(blockpos->getPosition())))) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	void static SelectForm(Player* player, UINT fid, string selected) {
+		if (selected == "null") {
+			selected = "-1";
+		}
 		if (ChestShop::isRequestBuyForm(player)) {
 			ChestShop::realbuy(player, atoi(selected.c_str()));
 		}
@@ -38,7 +50,7 @@ public:
 	}
 
 	bool static BreakItemFrame(Player* player, BlockPos* position) {
-		cout << "Player: " << player << " Break" << position->getPosition()->toNormalString() << endl;
+		cout << "Player: " << player << " Break Frame" << position->getPosition()->toNormalString() << endl;
 		return false;
 	}
 
@@ -87,7 +99,7 @@ public:
 		}
 		if (AwardBox::isAwardBox(blockposition)) {
 			int aw = AwardBox::getAward(blockposition, player);
-			Economy::GivePlayerMoney(player->getNameTag(), aw);
+			Economy::GivePlayerMoney(player->getRealNameTag(), aw);
 			player->sendMsg("您已获得 " + std::to_string(aw));
 			return false;
 		}
@@ -119,12 +131,12 @@ public:
 	}
 
 	void static Spawn(Player* player) {
-		if (RPG::isNewPlayer(player->getNameTag())) {
-			Economy::SetPlayerMoney(player->getNameTag(), 10);
-			player->sendMsg("欢迎来到 FutureCraft 终日世界! 目前已给你转账 10 金币! 开始你的生存吧!");
+		if (RPG::isNewPlayer(player->getRealNameTag())) {
+			Economy::SetPlayerMoney(player->getRealNameTag(), 30);
+			player->sendMsg("欢迎来到 FutureCraft 终日世界! 目前已给你转账 30 金币! 开始你的生存吧!");
 			player->sendMsg("官方QQ群号: 626714017  群里有玩法手册哦~");
 		}
-		if (Economy::GetPlayerMoney(player->getNameTag()) >= 50) {
+		if (Economy::GetPlayerMoney(player->getRealNameTag()) >= 50) {
 			player->sendMsg("你的金币数大于50,新手城将不再提供保护. 快去探索新世界吧!");
 		}
 	}
@@ -161,7 +173,7 @@ public:
 	}
 
 	void static Chat(Player* player, string* chat) {
-		string nametag = player->getNameTag();
+		string nametag = player->getRealNameTag();
 		if (Guild::isInGuild(nametag)) {
 			cout << "[" + Guild::getPlayerGuildName(nametag) + "]<" + nametag + "> " + *chat << endl;
 			runcmd("tellraw @a {\"rawtext\":[{\"text\":\"[" + Guild::getPlayerGuildName(nametag) + "]<" + nametag + "> " + *chat + "\"}]}");
