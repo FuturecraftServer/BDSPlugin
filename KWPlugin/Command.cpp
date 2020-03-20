@@ -23,7 +23,7 @@ public:
 	vector<string> static SplitStr(string str, char a)
 	{
 		vector<string> ret;
-		int size = str.size();
+		size_t size = str.size();
 		bool quoate = false;
 		string temp = "";
 		for (int i = 0; i <= size; i++) {
@@ -40,6 +40,7 @@ public:
 				temp += str[i];
 			}
 		}
+		temp = temp.substr(0, temp.length() - 1);
 		ret.push_back(temp);
 		return ret;
 	}
@@ -51,7 +52,6 @@ public:
 
 	bool static onConsoleSendCommand(std::string cmd) {
 		vector<string> params = SplitStr(cmd, ' ');
-
 		return !ProcessConsoleCommand(params);
 	}
 
