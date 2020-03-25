@@ -10,7 +10,7 @@ static char localpath[MAX_PATH] = { 0 };
 static std::string getLocalPath() {
 	if (!localpath[0]) {
 		GetModuleFileNameA(NULL, localpath, _countof(localpath));
-		for (size_t l = strlen(localpath); l >= 0; l--) {
+		for (int l = strlen(localpath); l >= 0; l--) {
 			if (localpath[l] == '\\') {
 				localpath[l] = localpath[l + 1] = localpath[l + 2] = 0;
 				break;

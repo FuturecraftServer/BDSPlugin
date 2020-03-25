@@ -1,11 +1,28 @@
 #pragma once
 #include "Prebuild.h"
+
+
+#include "GUI/varint.h"
+#include "GUI/Bstream.h"
+#include "GUI/myPacket.h"
+
 static VA p_spscqueue;
 // 执行后端指令
 static bool runcmd(std::string cmd) {
 	if (p_spscqueue != 0)
 		return SYMCALL(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e, p_spscqueue, cmd);
 	return false;
+}
+
+
+std::string static replace_all_distinct(std::string str, std::string old_value, std::string new_value)
+{
+	for (std::string::size_type pos(0); pos != std::string::npos; pos += new_value.length()) {
+		if ((pos = str.find(old_value, pos)) != std::string::npos)
+			str.replace(pos, old_value.length(), new_value);
+		else   break;
+	}
+	return   str;
 }
 
 // 方块坐标结构体
@@ -167,7 +184,17 @@ struct Mob : Actor {
 };
 struct Player : Actor {
 
-	
+	//跨服传送
+	void transferServer(std::string server, int port) {
+		WBStream ws;
+		ws.apply(VarUInt(server.size()));
+		ws.write(server.c_str(), server.size());
+		ws.apply(VarUInt(port));
+		MyPkt<0x55, false> guipk{ ws.data };
+		SYMCALL(VA, MSSYM_B1QE17sendNetworkPacketB1AE12ServerPlayerB2AAE15UEBAXAEAVPacketB3AAAA1Z,
+			this, &guipk);
+	}
+
 	// 取uuid
 	MCUUID* getUuid() {				// IDA ServerNetworkHandler::_createNewPlayer
 		return (MCUUID*)((char*)this + 3192);
@@ -207,11 +234,6 @@ struct Player : Actor {
 		return retStr;
 	}
 
-	void sendMsg(std::string msg) {
-		msg = stringToUTF8(msg);
-		runcmd("tellraw " + this->getRealNameTag() + " { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");
-	}
-
 	std::string getRealNameTag() {
 		std::string name = this->getNameTag();
 		if (name.find(' ') != name.npos) {
@@ -220,6 +242,13 @@ struct Player : Actor {
 		else {
 			return name;
 		}
+	}
+
+	void sendMsg(std::string msg) {
+		msg = replace_all_distinct(msg, "\\", "\\\\");
+		msg = replace_all_distinct(msg, "\"", "\\\"");
+		msg = stringToUTF8(msg);
+		runcmd("tellraw " + this->getRealNameTag() + " { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");
 	}
 
 

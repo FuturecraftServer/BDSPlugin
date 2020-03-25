@@ -9,12 +9,12 @@
 #include <mutex>
 #include "GUI/SimpleForm.h"
 
-#include "Command.cpp"
 #include "PlayerEvent.cpp"
 
 
 static bool runcmd(std::string);
 static bool reNameByUuid(std::string, std::string);
+
 
 // 调试信息
 template<typename T>
@@ -48,6 +48,8 @@ static bool reNameByUuid(std::string uuid, std::string newName) {
 	}
 	return ret;
 }
+
+
 
 // 判断指针是否为玩家列表中指针
 static bool checkIsPlayer(void* mp) {

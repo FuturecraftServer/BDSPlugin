@@ -114,10 +114,8 @@ public:
 				}
 			}
 			else {
-				Economy::GivePlayerMoney(player->getRealNameTag(), 1);
 				player->sendMsg("你的余额不足以使用tpa");
 			}
-
 		}
 		else if (param[0] == "/tpayes") {
 			if (atoi(CConfig::GetValueString("TPA", player->getRealNameTag(), "time", "NaN").c_str()) < time(NULL) - 61)
@@ -204,7 +202,6 @@ public:
 					}
 					else {
 						player->sendMsg("用法: /g create <公会名> ");
-
 					}
 				}
 			}
@@ -267,8 +264,25 @@ public:
 			runcmd("tp " + player->getRealNameTag() + " 399 70 -61");
 			player->sendMsg("您已成功回城");
 		}
+		else if (param[0] == "/home") {
+			string home = CConfig::GetValueString("Player", player->getRealNameTag(), "home", "NaN");
+			if (home == "NaN") {
+				player->sendMsg("你还没有设置Home");
+			}
+			else {
+				runcmd("tp " + player->getRealNameTag() + " " + home);
+				Economy::RemovePlayerMoney(player->getRealNameTag(), 1);
+			}
+		}
+		else if (param[0] == "/sethome") {
+			CConfig::SetValueString("Player", player->getRealNameTag(), "home", player->getPos()->toNormalString());
+			player->sendMsg("成功设置Home!");
+		}
 		else if (param[0] == "/qd") {
 			Economy::DailySign(player);
+		}
+		else if (param[0] == "/trans") {
+			player->transferServer("play.futurecraft.site", 19132);
 		}
 		else {
 			return false;
