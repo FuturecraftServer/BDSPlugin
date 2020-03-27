@@ -281,9 +281,6 @@ public:
 		else if (param[0] == "/qd") {
 			Economy::DailySign(player);
 		}
-		else if (param[0] == "/trans") {
-			player->transferServer("play.futurecraft.site", 19132);
-		}
 		else {
 			return false;
 		}
