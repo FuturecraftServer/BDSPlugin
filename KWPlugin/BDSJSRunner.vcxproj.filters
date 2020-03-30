@@ -84,12 +84,6 @@
     <ClCompile Include="SimpleIni\snippets.cpp">
       <Filter>SimpleIni</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleIni\test1.cpp">
-      <Filter>SimpleIni</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleIni\testsi.cpp">
-      <Filter>SimpleIni</Filter>
-    </ClCompile>
     <ClCompile Include="SimpleIni\ConvertUTF.c">
       <Filter>SimpleIni</Filter>
     </ClCompile>
@@ -141,24 +135,6 @@
       <Filter>SimpleIni</Filter>
     </None>
     <None Include="SimpleIni\SimpleIni.vcproj">
-      <Filter>SimpleIni</Filter>
-    </None>
-    <None Include="SimpleIni\test.cmd">
-      <Filter>SimpleIni</Filter>
-    </None>
-    <None Include="SimpleIni\test1-expected.ini">
-      <Filter>SimpleIni</Filter>
-    </None>
-    <None Include="SimpleIni\test1-input.ini">
-      <Filter>SimpleIni</Filter>
-    </None>
-    <None Include="SimpleIni\testsi-EUCJP.ini">
-      <Filter>SimpleIni</Filter>
-    </None>
-    <None Include="SimpleIni\testsi-SJIS.ini">
-      <Filter>SimpleIni</Filter>
-    </None>
-    <None Include="SimpleIni\testsi-UTF8.ini">
       <Filter>SimpleIni</Filter>
     </None>
     <None Include="SimpleIni\.travis.yml">

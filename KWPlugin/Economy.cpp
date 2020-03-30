@@ -1,6 +1,5 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS 1
-#include "Prebuild.h"
 #include "CConfig.cpp"
 #include "BDSAPI.hpp"
 //#include <string>

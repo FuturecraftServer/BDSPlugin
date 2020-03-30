@@ -1,5 +1,4 @@
 #pragma once
-#include "Prebuild.h"
 #include "BDSAPI.hpp"
 
 #include<combaseapi.h>
@@ -483,10 +482,14 @@ THook2(_JS_ONATTACK, bool,
 
 #pragma endregion
 
-
 void init() {
-	std::cout << u8"Init KWPlugin V1.0.1alpha (branch LockBox)" << std::endl << "Path: " << getLocalPath();
+
+	std::cout << u8"Init KWPlugin V1.0.1 (branch Master)" << std::endl << "Path: " << getLocalPath();
+	std::cout << "File Dedicated.txt is ";
 }
+
+
+
 
 void exit() {
 }

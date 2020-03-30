@@ -200,8 +200,6 @@
     <ClCompile Include="RPG.cpp" />
     <ClCompile Include="SimpleIni\ConvertUTF.c" />
     <ClCompile Include="SimpleIni\snippets.cpp" />
-    <ClCompile Include="SimpleIni\test1.cpp" />
-    <ClCompile Include="SimpleIni\testsi.cpp" />
     <ClCompile Include="War.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -215,12 +213,6 @@
     <None Include="SimpleIni\simpleini.dsw" />
     <None Include="SimpleIni\SimpleIni.sln" />
     <None Include="SimpleIni\SimpleIni.vcproj" />
-    <None Include="SimpleIni\test.cmd" />
-    <None Include="SimpleIni\test1-expected.ini" />
-    <None Include="SimpleIni\test1-input.ini" />
-    <None Include="SimpleIni\testsi-EUCJP.ini" />
-    <None Include="SimpleIni\testsi-SJIS.ini" />
-    <None Include="SimpleIni\testsi-UTF8.ini" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="SimpleIni\LICENCE.txt" />
