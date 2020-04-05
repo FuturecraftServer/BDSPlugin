@@ -484,8 +484,8 @@ THook2(_JS_ONATTACK, bool,
 
 void init() {
 
-	std::cout << u8"Init KWPlugin V1.0.1 (branch Master)" << std::endl << "Path: " << getLocalPath();
-	std::cout << "File Dedicated.txt is ";
+	std::cout << u8"Init KWPlugin V1.0.4 (branch Master) TIC Special" << std::endl << "Path: " << getLocalPath();
+	std::cout << u8"Copyright Kengwang All rights reserved" << std::endl;
 }
 
 

@@ -28,20 +28,25 @@ public:
 
 	void static CreateGuild(string name, string admin) {
 		CConfig::SetValueString("Guild", name, "admin", admin);
+		CConfig::SetValueString("Guild", name, "Player", admin);
 		CConfig::SetValueString("Guild", "Player", admin, name);
 	}
 
 	bool static isGuildSet(string name) {
-		bool ret = CConfig::GetValueString("Guild", name, "admin", "NaN") == "NaN" ? false : true;
-		return ret;
+		return CConfig::GetValueString("Guild", name, "admin", "NaN") == "NaN" ? false : true;
 	}
 
 	string static PlayerInWhich(string player) {
 		return CConfig::GetValueString("Guild", "Player", player, "NaN");
 	}
 
+	string static GetPlayers(string guild) {
+		return CConfig::GetValueString("Guild", guild, "Player", "NaN");
+	}
+
 	void static JoinGuild(string name, string player) {
 		CConfig::SetValueString("Guild", "Player", player, name);
+		CConfig::SetValueString("Guild", name, "Player", CConfig::GetValueString("Guild", name, "Player", "NaN") + player + ",");
 	}
 
 	void static RequestJoin(string name, string player) {
@@ -78,8 +83,11 @@ public:
 	}
 
 	void static ExitGuild(string name, Player* player) {
-		if (PlayerInWhich(player->getRealNameTag()) != "NaN") {
+		string guild = PlayerInWhich(player->getRealNameTag());
+		if (guild != "NaN") {
+			CConfig::SetValueString("Guild", guild, "Player", replace_all_distinct(GetPlayers(guild), player->getRealNameTag() + ",", ""));
 			CConfig::SetValueString("Guild", "Player", player->getRealNameTag(), "NaN");
+
 			player->sendMsg("成功退出公会!");
 		}
 		else {
