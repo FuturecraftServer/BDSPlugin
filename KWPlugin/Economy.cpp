@@ -19,6 +19,14 @@ public:
 		return now;
 	}
 
+	int static GetPriceToDo(std::string things) {
+		return CConfig::GetValueInt("Economy", "Price", things, 9999999);
+	}
+
+	int static SetPriceToDo(std::string things,std::string price) {
+		return CConfig::SetValueString("Economy", "Price", things, price);
+	}
+
 	void static DailySign(Player* player) {
 		char tick[MAX_PATH];  //用于存储格式的时间
 		struct tm t;     //tm结构指针
@@ -31,9 +39,9 @@ public:
 			return;
 		}
 		else {
-			GivePlayerMoney(player->getRealNameTag(), 1);
+			GivePlayerMoney(player->getRealNameTag(), GetPriceToDo("DailySign"));
 			CConfig::SetValueString("Economy", "sign", player->getRealNameTag(), tick);
-			player->sendMsg("签到成功! 1 金币 Get~");
+			player->sendMsg("签到成功! " + intToString(GetPriceToDo("DailySign")) + " 金币 Get~");
 		}
 	}
 

@@ -57,16 +57,8 @@ public:
 	}
 
 	bool static PlaceBlock(Player* player, short blockid, BlockPos* position) {
-		/*
-		if (blockid == 154) {
-			if (!LockBox::CheckDropper(player, position)) {
-				player->sendMsg("您无法在此处放置漏斗,因为附近有上锁的箱子");
-				return false;
-			}
-		}
-		*/
 		if (!Land::canLandModifyBlock(Land::BlockChunckId(position->getPosition()), player)) {
-			player->sendMsg("你无法破坏此领地的方块!");
+			player->sendMsg("你无法在此领地放置方块!");
 			return false;
 		}
 		return true;
@@ -79,7 +71,10 @@ public:
 				return false;
 			}
 		}
-		if (!Land::canLandModifyBlock(Land::BlockChunckId(blockpos->getPosition()), player)) return false;
+		if (!Land::canLandModifyBlock(Land::BlockChunckId(blockpos->getPosition()), player)) {
+			player->sendMsg("你无法在此领地破坏方块!");
+			return false;
+		}
 		return true;
 
 	}
@@ -133,13 +128,10 @@ public:
 	}
 
 	void static Spawn(Player* player) {
-		if (RPG::isNewPlayer(player->getRealNameTag())) {
-			Economy::SetPlayerMoney(player->getRealNameTag(), 30);
-			player->sendMsg("欢迎来到 FutureCraft 终日世界! 目前已给你转账 30 金币! 开始你的生存吧!");
-			player->sendMsg("官方QQ群号: 626714017  群里有玩法手册哦~");
-		}
-		if (Economy::GetPlayerMoney(player->getRealNameTag()) >= 50) {
-			player->sendMsg("你的金币数大于50,新手城将不再提供保护. 快去探索新世界吧!");
+		player->sendMsg("§l§d欢迎来到§eTIC§a服务器，§4服务器全面自由，开始你的愉快之路吧^_^§6服务器QQ群166010681§c感谢你的游玩");
+		if (CConfig::GetValueString("Player", "Darkroom", player->getRealNameTag(), "false") == "true") {
+			runcmd("tp " + player->getRealNameTag() + " 1484 95 45");
+			player->sendMsg("你已被关在小黑屋反思.");
 		}
 	}
 

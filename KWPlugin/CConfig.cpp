@@ -30,7 +30,6 @@ public:
 		return ini.GetValue(section.c_str(), key.c_str(), defvalue.c_str());
 	}
 
-
 	int static GetValueInt(string filepath, string section, string key, int defvalue = 0) {
 		filepath = getLocalPath() + "Plugin\\" + filepath + ".ini";
 		CSimpleIniA ini;

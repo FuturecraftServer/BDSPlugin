@@ -62,8 +62,16 @@ public:
 
 
 	bool static ProcessCommand(vector<string> param, Player* player) {
-		if (param[0] == "/money") {
+		if (param[0] == "/money" && param.size() == 1) {
 			player->sendMsg("你的余额为: §l§a" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
+		}
+		else if (param[0] == "money") {
+			if (param.size() == 2) {
+				cout << u8"他的余额为: " << intToString(Economy::GetPlayerMoney(param[1])) << endl;
+			}
+			else {
+				cout << u8"用法: /money <玩家名>" << endl;
+			}
 		}
 		else if (param[0] == "/pay") {
 			if (param.size() != 3) {
@@ -71,7 +79,7 @@ public:
 				return true;
 			}
 			int willgive = atoi(param[2].c_str());
-			if (Economy::GetPlayerMoney(player->getRealNameTag()) < willgive) {
+			if (Economy::GetPlayerMoney(player->getRealNameTag()) < willgive && !isAdmin(player)) {
 				player->sendMsg("你的余额为: §l§c" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
 				player->sendMsg("不足以支付 §l§c" + param[2]);
 			}
@@ -97,7 +105,7 @@ public:
 				player->sendMsg("用法: /tpa <玩家名>");
 				return true;
 			}
-			if (Economy::GetPlayerMoney(player->getRealNameTag()) >= 1) {
+			if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("TPA")) {
 				string sendoutuuid = NametoUuid[param[1]];
 				if (sendoutuuid != "") {//玩家在线
 					CConfig::SetValueString("TPA", param[1], "from", player->getRealNameTag());
@@ -128,6 +136,7 @@ public:
 			if (sendoutuuid != "") {//玩家在线
 				CConfig::SetValueString("TPA", player->getRealNameTag(), "time", intToString(0));
 				runcmd("tp " + from + " " + player->getRealNameTag());
+				Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("TPA"));
 				onlinePlayers[sendoutuuid]->sendMsg("成功TPA到" + player->getRealNameTag());
 				player->sendMsg("玩家 " + from + " 已成功TPA到此处");
 			}
@@ -149,8 +158,14 @@ public:
 		}
 
 		else if (param[0] == "/lock") {
-			LockBox::RequestLockBox(player);
-			player->sendMsg("请点击要锁的箱子!");
+			if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("LockBox")) {
+				Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("LockBox"));
+				LockBox::RequestLockBox(player);
+				player->sendMsg("请点击要锁的箱子!");
+			}
+			else {
+				player->sendMsg("你的余额不足!");
+			}
 		}
 		else if (param[0] == "/g") {
 			if (param[1] == "join") {
@@ -193,12 +208,20 @@ public:
 				}
 				else {
 					if (param.size() == 3) {
-						if (Economy::GetPlayerMoney(player->getRealNameTag()) >= 50) {
-							Guild::CreateGuild(param[2], player->getRealNameTag());
-							player->sendMsg("成功创建公会!");
+						if (!Guild::isGuildSet(param[2])) {
+							player->sendMsg(param[2] + " 不存在");
+							if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("CreateGuild")) {
+								Guild::CreateGuild(param[2], player->getRealNameTag());
+								Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("CreateGuild"));
+								player->sendMsg("成功创建公会!");
+							}
+							else {
+								player->sendMsg("你的余额不足!");
+							}
 						}
-						else {
-							player->sendMsg("你的余额不足!");
+						else
+						{
+							player->sendMsg("该公会已成立");
 						}
 					}
 					else {
@@ -209,10 +232,17 @@ public:
 			if (param[1] == "exit") {
 				if (Guild::isAdmin(player->getRealNameTag(), Guild::PlayerInWhich(player->getRealNameTag()))) {
 					Guild::RemoveGuild(Guild::PlayerInWhich(player->getRealNameTag()), player);
-					Guild::ExitGuild(Guild::PlayerInWhich(player->getRealNameTag()), player);
+				}
+				Guild::ExitGuild(Guild::PlayerInWhich(player->getRealNameTag()), player);
+			}
+			if (param[1] == "member") {
+				if (Guild::isInGuild(player->getRealNameTag())) {
+					string guild = Guild::PlayerInWhich(player->getRealNameTag());
+					player->sendMsg(guild + " 成员有:");
+					player->sendMsg(Guild::GetPlayers(guild));
 				}
 				else {
-					Guild::ExitGuild(Guild::PlayerInWhich(player->getRealNameTag()), player);
+					player->sendMsg("你还未加入或创建公会");
 				}
 			}
 		}
@@ -221,14 +251,19 @@ public:
 		}
 		else if (param[0] == "/l") {
 			if (param[1] == "buy") {
-				if (Economy::GetPlayerMoney(player->getRealNameTag()) >= 25) {
+				if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("BuyLand")) {
 					if (Land::isLandOwned(Land::PlayerChunckId(player->getPos()))) {
 						player->sendMsg("领地已被购买! 你可以输入 §a/l info§r 查看详细信息");
 					}
 					else {
-						Land::GiveLand(Land::PlayerChunckId(player->getPos()), Guild::getPlayerGuildName(player->getRealNameTag()));
-						Economy::RemovePlayerMoney(player->getRealNameTag(), 25);
-						player->sendMsg("您已成功购买领地! 领地编号" + Land::PlayerChunckId(player->getPos()));
+						if (Guild::isInGuild(player->getNameTag())) {
+							Land::GiveLand(Land::PlayerChunckId(player->getPos()), Guild::getPlayerGuildName(player->getRealNameTag()));
+							Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("BuyLand"));
+							player->sendMsg("您已成功购买领地! 领地编号" + Land::PlayerChunckId(player->getPos()));
+						}
+						else {
+							player->sendMsg("你还未加入公会,请先创建或加入一个公会");
+						}
 					}
 				}
 				else {
@@ -245,6 +280,7 @@ public:
 					player->sendMsg("领地公会: " + Land::getLandOwner(chuck));
 				}
 			}
+
 		}
 		else if (param[0] == "/ab" && isAdmin(player)) {
 			if (param[1] != "tp") {
@@ -258,15 +294,10 @@ public:
 			ChestShop::RequestSetChestShop(player);
 			player->sendMsg("请点击ChestShop");
 		}
-		else if (param[0] == "/buy") {
+		else if (param[0] == "/sd") {
 			ChestShop::sendBuyForm(player);
 		}
 		else if (param[0] == "/maincity") {
-<<<<<<< Updated upstream
-			runcmd("tp " + player->getRealNameTag() + " 399 70 -61");
-			player->sendMsg("您已成功回城");
-		}
-=======
 			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "maincity"));
 			player->sendMsg("您已成功回城");
 		}
@@ -292,23 +323,36 @@ public:
 			}
 			player->sendMsg("成功让他出来了");
 		}
->>>>>>> Stashed changes
 		else if (param[0] == "/home") {
-			string home = CConfig::GetValueString("Player", player->getRealNameTag(), "home", "NaN");
-			if (home == "NaN") {
-				player->sendMsg("你还没有设置Home");
+			if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("TPHome")) {
+				player->sendMsg("你的余额不足以执行此操作");
 			}
 			else {
-				runcmd("tp " + player->getRealNameTag() + " " + home);
-				Economy::RemovePlayerMoney(player->getRealNameTag(), 1);
+				string home = CConfig::GetValueString("Player", player->getRealNameTag(), "home", "NaN");
+				if (home == "NaN") {
+					player->sendMsg("你还没有设置Home");
+				}
+				else {
+					runcmd("tp " + player->getRealNameTag() + " " + home);
+					Economy::RemovePlayerMoney(player->getRealNameTag(), 1);
+				}
 			}
 		}
 		else if (param[0] == "/sethome") {
-			CConfig::SetValueString("Player", player->getRealNameTag(), "home", player->getPos()->toNormalString());
-			player->sendMsg("成功设置Home!");
+			if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("SetHome")) {
+				player->sendMsg("你的余额不足以执行此操作");
+			}
+			else {
+				CConfig::SetValueString("Player", player->getRealNameTag(), "home", player->getPos()->toNormalString());
+				Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("SetHome"));
+				player->sendMsg("成功设置Home!");
+			}
 		}
 		else if (param[0] == "/qd") {
 			Economy::DailySign(player);
+		}
+		else if (param[0] == "/setprice" && isAdmin(player)) {
+			Economy::SetPriceToDo(param[1], param[2]);
 		}
 		else {
 			return false;
@@ -317,11 +361,7 @@ public:
 	}
 
 	bool static isAdmin(Player* player) {
-<<<<<<< Updated upstream
 		return Guild::isInGuild(player->getRealNameTag(), u8"FutureCraft管理员");
-=======
-		return Guild::isInGuild(player->getRealNameTag(), u8"FutrueCraft管理员");
->>>>>>> Stashed changes
 	}
 
 	bool static ProcessConsoleCommand(vector<string> param) {
@@ -345,6 +385,28 @@ public:
 			else {
 				cout << u8"用法: pay <玩家名> <数量>" << endl;
 			}
+		}
+		else if (param[0] == "darkroom") {
+			runcmd("tp " + param[1] + " 1484 95 45");
+			CConfig::SetValueString("Player", "Darkroom", param[1], "true");
+			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
+			if (sendoutuuid != "") {//玩家在线	
+				onlinePlayers[sendoutuuid]->sendMsg("你被关到了小黑屋");
+			}
+			cout << u8"成功让他到了小黑屋" << endl;
+		}
+		else if (param[0] == "openroom") {
+			runcmd("tp " + param[1] + " 1495 67 54");
+			CConfig::SetValueString("Player", "Darkroom", param[1], "false");
+			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
+			if (sendoutuuid != "") {//玩家在线	
+				onlinePlayers[sendoutuuid]->sendMsg("管理员把你放了出来");
+			}
+			cout << u8"成功让他出来了" << endl;
+		}
+		else if (param[0] == "cleanmob") {
+			runcmd("kill @e[type=item]");
+			runcmd("me 掉落物清理§l§a完成");
 		}
 		else {
 			return false;
