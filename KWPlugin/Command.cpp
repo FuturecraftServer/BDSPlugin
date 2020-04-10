@@ -91,6 +91,7 @@ public:
 				}
 			}
 		}
+
 		else if (param[0] == "/tpa") {
 			if (param.size() != 2) {
 				player->sendMsg("用法: /tpa <玩家名>");
@@ -146,6 +147,7 @@ public:
 				player->sendMsg("§l§c请求发起者已下线!");
 			}
 		}
+
 		else if (param[0] == "/lock") {
 			LockBox::RequestLockBox(player);
 			player->sendMsg("请点击要锁的箱子!");
@@ -260,9 +262,37 @@ public:
 			ChestShop::sendBuyForm(player);
 		}
 		else if (param[0] == "/maincity") {
+<<<<<<< Updated upstream
 			runcmd("tp " + player->getRealNameTag() + " 399 70 -61");
 			player->sendMsg("您已成功回城");
 		}
+=======
+			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "maincity"));
+			player->sendMsg("您已成功回城");
+		}
+		else if (param[0] == "/setmaincity") {
+			CConfig::SetValueString("Settings", "Settings", "maincity", player->getPos()->toNormalString());
+			player->sendMsg("成功设置主城!");
+		}
+		else if (param[0] == "/darkroom" && isAdmin(player)) {
+			runcmd("tp " + param[1] + " 1484 95 45");
+			CConfig::SetValueString("Player", "Darkroom", param[1], "true");
+			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
+			if (sendoutuuid != "") {//玩家在线	
+				onlinePlayers[sendoutuuid]->sendMsg("你被关到了小黑屋");
+			}
+			player->sendMsg("成功让他到了小黑屋");
+		}
+		else if (param[0] == "/openroom" && isAdmin(player)) {
+			runcmd("tp " + param[1] + " 1495 67 54");
+			CConfig::SetValueString("Player", "Darkroom", param[1], "false");
+			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
+			if (sendoutuuid != "") {//玩家在线	
+				onlinePlayers[sendoutuuid]->sendMsg("管理员把你放了出来");
+			}
+			player->sendMsg("成功让他出来了");
+		}
+>>>>>>> Stashed changes
 		else if (param[0] == "/home") {
 			string home = CConfig::GetValueString("Player", player->getRealNameTag(), "home", "NaN");
 			if (home == "NaN") {
@@ -287,7 +317,11 @@ public:
 	}
 
 	bool static isAdmin(Player* player) {
+<<<<<<< Updated upstream
 		return Guild::isInGuild(player->getRealNameTag(), u8"FutureCraft管理员");
+=======
+		return Guild::isInGuild(player->getRealNameTag(), u8"FutrueCraft管理员");
+>>>>>>> Stashed changes
 	}
 
 	bool static ProcessConsoleCommand(vector<string> param) {
