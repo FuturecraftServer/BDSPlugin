@@ -1,4 +1,5 @@
 #pragma once
+#include "Prebuild.h" //Prebuild Header
 #include <string>
 #include "BDSAPI.hpp"
 #include "CConfig.cpp"

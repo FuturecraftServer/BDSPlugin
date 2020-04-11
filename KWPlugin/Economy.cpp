@@ -1,4 +1,5 @@
 #pragma once
+#include "Prebuild.h" //Prebuild Header
 #define _CRT_SECURE_NO_WARNINGS 1
 #include "CConfig.cpp"
 #include "BDSAPI.hpp"
