@@ -66,7 +66,7 @@ public:
 			return false;
 		}
 		Economy::RemovePlayerMoney(player->getRealNameTag(),price);
-		runcmd("give " + player->getRealNameTag() + " " + CConfig::GetValueString("ChestShop", id, "id", "dirt") + " " + CConfig::GetValueString("ChestShop", id, "count", "64"));
+		runcmd("give " + player->getRealNameTag() + " " + CConfig::GetValueString("ChestShop", id, "id", "NaN") + " " + CConfig::GetValueString("ChestShop", id, "count", "64"));
 	}
 
 	static UINT sendCustomForm(Player* player, char* json) {

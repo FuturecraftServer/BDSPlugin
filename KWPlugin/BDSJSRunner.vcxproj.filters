@@ -105,9 +105,6 @@
     <ClCompile Include="ChestShop.cpp">
       <Filter>Plugin</Filter>
     </ClCompile>
-    <ClCompile Include="War.cpp">
-      <Filter>RPG</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleIni\ini.syn">

@@ -52,7 +52,7 @@ public:
 	}
 
 	bool static BreakItemFrame(Player* player, BlockPos* position) {
-		cout << "Player: " << player << " Break Frame" << position->getPosition()->toNormalString() << endl;
+		cout << "Player: " << player << " Break Frame " << position->getPosition()->toNormalString() << endl;
 		return false;
 	}
 
@@ -128,11 +128,24 @@ public:
 	}
 
 	void static Spawn(Player* player) {
-		player->sendMsg("§l§d欢迎来到§eTIC§a服务器，§4服务器全面自由，开始你的愉快之路吧^_^§6服务器QQ群166010681§c感谢你的游玩");
+		std::ifstream in(CConfig::GetPluginPath() + "Annoncement.txt");
+		std::ostringstream tmp;
+		tmp << in.rdbuf();
+		std::string str = tmp.str();
+
+		//player->sendMsg(str);    //聊天框版
+		sendMsgForm((VA)player,str,"公告");
 		if (CConfig::GetValueString("Player", "Darkroom", player->getRealNameTag(), "false") == "true") {
-			runcmd("tp " + player->getRealNameTag() + " 1484 95 45");
+			runcmd("tp " + player->getRealNameTag() + " "+CConfig::GetValueString("Settings","Settings","darkroom","0 0 0"));
 			player->sendMsg("你已被关在小黑屋反思.");
 		}
+	}
+
+	unsigned static sendMsgForm(VA pPlayer, std::string content, std::string title = "信息") {
+		if (pPlayer == 0)
+			return 0;
+		std::string orig = "{\"content\": \"" + content + "\",\"title\": \"" + title + "\"}";
+		return sendForm(pPlayer, orig);
 	}
 
 	// 重设新名字
@@ -170,11 +183,11 @@ public:
 		string nametag = player->getRealNameTag();
 		if (Guild::isInGuild(nametag)) {
 			cout << "[" + Guild::getPlayerGuildName(nametag) + "]<" + nametag + "> " + *chat << endl;
-			runcmd("tellraw @a {\"rawtext\":[{\"text\":\"[" + Guild::getPlayerGuildName(nametag) + "]<" + nametag + "> " + *chat + "\"}]}");
+			runcmd("tellraw @a {\"rawtext\":[{\"text\":\"[" + Guild::getPlayerGuildName(nametag) + "] " + nametag + " >>> " + *chat + "\"}]}");
 		}
 		else {
 			cout << "<" + nametag + "> " + *chat << endl;
-			runcmd("tellraw @a {\"rawtext\":[{\"text\":\"<" + nametag + "> " + *chat + "\"}]}");
+			runcmd("tellraw @a {\"rawtext\":[{\"text\":\"" + nametag + " >>> " + *chat + "\"}]}");
 		}
 	}
 };

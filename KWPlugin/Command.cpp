@@ -305,8 +305,12 @@ public:
 			CConfig::SetValueString("Settings", "Settings", "maincity", player->getPos()->toNormalString());
 			player->sendMsg("成功设置主城!");
 		}
+		else if (param[0] == "/setdarkroom") {
+			CConfig::SetValueString("Settings", "Settings", "darkroom", player->getPos()->toNormalString());
+			player->sendMsg("成功设置小黑屋!");
+		}
 		else if (param[0] == "/darkroom" && isAdmin(player)) {
-			runcmd("tp " + param[1] + " 1484 95 45");
+			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
 			CConfig::SetValueString("Player", "Darkroom", param[1], "true");
 			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
 			if (sendoutuuid != "") {//玩家在线	
@@ -315,7 +319,7 @@ public:
 			player->sendMsg("成功让他到了小黑屋");
 		}
 		else if (param[0] == "/openroom" && isAdmin(player)) {
-			runcmd("tp " + param[1] + " 1495 67 54");
+			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "maincity"));
 			CConfig::SetValueString("Player", "Darkroom", param[1], "false");
 			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
 			if (sendoutuuid != "") {//玩家在线	
@@ -387,7 +391,7 @@ public:
 			}
 		}
 		else if (param[0] == "darkroom") {
-			runcmd("tp " + param[1] + " 1484 95 45");
+			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
 			CConfig::SetValueString("Player", "Darkroom", param[1], "true");
 			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
 			if (sendoutuuid != "") {//玩家在线	
@@ -396,17 +400,13 @@ public:
 			cout << u8"成功让他到了小黑屋" << endl;
 		}
 		else if (param[0] == "openroom") {
-			runcmd("tp " + param[1] + " 1495 67 54");
+			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "maincity"));
 			CConfig::SetValueString("Player", "Darkroom", param[1], "false");
 			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
 			if (sendoutuuid != "") {//玩家在线	
 				onlinePlayers[sendoutuuid]->sendMsg("管理员把你放了出来");
 			}
 			cout << u8"成功让他出来了" << endl;
-		}
-		else if (param[0] == "cleanmob") {
-			runcmd("kill @e[type=item]");
-			runcmd("me 掉落物清理§l§a完成");
 		}
 		else {
 			return false;

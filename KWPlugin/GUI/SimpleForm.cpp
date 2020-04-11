@@ -1,3 +1,4 @@
+#pragma once
 #include "../Prebuild.h"
 
 #include <string>
@@ -33,6 +34,7 @@ unsigned sendForm(VA pPlayer, std::string str)
 		pPlayer, &guipk);
 	return fid;
 }
+
 
 // 销毁已使用的id
 bool destroyForm(unsigned fid)

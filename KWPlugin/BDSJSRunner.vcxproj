@@ -200,7 +200,6 @@
     <ClCompile Include="RPG.cpp" />
     <ClCompile Include="SimpleIni\ConvertUTF.c" />
     <ClCompile Include="SimpleIni\snippets.cpp" />
-    <ClCompile Include="War.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleIni\.travis.yml" />

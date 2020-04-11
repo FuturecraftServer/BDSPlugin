@@ -248,7 +248,7 @@ struct Player : Actor {
 		msg = replace_all_distinct(msg, "\\", "\\\\");
 		msg = replace_all_distinct(msg, "\"", "\\\"");
 		msg = stringToUTF8(msg);
-		runcmd("tellraw " + this->getRealNameTag() + " { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");
+		runcmd("tellraw " + this->getRealNameTag() + " { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");		
 	}
 
 
