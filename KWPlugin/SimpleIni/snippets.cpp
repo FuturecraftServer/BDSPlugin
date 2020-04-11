@@ -4,7 +4,7 @@
 // Source:  http://code.jellycan.com/simpleini/
 //
 // Snippets that are used on the website
-
+#include "../Prebuild.h" //Prebuild Header
 #ifdef _WIN32
 # pragma warning(disable: 4786)
 #endif
