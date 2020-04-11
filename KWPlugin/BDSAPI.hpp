@@ -1,19 +1,21 @@
 #pragma once
 #include "Prebuild.h"
 
-
 #include "GUI/varint.h"
 #include "GUI/Bstream.h"
 #include "GUI/myPacket.h"
+#include <locale.h>
+#include <codecvt> 
+#include <wchar.h>
 
 static VA p_spscqueue;
 // ÷¥––∫Û∂À÷∏¡Ó
 static bool runcmd(std::string cmd) {
-	if (p_spscqueue != 0)
+	if (p_spscqueue != 0) {
 		return SYMCALL(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e, p_spscqueue, cmd);
+	}
 	return false;
 }
-
 
 std::string static replace_all_distinct(std::string str, std::string old_value, std::string new_value)
 {

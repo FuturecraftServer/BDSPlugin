@@ -14,6 +14,8 @@
 
 static std::map<std::string, Player*> onlinePlayers;
 static std::map<std::string, std::string> NametoUuid;
+
+
 using namespace std;
 
 class Command {
@@ -277,10 +279,33 @@ public:
 				else {
 					string chuck = Land::PlayerChunckId(player->getPos());
 					player->sendMsg("领地编号: " + chuck);
+					player->sendMsg("领地名称: " + Land::getLandName(chuck));
 					player->sendMsg("领地公会: " + Land::getLandOwner(chuck));
 				}
 			}
+			if (param[1] == "name") {
+				string chunck = Land::PlayerChunckId(player->getPos());
 
+				if (!Land::isLandOwned(chunck)) {
+					player->sendMsg("当前领地暂未被购买 输入 §a/l buy§r 购买此领地");
+				}
+				else {
+					if (param.size() == 3) {
+
+						if (Guild::isInGuild(player->getRealNameTag(), Land::getLandOwner(chunck))) {
+							Land::setLandName(chunck, param[2]);
+							player->sendMsg("成功设置");
+
+						}
+						else {
+							player->sendMsg("你不是此领地成员");
+						}
+					}
+					else {
+						player->sendMsg("用法 /l name <领地名称>");
+					}
+				}
+			}
 		}
 		else if (param[0] == "/ab" && isAdmin(player)) {
 			if (param[1] != "tp") {

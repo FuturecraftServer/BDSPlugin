@@ -10,6 +10,14 @@ public:
 		return CConfig::GetValueString("Land", landid, "guild", "NaN") != "NaN";
 	}
 
+	string static getLandName(string landid) {
+		return CConfig::GetValueString("Land", landid, "name", u8"未命名领地");
+	}
+
+	void static setLandName(string landid,string name) {
+		CConfig::SetValueString("Land", landid, "name", name);
+	}
+
 	string static getLandOwner(string landid) {
 		return CConfig::GetValueString("Land", landid, "guild", "NaN");
 	}
@@ -19,7 +27,7 @@ public:
 			return true;
 		}
 		if (CConfig::GetValueInt("Land", landid, "pvp", 1) == 0) return false;
-		if (Guild::isInGuild(attackon->getRealNameTag(), CConfig::GetValueString("Land", landid, "guild", "TIC"))) return false;
+		if (Guild::isInGuild(attackon->getRealNameTag(), CConfig::GetValueString("Land", landid, "guild", u8"FutureCraft管理员"))) return false;
 		return true;
 	}
 
@@ -30,7 +38,7 @@ public:
 	}
 
 	bool static canLandModifyBlock(string landid, Player* breaker) {
-		if (Guild::isInGuild(breaker->getRealNameTag(), CConfig::GetValueString("Land", landid, "guild", "TIC")) || CConfig::GetValueInt("Land", landid, "modblock", 0) == 1 || !Land::isLandOwned(landid)) return true;
+		if (Guild::isInGuild(breaker->getRealNameTag(), CConfig::GetValueString("Land", landid, "guild", u8"FutureCraft管理员")) || CConfig::GetValueInt("Land", landid, "modblock", 0) == 1 || !Land::isLandOwned(landid)) return true;
 		return false;
 	}
 

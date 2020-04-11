@@ -373,7 +373,7 @@ THook2(_JS_ONMOBDIE, void,
 // 玩家重生
 THook2(_JS_PLAYERRESPAWN, void, MSSYM_B1QA7respawnB1AA6PlayerB2AAA7UEAAXXZ,
 	Player* pPlayer) {
-	PlayerEvent::Spawn(pPlayer);
+	PlayerEvent::ReSpawn(pPlayer);
 	original(pPlayer);
 	return;
 }
@@ -453,22 +453,17 @@ THook2(_JS_ONPLAYERLEFT, void,
 }
 
 // 玩家移动信息构筑
-//TODO:怕卡
 THook2(_JS_ONMOVE, __int64,
 	MSSYM_B2QQE170MovePlayerPacketB2AAA4QEAAB1AE10AEAVPlayerB2AAE14W4PositionModeB1AA11B1AA2HHB1AA1Z,
 	void* _this, Player* pPlayer, char v3, int v4, int v5) {
-	/*
-	__int64 reto = 0;
-	jv["position"] = jv["XYZ"];//toJson(pPlayer->getPos()->toJsonString());
-	bool ret = runScriptCallBackListener(ActEvent.ONMOVE, ActMode::BEFORE, toJsonString(jv));
-	if (ret) {
-		reto = original(_this, pPlayer, v3, v3, v4);
-		jv["result"] = ret;
-		runScriptCallBackListener(ActEvent.ONMOVE, ActMode::AFTER, toJsonString(jv));
+	
+	if (PlayerEvent::Move(pPlayer)) {
+		return original(_this, pPlayer, v3, v4, v5);
 	}
-	return reto;
-	*/
-	return original(_this, pPlayer, v3, v4, v5);
+	else {
+		return 0;
+	}
+	
 }
 
 // 玩家攻击时触发调用

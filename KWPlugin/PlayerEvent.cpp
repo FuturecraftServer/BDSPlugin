@@ -5,7 +5,8 @@
 #include "Land.cpp"
 #include "ChestShop.cpp"
 
-
+static std::map<std::string, std::string> PlayerLastLandId;
+static std::map<std::string, bool> PlayerLastinLand;
 
 class PlayerEvent {
 public:
@@ -134,9 +135,39 @@ public:
 		std::string str = tmp.str();
 
 		//player->sendMsg(str);    //聊天框版
-		sendMsgForm((VA)player,str,"公告");
+		sendMsgForm((VA)player, str, "公告");
 		if (CConfig::GetValueString("Player", "Darkroom", player->getRealNameTag(), "false") == "true") {
-			runcmd("tp " + player->getRealNameTag() + " "+CConfig::GetValueString("Settings","Settings","darkroom","0 0 0"));
+			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
+			player->sendMsg("你已被关在小黑屋反思.");
+		}
+	}
+
+
+	bool static Move(Player* player) {
+		//我觉得很卡哦~
+
+		//进入新领地
+		string chunckid = Land::PlayerChunckId(player->getPos());
+		string playername = player->getRealNameTag();
+		if (chunckid != PlayerLastLandId[playername]) {
+			//进入了新区块
+			PlayerLastLandId[playername] = chunckid;
+			if (Land::isLandOwned(chunckid)) {
+				PlayerLastinLand[playername] = true;
+				runcmd("title " + playername + u8" actionbar 您已进入 " + Land::getLandName(chunckid) + u8" §r领地公会: " + Land::getLandOwner(chunckid));
+			}
+			else {
+				if (PlayerLastinLand[playername]) {
+					runcmd("title " + playername + u8" actionbar 您已进入 野外, 此地暂未购买");
+					PlayerLastinLand[playername] = false;
+				}
+			}
+		}
+	}
+
+	void static ReSpawn(Player* player) {
+		if (CConfig::GetValueString("Player", "Darkroom", player->getRealNameTag(), "false") == "true") {
+			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
 			player->sendMsg("你已被关在小黑屋反思.");
 		}
 	}
