@@ -440,6 +440,20 @@ THook(void,
 	}
 }
 
+//活塞推方块
+THook(bool,
+	MSSYM_B2QUE19attachedBlockWalkerB1AE16PistonBlockActorB2AAA4AEAAB1UE16NAEAVBlockSourceB2AAE12AEBVBlockPosB2AAA2EEB1AA1Z,
+	BlockActor* _this, BlockSource* a2, BlockPos* a3, unsigned __int8 a4, unsigned __int8 a5) {
+	Block* pushingBlock = a2->getBlock(a3);
+	//BlockPos* pos = a3;
+	short bid = pushingBlock->getLegacyBlock()->getBlockItemID();
+	if (bid == -198 || bid == -196 || bid == 61 || bid == 23 || bid == 58 || bid == 125) {
+		return false;
+	}
+	return original(_this, a2, a3, a4, a5);
+}
+//
+
 // 玩家离开游戏
 THook2(_JS_ONPLAYERLEFT, void,
 	MSSYM_B2QUE12onPlayerLeftB1AE20ServerNetworkHandlerB2AAE21AEAAXPEAVServerPlayerB3AAUA1NB1AA1Z,
@@ -456,14 +470,14 @@ THook2(_JS_ONPLAYERLEFT, void,
 THook2(_JS_ONMOVE, __int64,
 	MSSYM_B2QQE170MovePlayerPacketB2AAA4QEAAB1AE10AEAVPlayerB2AAE14W4PositionModeB1AA11B1AA2HHB1AA1Z,
 	void* _this, Player* pPlayer, char v3, int v4, int v5) {
-	
+
 	if (PlayerEvent::Move(pPlayer)) {
 		return original(_this, pPlayer, v3, v4, v5);
 	}
 	else {
 		return 0;
 	}
-	
+
 }
 
 // 玩家攻击时触发调用

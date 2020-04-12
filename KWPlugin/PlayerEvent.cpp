@@ -134,9 +134,11 @@ public:
 		std::ostringstream tmp;
 		tmp << in.rdbuf();
 		std::string str = tmp.str();
-
 		player->sendMsg(str);    //聊天框版
 		sendMsgForm((VA)player, str, "公告");
+		if (!Guild::isInGuild(player->getRealNameTag(), u8"FutureCraft管理员")) {
+			SYMCALL(void, MSSYM_B1QA9setCanFlyB1AA5ActorB2AAA5QEAAXB1UA1NB1AA1Z, player, false); //设置玩家不可飞行
+		}
 		if (CConfig::GetValueString("Player", "Darkroom", player->getRealNameTag(), "false") == "true") {
 			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
 			player->sendMsg("你已被关在小黑屋反思.");
