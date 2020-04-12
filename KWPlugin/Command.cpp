@@ -378,6 +378,9 @@ public:
 				player->sendMsg("≥…π¶…Ë÷√Home!");
 			}
 		}
+		else if (param[0] == "/ranklist") {
+			CConfig::GetSections("Economy");
+		}
 		else if (param[0] == "/qd") {
 			Economy::DailySign(player);
 		}

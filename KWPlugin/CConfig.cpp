@@ -49,6 +49,21 @@ public:
 		return true;
 	}
 
+	vector<string> static GetSections(string filepath) {
+		CSimpleIniA ini;
+		ini.SetUnicode();
+		filepath = getLocalPath() + "Plugin\\" + filepath + ".ini";
+		ini.LoadFile(filepath.c_str());
+		CSimpleIniA::TNamesDepend values;
+		ini.GetAllSections(values);
+		CSimpleIniA::TNamesDepend::const_iterator i;
+		vector<string> ret;
+		for (i = values.begin(); i != values.end(); ++i) {
+			ret.push_back(i->pItem);
+		}
+		return ret;
+	}
+
 	string static GetPluginPath() {
 		return getLocalPath() + "Plugin\\";
 	}

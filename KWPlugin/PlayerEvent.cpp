@@ -135,7 +135,7 @@ public:
 		tmp << in.rdbuf();
 		std::string str = tmp.str();
 
-		//player->sendMsg(str);    //聊天框版
+		player->sendMsg(str);    //聊天框版
 		sendMsgForm((VA)player, str, "公告");
 		if (CConfig::GetValueString("Player", "Darkroom", player->getRealNameTag(), "false") == "true") {
 			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
@@ -145,8 +145,6 @@ public:
 
 
 	bool static Move(Player* player) {
-		//我觉得很卡哦~
-
 		//进入新领地
 		string chunckid = Land::PlayerChunckId(player->getPos());
 		string playername = player->getRealNameTag();
