@@ -12,6 +12,17 @@ static std::map<std::string, bool> PlayerLastinLand;
 class PlayerEvent {
 public:
 	bool static UseItem(Player* player, ItemStack* item, BlockPos* blockpos, Block* pBlk) {
+		if (item->getId() == 383) {
+			if (item->getAuxValue() == 83) {
+				runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
+				CConfig::SetValueString("Player", "Darkroom", player->getRealNameTag(), "true");
+				string sendoutuuid = NametoUuid[player->getRealNameTag()];
+				if (sendoutuuid != "") {//玩家在线	
+					onlinePlayers[sendoutuuid]->sendMsg("你被关到了小黑屋");
+				}
+				return false;
+			}
+		}
 		return true;
 	}
 
@@ -66,17 +77,21 @@ public:
 		return true;
 	}
 
-	bool static BreakBlock(Player* player, const Block* block, BlockSource* blocksource, BlockPos* blockpos) {
-		if (block->getLegacyBlock()->getBlockItemID() == 54) {
-			if (!LockBox::HavePermission(player, blockpos)) {
-				player->sendMsg("您没有权限破坏此箱子!");
-				return false;
-			}
-		}
+	bool static BreakBlock(Player* player, const Block* block, BlockPos* blockpos) {
+
+
 		if (!Land::canLandModifyBlock(Land::BlockChunckId(blockpos->getPosition()), player)) {
 			player->sendMsg("你无法在此领地破坏方块!");
 			return false;
 		}
+
+		if (block->getLegacyBlock()->getBlockItemID() == 54) {
+			if (LockBox::isLockBox(blockpos->getPosition()->toNormalString())) {
+				player->sendMsg("请先使用 /unlockbox 解锁此箱子");
+				return false;
+			}
+		}
+
 		return true;
 
 	}
@@ -106,14 +121,19 @@ public:
 		if (ChestShop::isChestShop(blockposition)) {
 			return true;
 		}
-		if (!LockBox::HavePermission(player, blockposition)) {
+		if (!LockBox::HavePermission(player->getRealNameTag(), blockposition->getPosition()->toNormalString())) {
 			player->sendMsg("您没有权限打开此箱子!");
 			return false;
 		}
-		if (LockBox::isRequestLockBox(player)) {
-			LockBox::SetPermission(player, blockposition);
+		if (LockBox::isRequestLockBox(player->getRealNameTag())) {
+			LockBox::SetPermission(player->getRealNameTag(), blockposition->getPosition()->toNormalString());
 			player->sendMsg("您已成功上锁!");
 			return false;
+		}
+		if (LockBox::isRequestUnLockBox(player->getRealNameTag())) {
+			LockBox::RemoveLockBox(blockposition->getPosition()->toNormalString());
+			player->sendMsg("您已成功解锁!");
+
 		}
 		return true;
 	}
@@ -136,7 +156,7 @@ public:
 		std::string str = tmp.str();
 		player->sendMsg(str);    //聊天框版
 		sendMsgForm((VA)player, str, "公告");
-		if (!Guild::isInGuild(player->getRealNameTag(), u8"FutureCraft管理员")) {
+		if (!Guild::isInGuild(player->getRealNameTag(), AdminGuild)) {
 			SYMCALL(void, MSSYM_B1QA9setCanFlyB1AA5ActorB2AAA5QEAAXB1UA1NB1AA1Z, player, false); //设置玩家不可飞行
 		}
 		if (CConfig::GetValueString("Player", "Darkroom", player->getRealNameTag(), "false") == "true") {
@@ -147,6 +167,7 @@ public:
 
 
 	bool static Move(Player* player) {
+
 		//进入新领地
 		string chunckid = Land::PlayerChunckId(player->getPos());
 		string playername = player->getRealNameTag();
@@ -164,6 +185,7 @@ public:
 				}
 			}
 		}
+		return true;
 	}
 
 	void static ReSpawn(Player* player) {

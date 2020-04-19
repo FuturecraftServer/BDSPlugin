@@ -12,6 +12,7 @@
 #include "Land.cpp"
 #include "AwardBox.cpp"
 #include "ChestShop.cpp"
+#include "Shop.cpp"
 
 static std::map<std::string, Player*> onlinePlayers;
 static std::map<std::string, std::string> NametoUuid;
@@ -92,7 +93,9 @@ public:
 					return true;
 				}
 				Economy::GivePlayerMoney(param[1], willgive);
-				Economy::RemovePlayerMoney(player->getRealNameTag(), willgive);
+				if (!isAdmin(player)) {
+					Economy::RemovePlayerMoney(player->getRealNameTag(), willgive);
+				}
 				player->sendMsg("成功给 §a§l" + param[1] + " §r金额 §a§l" + param[2]);
 				player->sendMsg("你的余额为: §l§a" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
 				string sendoutuuid = NametoUuid[param[1]];
@@ -160,15 +163,19 @@ public:
 			}
 		}
 
-		else if (param[0] == "/lock") {
+		else if (param[0] == "/lockbox") {
 			if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("LockBox")) {
 				Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("LockBox"));
-				LockBox::RequestLockBox(player);
+				LockBox::RequestLockBox(player->getRealNameTag());
 				player->sendMsg("请点击要锁的箱子!");
 			}
 			else {
 				player->sendMsg("你的余额不足!");
 			}
+		}
+		else if (param[0] == "/unlockbox") {
+			LockBox::RequestUnLockBox(player->getRealNameTag());
+			player->sendMsg("请点击要解锁的箱子!");
 		}
 		else if (param[0] == "/g") {
 			if (param[1] == "join") {
@@ -338,7 +345,7 @@ public:
 		else if (param[0] == "/darkroom" && isAdmin(player)) {
 			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
 			CConfig::SetValueString("Player", "Darkroom", param[1], "true");
-			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
+			string sendoutuuid = NametoUuid[param[1]];
 			if (sendoutuuid != "") {//玩家在线	
 				onlinePlayers[sendoutuuid]->sendMsg("你被关到了小黑屋");
 			}
@@ -378,14 +385,25 @@ public:
 				player->sendMsg("成功设置Home!");
 			}
 		}
+		/*TODO
 		else if (param[0] == "/ranklist") {
 			CConfig::GetSections("Economy");
 		}
+		*/
 		else if (param[0] == "/qd") {
 			Economy::DailySign(player);
 		}
 		else if (param[0] == "/setprice" && isAdmin(player)) {
 			Economy::SetPriceToDo(param[1], param[2]);
+		}
+		else if (param[0] == "/setshop" && isAdmin(player)) {
+			ItemStack* item = player->getSelectedItem();
+			ShopItem shopitem = ShopItem(item->getId(), item->getAuxValue());
+			shopitem.sellprice = atoi(param[1].c_str());
+			shopitem.buyprice = atoi(param[2].c_str());
+			shopitem.cont = atoi(param[3].c_str());
+			shopitem.SaveItem();
+			player->sendMsg(u8"商品设置成功!");
 		}
 		else {
 			return false;
@@ -394,7 +412,7 @@ public:
 	}
 
 	bool static isAdmin(Player* player) {
-		return Guild::isInGuild(player->getRealNameTag(), u8"FutureCraft管理员");
+		return Guild::isInGuild(player->getRealNameTag(), AdminGuild);
 	}
 
 	bool static ProcessConsoleCommand(vector<string> param) {
@@ -411,13 +429,19 @@ public:
 				cout << u8"给钱成功! 他的余额目前为: " << Economy::GivePlayerMoney(param[1], atoi(param[2].c_str())) << endl;
 				string sendoutuuid = NametoUuid[param[1]];
 				if (sendoutuuid != "") {//玩家在线
-					onlinePlayers[sendoutuuid]->sendMsg("管理员 给你转账 §l§a" + param[2]);
-					onlinePlayers[sendoutuuid]->sendMsg("你当前余额为: §l§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getRealNameTag())));
+					onlinePlayers[sendoutuuid]->sendMsg(u8"管理员 给你转账 §l§a" + param[2]);
+					onlinePlayers[sendoutuuid]->sendMsg(u8"你当前余额为: §l§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getRealNameTag())));
 				}
 			}
 			else {
 				cout << u8"用法: pay <玩家名> <数量>" << endl;
 			}
+		}
+		else if (param[0] == "setadminguild") {
+			CConfig::SetValueString("Settings", "Settings", "AdminGuild", param[1]);
+			AdminGuild = param[1];
+			cout << u8"Admin Guild Now Is: " << AdminGuild << endl;
+			CConfig::GetSectionKeys("Guild", u8"FutureCraft管理员");
 		}
 		else if (param[0] == "darkroom") {
 			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));

@@ -64,6 +64,28 @@ public:
 		return ret;
 	}
 
+	vector<string> static GetSectionKeys(string filepath, string section) {
+		CSimpleIniA ini;
+		ini.SetUnicode();
+		filepath = getLocalPath() + "Plugin\\" + filepath + ".ini";
+		ini.LoadFile(filepath.c_str());
+		CSimpleIniA::TNamesDepend keys;
+		vector<string> ret;
+		ret.clear();
+		if (ini.GetAllKeys(section.c_str(), keys)) {
+			CSimpleIniA::TNamesDepend::const_iterator i;
+			for (i = keys.begin(); i != keys.end(); ++i) {
+				cout << "key = " << i->pItem << endl;
+				ret.push_back(i->pItem);
+
+			}
+		}
+		else {
+			cout << "Section no keys" << endl;
+		}
+		return ret;
+	}
+
 	string static GetPluginPath() {
 		return getLocalPath() + "Plugin\\";
 	}

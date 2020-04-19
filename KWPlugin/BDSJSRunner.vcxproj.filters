@@ -31,18 +31,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GUI\Bstream.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\myPacket.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\varint.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\SimpleForm.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
     <ClInclude Include="Symbol.hpp">
       <Filter>SymbolInfo</Filter>
     </ClInclude>
@@ -58,6 +46,18 @@
     <ClInclude Include="SimpleIni\ConvertUTF.h">
       <Filter>SimpleIni</Filter>
     </ClInclude>
+    <ClInclude Include="Bstream.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="myPacket.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleForm.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="varint.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Mainhoosk.cpp">
@@ -65,9 +65,6 @@
     </ClCompile>
     <ClCompile Include="Prebuild.cpp">
       <Filter>Other</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\SimpleForm.cpp">
-      <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="Economy.cpp">
       <Filter>Economy</Filter>
@@ -104,6 +101,12 @@
     </ClCompile>
     <ClCompile Include="ChestShop.cpp">
       <Filter>Plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleForm.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Shop.cpp">
+      <Filter>Other</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

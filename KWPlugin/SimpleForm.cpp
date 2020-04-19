@@ -1,5 +1,5 @@
 #pragma once
-#include "../Prebuild.h"
+#include "Prebuild.h"
 
 #include <string>
 #include "Bstream.h"
@@ -7,6 +7,10 @@
 #include "varint.h"
 
 static std::map<unsigned, bool> fids;
+
+struct Form {
+
+};
 
 // 获取一个未被使用的基于时间秒数的id
 static unsigned getFormId() {
@@ -19,7 +23,7 @@ static unsigned getFormId() {
 }
 
 // 发送一个SimpleForm的表单数据包
-unsigned sendForm(VA pPlayer, std::string str)
+extern unsigned sendForm(VA pPlayer, std::string str)
 {
 	if (pPlayer == 0)
 		return 0;
@@ -45,6 +49,8 @@ bool destroyForm(unsigned fid)
 	}
 	return false;
 }
+
+
 
 /*
 // 创建一个简易表单字符串

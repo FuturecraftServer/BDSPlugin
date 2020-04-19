@@ -28,7 +28,7 @@ public:
 			return true;
 		}
 		if (CConfig::GetValueInt("Land", landid, "pvp", 1) == 0) return false;
-		if (Guild::isInGuild(attackon->getRealNameTag(), CConfig::GetValueString("Land", landid, "guild", u8"FutureCraft管理员"))) return false;
+		if (Guild::isInGuild(attackon->getRealNameTag(), CConfig::GetValueString("Land", landid, "guild", AdminGuild))) return false;
 		return true;
 	}
 
@@ -39,7 +39,7 @@ public:
 	}
 
 	bool static canLandModifyBlock(string landid, Player* breaker) {
-		if (Guild::isInGuild(breaker->getRealNameTag(), CConfig::GetValueString("Land", landid, "guild", u8"FutureCraft管理员")) || CConfig::GetValueInt("Land", landid, "modblock", 0) == 1 || !Land::isLandOwned(landid)) return true;
+		if (Guild::isInGuild(breaker->getRealNameTag(), CConfig::GetValueString("Land", landid, "guild", AdminGuild)) || CConfig::GetValueInt("Land", landid, "modblock", 0) == 1 || !Land::isLandOwned(landid)) return true;
 		return false;
 	}
 

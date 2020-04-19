@@ -3,9 +3,9 @@
 #include "BDSAPI.hpp"
 #include "CConfig.cpp"
 #include "Economy.cpp"
-#include "GUI/SimpleForm.h"
 #include <fstream>
 #include <sstream>
+#include "SimpleForm.h"
 
 class ChestShop {
 public:
@@ -50,7 +50,7 @@ public:
 		std::ostringstream tmp;
 		tmp << in.rdbuf();
 		std::string str = tmp.str();
-		UINT fid = sendCustomForm(player, (char*)str.c_str());
+		UINT fid = sendForm((VA)player, (char*)str.c_str());
 		CConfig::SetValueString("ChestShop", "SellForm", player->getRealNameTag(), std::to_string(fid));
 	}
 
@@ -68,9 +68,6 @@ public:
 		}
 		Economy::RemovePlayerMoney(player->getRealNameTag(),price);
 		runcmd("give " + player->getRealNameTag() + " " + CConfig::GetValueString("ChestShop", id, "id", "NaN") + " " + CConfig::GetValueString("ChestShop", id, "count", "64"));
-	}
-
-	static UINT sendCustomForm(Player* player, char* json) {
-		return sendForm((VA)player, json);
+		return true;
 	}
 };

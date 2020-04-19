@@ -6,13 +6,14 @@
 #include <stdio.h>
 #include <thread>
 #include <mutex>
-#include "GUI/SimpleForm.h"
+#include "SimpleForm.h"
 
 #include "PlayerEvent.cpp"
 
 
 static bool runcmd(std::string);
 static bool reNameByUuid(std::string, std::string);
+static std::map<std::string, bool> canUnpairChest;
 
 
 // 调试信息
@@ -77,7 +78,7 @@ static UINT sendSimpleForm(char* uuid, char* title, char* content, char* buttons
 	return sendForm((VA)onlinePlayers[uuid], str);
 }
 */
-
+/*
 // 发送指定玩家一个模板对话框
 static UINT sendModalForm(char* uuid, char* title, char* content, char* button1, char* button2) {
 	if (!onlinePlayers[uuid])
@@ -93,7 +94,7 @@ static UINT sendCustomForm(char* uuid, char* json) {
 		return 0;
 	return sendForm((VA)p, json);
 }
-
+*/
 static std::string oldseedstr;
 
 /**************** 插件HOOK区域 ****************/
@@ -199,7 +200,7 @@ THook2(_JS_ONUSEITEM, bool,
 }
 
 
-//玩家操作物品栏`
+//玩家使物品展示框掉落
 THook(void, MSSYM_B1QE14dropFramedItemB1AE19ItemFrameBlockActorB2AAE20QEAAXAEAVBlockSourceB3AAUA1NB1AA1Z,
 	void* _this, BlockSource* blk, char* v3) {
 	auto real_this = reinterpret_cast<void*>(reinterpret_cast<VA>(_this) - 248);
@@ -209,15 +210,14 @@ THook(void, MSSYM_B1QE14dropFramedItemB1AE19ItemFrameBlockActorB2AAE20QEAAXAEAVB
 }
 
 //玩家放置方块
-THook2(_JS_ONPLACEDBLOCK, void,
-	MSSYM_B1QE23sendBlockPlacedByPlayerB1AE21BlockEventCoordinatorB2AAE15QEAAXAEAVPlayerB2AAA9AEBVBlockB2AAE12AEBVBlockPosB3AAUA1NB1AA1Z,
-	void* _this, Player* pPlayer, const Block* pBlk, BlockPos* pBlkpos) {
-	bool ret = PlayerEvent::PlaceBlock(pPlayer, pBlk->getLegacyBlock()->getBlockItemID(), pBlkpos);
+THook(bool,
+	MSSYM_B1QA8mayPlaceB1AE11BlockSourceB2AAA4QEAAB1UE10NAEBVBlockB2AAE12AEBVBlockPosB2AAE10EPEAVActorB3AAUA1NB1AA1Z,
+	BlockSource* _this, Block* a2, BlockPos* a3, unsigned __int8 a4, Player* a5, bool a6) {
+	bool ret = PlayerEvent::PlaceBlock(a5, a2->getLegacyBlock()->getBlockItemID(), a3);
 	if (ret)
-		return original(_this, pPlayer, pBlk, pBlkpos);
+		return original(_this, a2, a3, a4, a5, a6);
 	else {
-		runcmd("setblock " + pBlkpos->getPosition()->toNormalString() + " air");
-		return;
+		return false;;
 	}
 }
 
@@ -236,27 +236,75 @@ THook2(_JS_ONPLACEDBLOCK, __int64,
 }
 */
 
-//禁止大箱子
-THook(bool, MSSYM_B1QE11canPairWithB1AE15ChestBlockActorB2AAA4QEAAB1UE15NPEAVBlockActorB2AAE15AEAVBlockSourceB3AAAA1Z) {
-	return false;
+
+//大箱子合并
+THook(void,
+	MSSYM_B1QA8pairWithB1AE15ChestBlockActorB2AAE10QEAAXPEAV1B2AUA1NB1AA1Z,
+	BlockActor* _this, BlockActor* a2, char a3) {
+	//cout << "Checking " << _this->getPosition()->getPosition()->toNormalString() << " can compair with " << a2->getPosition()->getPosition()->toNormalString() << endl;
+	original(_this, a2, a3);
+	string pos = _this->getPosition()->getPosition()->toNormalString();
+	if (LockBox::isLockBox(pos)) {
+		LockBox::SetPermission(LockBox::GetOwner(pos), a2->getPosition()->getPosition()->toNormalString());
+	}
+
 }
+
 // 玩家破坏方块
-THook2(_JS_ONDESTROYBLOCK, bool,
+THook(bool,
 	MSSYM_B2QUE20destroyBlockInternalB1AA8GameModeB2AAA4AEAAB1UE13NAEBVBlockPosB2AAA1EB1AA1Z,
 	void* _this, BlockPos* pBlkpos) {
 	auto pPlayer = *reinterpret_cast<Player**>(reinterpret_cast<VA>(_this) + 8);
 	auto pBlockSource = *(BlockSource**)(*((__int64*)_this + 1) + 840i64);
 	auto pBlk = pBlockSource->getBlock(pBlkpos);
-	return PlayerEvent::BreakBlock(pPlayer, pBlk, pBlockSource, pBlkpos) ? original(_this, pBlkpos) : false;
+	if (PlayerEvent::BreakBlock(pPlayer, pBlk, pBlkpos)) {
+		return original(_this, pBlkpos);
+	}
+	else {
+		return false;
+	}
+}
+
+THook(void,
+	MSSYM_B1QA8onRemoveB1AE10ChestBlockB2AAE20UEBAXAEAVBlockSourceB2AAE12AEBVBlockPosB3AAAA1Z,
+	Block* _this, BlockSource* a2, BlockPos* a3) {
+	if (LockBox::isLockBox(a3->getPosition()->toNormalString())) {
+		return;
+	}
+	else {
+		original(_this, a2, a3);
+	}
 }
 
 // 玩家开箱准备
-THook2(_JS_ONCHESTBLOCKUSE, bool,
+THook(bool,
 	MSSYM_B1QA3useB1AE10ChestBlockB2AAA4UEBAB1UE11NAEAVPlayerB2AAE12AEBVBlockPosB3AAAA1Z,
 	void* _this, Player* pPlayer, BlockPos* pBlkpos) {
 	auto pBlockSource = (BlockSource*)*((__int64*)pPlayer + 105);
+	((ChestBlockActor*)(pBlockSource->getBlockEntity(pBlkpos)))->tick(pBlockSource);
 	//auto pBlk = pBlockSource->getBlock(pBlkpos);
 	return PlayerEvent::ReadyOpenBox(pPlayer, pBlockSource, pBlkpos) ? original(_this, pPlayer, pBlkpos) : false;
+}
+
+THook(bool,
+	MSSYM_B2QUE11canOpenThisB1AE15ChestBlockActorB2AAA4MEBAB1UE16NAEAVBlockSourceB3AAAA1Z,
+	ChestBlockActor* _this, struct BlockSource* a2) {
+	_this->tick(a2);
+	return original(_this, a2);
+}
+
+THook(void,
+	MSSYM_B1QA6unpairB1AE15ChestBlockActorB2AAE20QEAAXAEAVBlockSourceB3AAAA1Z,
+	ChestBlockActor* _this, BlockSource* a2)
+{
+
+	original(_this, a2);
+	/*
+		ChestBlockActor* v4=(ChestBlockActor*) a2->getBlockEntity(*((char*)_this + 134), *((char*)_this + 12), *((char*)_this + 135));
+		_this->pairWith(v4, ~*((char*)v4 + 532) & 1);
+		*/
+	_this->tick(a2);
+
 }
 
 // 玩家开桶准备
@@ -415,8 +463,8 @@ THook2(_JS_ONINPUTCOMMAND, void,
 	if (PlayerEvent::Command(p, crp->toString())) original(_this, id, crp);
 }
 
+
 // 玩家加载名字
-// TODO: Unknown Usage
 THook2(_JS_ONCREATEPLAYER, Player*,
 	MSSYM_B2QUE15createNewPlayerB1AE20ServerNetworkHandlerB2AAE20AEAAAEAVServerPlayerB2AAE21AEBVNetworkIdentifierB2AAE21AEBVConnectionRequestB3AAAA1Z,
 	VA a1, VA a2, VA** a3) {
@@ -426,6 +474,7 @@ THook2(_JS_ONCREATEPLAYER, Player*,
 	NametoUuid[pPlayer->getRealNameTag()] = uuid;
 	return pPlayer;
 }
+
 
 //漏斗的Tick
 THook(void,
@@ -449,6 +498,11 @@ THook(bool,
 	short bid = pushingBlock->getLegacyBlock()->getBlockItemID();
 	if (bid == -198 || bid == -196 || bid == 61 || bid == 23 || bid == 58 || bid == 125) {
 		return false;
+	}
+	if (bid == 54) {//推箱子
+		if (LockBox::isLockBox(a3->getPosition()->toNormalString())) {
+			return false;
+		}
 	}
 	return original(_this, a2, a3, a4, a5);
 }
@@ -492,8 +546,11 @@ THook2(_JS_ONATTACK, bool,
 #pragma endregion
 
 void init() {
-	std::cout << u8"Init KWPlugin V1.0.4 (branch Master) FutureCraft Original" << std::endl << "Path: " << getLocalPath();
+	std::cout << u8"Init KWPlugin V1.0.5 alpha (branch Master) FutureCraft Original" << std::endl << "Path: " << getLocalPath() << endl;
 	std::cout << u8"Copyright Kengwang All rights reserved" << std::endl;
+	cout << "Loading Plugin Settings" << endl;
+	AdminGuild = CConfig::GetValueString("Settings", "Settings", "AdminGuild", u8"FutureCraft管理员");
+	cout << "Plugin Settings Done! Have Fun~" << endl;
 }
 
 

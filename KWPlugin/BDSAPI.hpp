@@ -1,14 +1,15 @@
 #pragma once
 #include "Prebuild.h"
 
-#include "GUI/varint.h"
-#include "GUI/Bstream.h"
-#include "GUI/myPacket.h"
+#include "varint.h"
+#include "Bstream.h"
+#include "myPacket.h"
 #include <locale.h>
 #include <codecvt> 
 #include <wchar.h>
 
 static VA p_spscqueue;
+static string AdminGuild;
 // 执行后端指令
 static bool runcmd(std::string cmd) {
 	if (p_spscqueue != 0) {
@@ -85,12 +86,38 @@ struct BlockActor {
 	}
 };
 
+
 struct BlockSource {
 	// 取方块
 	Block* getBlock(const BlockPos* blkpos) {
 		return SYMCALL(Block*,
 			MSSYM_B1QA8getBlockB1AE11BlockSourceB2AAE13QEBAAEBVBlockB2AAE12AEBVBlockPosB3AAAA1Z,
 			this, blkpos);
+	}
+
+	BlockActor* getBlockEntity(int a2, __int16 a3, int a4) {
+		return SYMCALL(BlockActor*,
+			MSSYM_B1QE14getBlockEntityB1AE11BlockSourceB2AAE18QEAAPEAVBlockActorB2AAA3HHHB1AA1Z,
+			this, a2, a3, a4);
+	}
+	BlockActor* getBlockEntity(BlockPos* a2) {
+		return SYMCALL(BlockActor*,
+			MSSYM_B1QE14getBlockEntityB1AE11BlockSourceB2AAE18QEAAPEAVBlockActorB2AAE12AEBVBlockPosB3AAAA1Z,
+			this, a2);
+	}
+};
+
+struct ChestBlockActor :BlockActor {
+	void tick(BlockSource* a2) {
+		SYMCALL(void,
+			MSSYM_B1QA4tickB1AE15ChestBlockActorB2AAE20UEAAXAEAVBlockSourceB3AAAA1Z,
+			this, a2);
+	}
+
+	void pairWith(ChestBlockActor* a2, char a3) {
+		SYMCALL(void,
+			MSSYM_B1QA4tickB1AE15ChestBlockActorB2AAE20UEAAXAEAVBlockSourceB3AAAA1Z,
+			this, a2, a3);
 	}
 };
 
@@ -183,7 +210,45 @@ struct Actor {
 	}
 };
 struct Mob : Actor {
+
 };
+
+
+struct ItemStack {
+	// 取物品ID
+	short getId() {
+		return SYMCALL(short,
+			MSSYM_B1QA5getIdB1AE13ItemStackBaseB2AAA7QEBAFXZ,
+			this);
+	}
+	// 取物品特殊值
+	short getAuxValue() {
+		return SYMCALL(short,
+			MSSYM_B1QE11getAuxValueB1AE13ItemStackBaseB2AAA7QEBAFXZ,
+			this);
+	}
+	// 取物品名称
+	std::string getName() {
+		std::string str;
+		SYMCALL(__int64,
+			MSSYM_MD5_6d581a35d7ad70fd364b60c3ebe93394,
+			this, &str);
+		return str;
+	}
+	// 取容器内数量
+	int getStackSize() {
+		return SYMCALL(int,
+			MSSYM_B1QA8getCountB1AE18ContainerItemStackB2AAA7QEBAHXZ,
+			this);
+	}
+	// 判断是否空容器
+	bool isNull() {
+		return SYMCALL(bool,
+			MSSYM_B1QA6isNullB1AE13ItemStackBaseB2AAA4QEBAB1UA3NXZ,
+			this);
+	}
+};
+
 struct Player : Actor {
 
 	//跨服传送
@@ -195,6 +260,14 @@ struct Player : Actor {
 		MyPkt<0x55, false> guipk{ ws.data };
 		SYMCALL(VA, MSSYM_B1QE17sendNetworkPacketB1AE12ServerPlayerB2AAE15UEBAXAEAVPacketB3AAAA1Z,
 			this, &guipk);
+	}
+
+	ItemStack* getSelectedItem() {
+		return SYMCALL(ItemStack*, MSSYM_B1QE15getSelectedItemB1AA6PlayerB2AAE17QEBAAEBVItemStackB2AAA2XZ, this);
+	}
+
+	bool addItem(string name, string cout, string dataid = "0") {
+		runcmd("give " + this->getRealNameTag() + " " + name + " " + cout + " " + dataid);
 	}
 
 	// 取uuid
@@ -250,7 +323,7 @@ struct Player : Actor {
 		msg = replace_all_distinct(msg, "\\", "\\\\");
 		msg = replace_all_distinct(msg, "\"", "\\\"");
 		msg = stringToUTF8(msg);
-		runcmd("tellraw " + this->getRealNameTag() + " { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");		
+		runcmd("tellraw " + this->getRealNameTag() + " { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");
 	}
 
 
@@ -261,40 +334,7 @@ struct Player : Actor {
 	}
 };
 
-struct ItemStack {
-	// 取物品ID
-	short getId() {
-		return SYMCALL(short,
-			MSSYM_B1QA5getIdB1AE13ItemStackBaseB2AAA7QEBAFXZ,
-			this);
-	}
-	// 取物品特殊值
-	short getAuxValue() {
-		return SYMCALL(short,
-			MSSYM_B1QE11getAuxValueB1AE13ItemStackBaseB2AAA7QEBAFXZ,
-			this);
-	}
-	// 取物品名称
-	std::string getName() {
-		std::string str;
-		SYMCALL(__int64,
-			MSSYM_MD5_6d581a35d7ad70fd364b60c3ebe93394,
-			this, &str);
-		return str;
-	}
-	// 取容器内数量
-	int getStackSize() {
-		return SYMCALL(int,
-			MSSYM_B1QA8getCountB1AE18ContainerItemStackB2AAA7QEBAHXZ,
-			this);
-	}
-	// 判断是否空容器
-	bool isNull() {
-		return SYMCALL(bool,
-			MSSYM_B1QA6isNullB1AE13ItemStackBaseB2AAA4QEBAB1UA3NXZ,
-			this);
-	}
-};
+
 struct ContainerItemStack
 	:ItemStack {
 
@@ -324,6 +364,10 @@ struct CommandRequestPacket {
 		std::string str = std::string(*(std::string*)((VA)this + 40));
 		return str;
 	}
+};
+
+struct CommandOrigin {
+
 };
 
 struct ModalFormResponsePacket {
