@@ -52,9 +52,6 @@
     <ClInclude Include="myPacket.h">
       <Filter>GUI</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleForm.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
     <ClInclude Include="varint.h">
       <Filter>GUI</Filter>
     </ClInclude>
@@ -102,11 +99,11 @@
     <ClCompile Include="ChestShop.cpp">
       <Filter>Plugin</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleForm.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Shop.cpp">
       <Filter>Other</Filter>
+    </ClCompile>
+    <ClCompile Include="KWForm.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

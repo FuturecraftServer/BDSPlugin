@@ -37,6 +37,7 @@ public:
 
 
 	void static SelectForm(Player* player, UINT fid, string selected) {
+		//此方法废弃,请直接到KWForm内更改
 		if (selected == "null") {
 			selected = "-1";
 		}
@@ -199,7 +200,9 @@ public:
 		if (pPlayer == 0)
 			return 0;
 		std::string orig = "{\"content\": \"" + content + "\",\"title\": \"" + title + "\"}";
-		return sendForm(pPlayer, orig);
+		//return sendForm(pPlayer, orig);
+		//TODO
+		return 0;
 	}
 
 	// 重设新名字

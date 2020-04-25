@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <thread>
 #include <mutex>
-#include "SimpleForm.h"
 
 #include "PlayerEvent.cpp"
 
@@ -182,17 +181,25 @@ THook(void,
 		handle, id, *(char*)((VA)fmp + 16));
 	if (p != NULL) {
 		UINT fid = fmp->getFormId();
-		if (destroyForm(fid)) {
-			PlayerEvent::SelectForm(p, fid, fmp->getSelectStr());
-			return;
-		}
+		// TODO
+		//if (destroyForm(fid)) {
+		ParseFormCallback(p, fid, fmp->getSelectStr());
+		return;
+		//}
 	}
 	original(_this, id, handle, fp);
 }
 
+THook(void,
+	MSSYM_MD5_21204897709106ba1d290df17fead479,
+	VA _this, string &servername, bool shouldannounce) {
+	ServerNetworkHandler = _this;
+	//这个纯粹是抓取servernetworkhandler的!
+	original(_this, servername, shouldannounce);
+}
 
 // 玩家操作物品
-THook2(_JS_ONUSEITEM, bool,
+THook(bool,
 	MSSYM_B1QA9useItemOnB1AA8GameModeB2AAA4UEAAB1UE14NAEAVItemStackB2AAE12AEBVBlockPosB2AAA9EAEBVVec3B2AAA9PEBVBlockB3AAAA1Z,
 	void* _this, ItemStack* item, BlockPos* pBlkpos, unsigned __int8 a4, void* v5, Block* pBlk) {
 	auto pPlayer = *reinterpret_cast<Player**>(reinterpret_cast<VA>(_this) + 8);
@@ -546,7 +553,7 @@ THook2(_JS_ONATTACK, bool,
 #pragma endregion
 
 void init() {
-	std::cout << u8"Init KWPlugin V1.0.5 alpha (branch Master) FutureCraft Original" << std::endl << "Path: " << getLocalPath() << endl;
+	std::cout << u8"Init KWPlugin V1.0.6 alpha (branch Master) FutureCraft Original" << std::endl << "Build: " << __DATE__ << " " << __TIME__ << endl << "Path: " << getLocalPath() << endl;
 	std::cout << u8"Copyright Kengwang All rights reserved" << std::endl;
 	cout << "Loading Plugin Settings" << endl;
 	AdminGuild = CConfig::GetValueString("Settings", "Settings", "AdminGuild", u8"FutureCraft管理员");

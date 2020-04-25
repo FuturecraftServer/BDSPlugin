@@ -5,7 +5,6 @@
 #include "Economy.cpp"
 #include <fstream>
 #include <sstream>
-#include "SimpleForm.h"
 
 class ChestShop {
 public:
@@ -44,7 +43,7 @@ public:
 	bool static isRequestSetChestShop(Player* player) {
 		return CConfig::GetValueString("ChestShop", "Request", player->getRealNameTag(), "false") == "true";
 	}
-
+	/* TODO
 	void static sendBuyForm(Player* player) {
 		std::ifstream in(CConfig::GetPluginPath() + "SellShop.json");
 		std::ostringstream tmp;
@@ -53,7 +52,7 @@ public:
 		UINT fid = sendForm((VA)player, (char*)str.c_str());
 		CConfig::SetValueString("ChestShop", "SellForm", player->getRealNameTag(), std::to_string(fid));
 	}
-
+	*/
 	bool static isRequestBuyForm(Player* player) {
 		return CConfig::GetValueString("ChestShop", "SellForm", player->getRealNameTag(), "NaN") != "NaN";
 	}

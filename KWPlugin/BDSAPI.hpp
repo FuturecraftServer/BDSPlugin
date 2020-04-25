@@ -9,6 +9,7 @@
 #include <wchar.h>
 
 static VA p_spscqueue;
+static VA ServerNetworkHandler;
 static string AdminGuild;
 // 执行后端指令
 static bool runcmd(std::string cmd) {
@@ -17,6 +18,108 @@ static bool runcmd(std::string cmd) {
 	}
 	return false;
 }
+
+static void changeMOTD(std::string motd) {
+	SYMCALL(void,
+		MSSYM_MD5_21204897709106ba1d290df17fead479,
+		ServerNetworkHandler, &motd, true);
+}
+
+/* Something From BDX */
+struct MCRESULT {
+	unsigned char filler[4];
+	operator bool() {
+		return filler[0];
+	}
+	bool isSuccess() {
+		return operator bool();
+	}
+};
+template<class T>
+struct LocateS {
+	static T* _srv;
+	T& operator*() {
+		return *_srv;
+	}
+	T* operator->() {
+		return _srv;
+	}
+	operator T& () {
+		return *_srv;
+	}
+	static void assign(const T& srv) {
+#ifdef LIGHTBASE_EXPORTS
+		LOG("[LocateService] located", typeid(decltype(_srv)).name(), "->", (void*)&srv);
+#endif
+		_srv = (T*)&srv;
+	}
+};
+
+
+/* Color Code */
+const string TEXTFORMATE_BLACK = "§0";
+const string TEXTFORMATE_DARKBLUE = "§1";
+const string TEXTFORMATE_DARKGREEN = "§2";
+const string TEXTFORMATE_DARKAQUA = "§3";
+const string TEXTFORMATE_DARKRED = "§4";
+const string TEXTFORMATE_DARKPURPLE = "§5";
+const string TEXTFORMATE_GLOD = "§6";
+const string TEXTFORMATE_GREY = "§7";
+const string TEXTFORMATE_DARKGREY = "§8";
+const string TEXTFORMATE_BLUE = "§9";
+const string TEXTFORMATE_GREEN = "§a";
+const string TEXTFORMATE_AUQA = "§b";
+const string TEXTFORMATE_RED = "§c";
+const string TEXTFORMATE_LIGHTPURPLE = "§d";
+const string TEXTFORMATE_YELLOW = "§e";
+const string TEXTFORMATE_WHITE = "§f";
+
+/* Format Code */
+const string TEXTFORMATE_RANDOM = "§k";
+const string TEXTFORMATE_BOLD = "§l";
+const string TEXTFORMATE_DELETELINE = "§m";
+const string TEXTFORMATE_UNDERLINE = "§n";
+const string TEXTFORMATE_ITALY = "§o";
+const string TEXTFORMATE_RESET = "§r";
+const string TEXTFORMATE_NEWLINE = "\\n";
+
+std::string static stringToUTF8(const std::string& str)
+{
+	int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
+
+	wchar_t* pwBuf = new wchar_t[nwLen + 1];//一定要加1，不然会出现尾巴 
+	ZeroMemory(pwBuf, nwLen * 2 + 2);
+
+	::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
+
+	int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
+
+	char* pBuf = new char[nLen + 1];
+	ZeroMemory(pBuf, nLen + 1);
+
+	::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
+
+	std::string retStr(pBuf);
+
+	delete[]pwBuf;
+	delete[]pBuf;
+
+	pwBuf = NULL;
+	pBuf = NULL;
+
+	return retStr;
+}
+
+class MinecraftCommands;
+class MinecraftCommands {
+public:
+	static MCRESULT _runcmd(void* origin, const string& cmd, int unk1, bool unk2) {
+		MCRESULT rv;
+		/*SymCall("?executeCommand@MinecraftCommands@@QEBA?AUMCRESULT@@V?$shared_ptr@VCommandContext@@@std@@_N@Z", void, MinecraftCommands*, MCRESULT*, shared_ptr<CommandContext>, bool)(LocateS<MinecraftCommands>::_srv,&rv,std::make_shared<CommandContext>(std::forward<TP>(cmd),(CommandOrigin*)origin),false);*/
+		SYMCALL(void, MSSYM_MD5_2f44106d21f04bf0ef021570ea279df0, LocateS<MinecraftCommands>::_srv, &rv, &origin, cmd, unk1, unk2);
+		return rv;
+	}
+};
 
 std::string static replace_all_distinct(std::string str, std::string old_value, std::string new_value)
 {
@@ -282,32 +385,7 @@ struct Player : Actor {
 	}
 
 
-	std::string static stringToUTF8(const std::string& str)
-	{
-		int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
 
-		wchar_t* pwBuf = new wchar_t[nwLen + 1];//一定要加1，不然会出现尾巴 
-		ZeroMemory(pwBuf, nwLen * 2 + 2);
-
-		::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
-
-		int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
-
-		char* pBuf = new char[nLen + 1];
-		ZeroMemory(pBuf, nLen + 1);
-
-		::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
-
-		std::string retStr(pBuf);
-
-		delete[]pwBuf;
-		delete[]pBuf;
-
-		pwBuf = NULL;
-		pBuf = NULL;
-
-		return retStr;
-	}
 
 	std::string getRealNameTag() {
 		std::string name = this->getNameTag();
@@ -326,6 +404,22 @@ struct Player : Actor {
 		runcmd("tellraw " + this->getRealNameTag() + " { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");
 	}
 
+
+
+	//以玩家权限执行命令 - 来源 BDX
+	static void dummy() {
+	}
+	static void* FAKE_PORGVTBL[26];
+	bool runcmdAs(Player* wp, string cmd) {
+		void** filler[5];
+		SYMCALL(void, MSSYM_B2QQE200PlayerCommandOriginB2AAA4QEAAB1AE10AEAVPlayerB3AAAA1Z, filler, this);
+		if (FAKE_PORGVTBL[1] == NULL) {
+			memcpy(FAKE_PORGVTBL, ((void**)filler[0]) - 1, sizeof(FAKE_PORGVTBL));
+			FAKE_PORGVTBL[1] = (void*)dummy;
+		}
+		filler[0] = FAKE_PORGVTBL + 1;
+		return MinecraftCommands::_runcmd(filler, std::move(cmd), 4, 1);
+	}
 
 	// 重设服务器玩家名
 	void reName(std::string name) {
