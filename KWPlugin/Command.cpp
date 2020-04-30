@@ -328,8 +328,19 @@ public:
 			ChestShop::RequestSetChestShop(player);
 			player->sendMsg("请点击ChestShop");
 		}
-		else if (param[0] == "/sd") {
-			//ChestShop::sendBuyForm(player);
+		else if (param[0] == "/shop") {
+			vector<ShopItem> items = Shop::GetShopSellItem();
+			ButtonsForm form = ButtonsForm();
+			for (int i = 0; i < items.size(); i++)
+			{
+				ShopItem item = items[i];
+				FormButton fb;
+				FunctionButton	funb;
+				fb.text = item.name + " * " + std::to_string(item.cont) + " = " + std::to_string(item.sellprice);
+				funb.command = "/buy " + item.uniqueid;
+				form.AddButton(fb,funb);
+			}
+			form.releaseForm((VA)player);
 		}
 		else if (param[0] == "/maincity") {
 			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "maincity"));
@@ -342,22 +353,6 @@ public:
 		else if (param[0] == "/setdarkroom" && isAdmin(player)) {
 			CConfig::SetValueString("Settings", "Settings", "darkroom", player->getPos()->toNormalString());
 			player->sendMsg("成功设置小黑屋!");
-		}
-		else if (param[0] == "/test") {
-			ButtonsForm f = ButtonsForm();
-			FormButton fb;
-			FunctionButton funb;
-			fb.text = u8"第一个按钮";
-			funb.isconsole = false;
-			funb.command = "NaN";
-			f.AddButton(fb, funb);
-			fb.text = u8"第二个按钮";
-			f.AddButton(fb, funb);
-			fb.text = u8"第3个按钮";
-			f.AddButton(fb, funb);
-			f.SetTitle(u8"测试表单");
-			f.SetText(u8"这是个测试表单");
-			f.releaseForm((VA)player);
 		}
 		else if (param[0] == "/darkroom" && isAdmin(player)) {
 			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));

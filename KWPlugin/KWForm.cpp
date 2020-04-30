@@ -221,6 +221,20 @@ public:
 
 static void ParseFormCallback(Player* player, unsigned fid, string selected) {
 	cout << "Form Select Handling -> Player: " + player->getRealNameTag() + " FormID: " << fid << " Selected: " << selected << " FormType: " << fids[fid] << endl;
+	if (fids[fid]) {
+		cout << "This form has been destoryed!" << endl;
+		return;
+	}
+	int rselected = 0;
+	if (selected == "true") {
+		rselected = 0;
+	}else if (selected == "false") {
+		rselected = 1;
+	}
+	else {
+		rselected = atoi(selected.c_str());
+	}
+	cout << "The command could be " << buttons[fid][rselected].command << " isconsole: " << buttons[fid][rselected].isconsole << endl;
 	destroyForm(fid);
 }
 

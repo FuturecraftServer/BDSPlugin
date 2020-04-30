@@ -75,9 +75,6 @@
     <ClCompile Include="Guild.cpp">
       <Filter>Guild</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleIni\snippets.cpp">
-      <Filter>SimpleIni</Filter>
-    </ClCompile>
     <ClCompile Include="SimpleIni\ConvertUTF.c">
       <Filter>SimpleIni</Filter>
     </ClCompile>
@@ -99,11 +96,11 @@
     <ClCompile Include="ChestShop.cpp">
       <Filter>Plugin</Filter>
     </ClCompile>
-    <ClCompile Include="Shop.cpp">
-      <Filter>Other</Filter>
-    </ClCompile>
     <ClCompile Include="KWForm.cpp">
       <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Shop.cpp">
+      <Filter>Plugin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

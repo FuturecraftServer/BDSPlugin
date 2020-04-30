@@ -9,6 +9,7 @@ struct ShopItem {
 	int buyprice;
 	int sellprice;
 	int cont;
+	string name;
 
 	ShopItem(int id, int dataid) {
 		this->id = id;
@@ -17,6 +18,7 @@ struct ShopItem {
 		this->buyprice = CConfig::GetValueInt("Shop", "buy", this->uniqueid, 0);
 		this->sellprice = CConfig::GetValueInt("Shop", "sell", this->uniqueid, 0);
 		this->cont = CConfig::GetValueInt("Shop", "count", this->uniqueid, 0);
+		this->name = CConfig::GetValueString("Shop", "name", this->uniqueid, "未知商品");
 	}
 
 	ShopItem(string id, string dataid) {
@@ -26,6 +28,8 @@ struct ShopItem {
 		this->buyprice = CConfig::GetValueInt("Shop", "buy", this->uniqueid, 0);
 		this->sellprice = CConfig::GetValueInt("Shop", "sell", this->uniqueid, 0);
 		this->cont = CConfig::GetValueInt("Shop", "count", this->uniqueid, 0);
+		this->name = CConfig::GetValueString("Shop", "name", this->uniqueid, "未知商品");
+
 	}
 	ShopItem(string uniqueid) {
 		int index = uniqueid.find(":");
@@ -35,16 +39,20 @@ struct ShopItem {
 		this->buyprice = CConfig::GetValueInt("Shop", "buy", uniqueid, 0);
 		this->sellprice = CConfig::GetValueInt("Shop", "sell", uniqueid, 0);
 		this->cont = CConfig::GetValueInt("Shop", "count", uniqueid, 0);
+		this->name = CConfig::GetValueString("Shop", "name", uniqueid, "未知商品");
+
 	}
 
 	void SaveItem() {
 		CConfig::SetValueString("Shop", "buy", this->uniqueid, std::to_string(this->buyprice));
 		CConfig::SetValueString("Shop", "sell", this->uniqueid, std::to_string(this->sellprice));
 		CConfig::SetValueString("Shop", "cont", this->uniqueid, std::to_string(this->cont));
+		CConfig::SetValueString("Shop", "name", this->uniqueid, this->name);
 	}
 };
 
 class Shop {
+public:
 	void static SetPrice(int id, int dataid, int buy, int sell, int cont) {
 		ShopItem item = ShopItem(id, dataid);
 		item.buyprice = buy;

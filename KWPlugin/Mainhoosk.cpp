@@ -102,7 +102,7 @@ static std::string oldseedstr;
 static const VA STD_COUT_HANDLE = SYM_OBJECT(VA,
 	MSSYM_B2UUA3impB2UQA4coutB1AA3stdB2AAA23VB2QDA5basicB1UA7ostreamB1AA2DUB2QDA4charB1UA6traitsB1AA1DB1AA3stdB3AAAA11B1AA1A); //140721370820768
 
-
+/*
 // 获取指令队列
 THook2(_JS_GETSPSCQUEUE, VA, MSSYM_MD5_3b8fb7204bf8294ee636ba7272eec000,
 	VA _this) {
@@ -116,6 +116,7 @@ THook2(_JS_PLAYERINIT, Player*, MSSYM_MD5_c4b0cddb50ed88e87acce18b5bd3fb8a,
 	p_level = level;
 	return original(_this, level, a3, a4, a5, a6, uuid, struuid, a9, a10, a11);
 }
+
 
 // 保存设置文件中地图种子字符
 THook2(_JS_GETOLDSEEDSTR, UINT, MSSYM_MD5_d2496e689e9641a96868df357e31ad87,
@@ -133,7 +134,7 @@ THook2(_JS_HIDESEEDPACKET, void,
 	}
 	return original(_this, a2);
 }
-
+*/
 // 服务器后台输入指令
 
 THook2(_JS_ONSERVERCMD, bool,
