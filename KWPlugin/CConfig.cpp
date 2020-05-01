@@ -75,9 +75,7 @@ public:
 		if (ini.GetAllKeys(section.c_str(), keys)) {
 			CSimpleIniA::TNamesDepend::const_iterator i;
 			for (i = keys.begin(); i != keys.end(); ++i) {
-				cout << "key = " << i->pItem << endl;
 				ret.push_back(i->pItem);
-
 			}
 		}
 		else {

@@ -151,12 +151,6 @@ public:
 	}
 
 	void static Spawn(Player* player) {
-		std::ifstream in(CConfig::GetPluginPath() + "Annoncement.txt");
-		std::ostringstream tmp;
-		tmp << in.rdbuf();
-		std::string str = tmp.str();
-		player->sendMsg(str);    //聊天框版
-		sendMsgForm((VA)player, str, "公告");
 		if (!Guild::isInGuild(player->getRealNameTag(), AdminGuild)) {
 			SYMCALL(void, MSSYM_B1QA9setCanFlyB1AA5ActorB2AAA5QEAAXB1UA1NB1AA1Z, player, false); //设置玩家不可飞行
 		}
@@ -168,7 +162,6 @@ public:
 
 
 	bool static Move(Player* player) {
-
 		//进入新领地
 		string chunckid = Land::PlayerChunckId(player->getPos());
 		string playername = player->getRealNameTag();
@@ -194,15 +187,6 @@ public:
 			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
 			player->sendMsg("你已被关在小黑屋反思.");
 		}
-	}
-
-	unsigned static sendMsgForm(VA pPlayer, std::string content, std::string title = "信息") {
-		if (pPlayer == 0)
-			return 0;
-		std::string orig = "{\"content\": \"" + content + "\",\"title\": \"" + title + "\"}";
-		//return sendForm(pPlayer, orig);
-		//TODO
-		return 0;
 	}
 
 	// 重设新名字

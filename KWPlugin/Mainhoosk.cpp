@@ -137,7 +137,7 @@ THook2(_JS_HIDESEEDPACKET, void,
 */
 // 服务器后台输入指令
 
-THook2(_JS_ONSERVERCMD, bool,
+THook(bool,
 	MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e,
 	VA _this, std::string* cmd) {
 	return Command::onConsoleSendCommand(*cmd) ? original(_this, cmd) : false;
@@ -193,7 +193,7 @@ THook(void,
 
 THook(void,
 	MSSYM_MD5_21204897709106ba1d290df17fead479,
-	VA _this, string &servername, bool shouldannounce) {
+	VA _this, string& servername, bool shouldannounce) {
 	ServerNetworkHandler = _this;
 	//这个纯粹是抓取servernetworkhandler的!
 	original(_this, servername, shouldannounce);
@@ -378,6 +378,12 @@ THook2(_JS_ONCHANGEDIMENSION, bool,
 	return original(_this, pPlayer, req);
 }
 
+THook(void,
+	MSSYM_B1QE13initCoreEnumsB1AE17MinecraftCommandsB2AAA5QEAAXB1UE20NAEBVBaseGameVersionB3AAAA1Z,
+	MinecraftCommands* a0, VA a1, VA a2) {
+	commands = a0;
+}
+
 // 命名生物死亡
 THook2(_JS_ONMOBDIE, void,
 	MSSYM_B1QA3dieB1AA3MobB2AAE26UEAAXAEBVActorDamageSourceB3AAAA1Z,
@@ -461,6 +467,7 @@ THook2(JS_ONINPUTTEXT, void,
 		_this, id, *((char*)tp + 16));
 	PlayerEvent::Chat(player, &tp->toString());
 }
+
 
 // 输入指令
 THook2(_JS_ONINPUTCOMMAND, void,

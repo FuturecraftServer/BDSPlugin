@@ -331,12 +331,16 @@ public:
 		else if (param[0] == "/shop") {
 			vector<ShopItem> items = Shop::GetShopSellItem();
 			ButtonsForm form = ButtonsForm();
+			form.SetText(u8"欢迎来到购买商店! 你可以在这里买到你想要的东西!");
 			for (int i = 0; i < items.size(); i++)
 			{
 				ShopItem item = items[i];
 				FormButton fb;
 				FunctionButton	funb;
 				fb.text = item.name + " * " + std::to_string(item.cont) + " = " + std::to_string(item.sellprice);
+				fb.haveimage = true;
+				fb.isimgurl = false;
+				fb.imgpath = item.texture;
 				funb.command = "/buy " + item.uniqueid;
 				form.AddButton(fb,funb);
 			}
@@ -409,11 +413,18 @@ public:
 			Economy::SetPriceToDo(param[1], param[2]);
 		}
 		else if (param[0] == "/setshop" && isAdmin(player)) {
+		//   /setshop <买入价格> <售出价格> <起卖数量>
 			ItemStack* item = player->getSelectedItem();
+			if (item->isNull()) {
+				player->sendMsg("请先选中一个东西! ");
+				return true;
+			}
 			ShopItem shopitem = ShopItem(item->getId(), item->getAuxValue());
 			shopitem.sellprice = atoi(param[1].c_str());
 			shopitem.buyprice = atoi(param[2].c_str());
 			shopitem.cont = atoi(param[3].c_str());
+			shopitem.name = item->getName();
+			shopitem.texture = "textures/items/" + item->getRawNameId();
 			shopitem.SaveItem();
 			player->sendMsg(u8"商品设置成功!");
 		}

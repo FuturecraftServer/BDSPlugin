@@ -11,6 +11,8 @@
 static VA p_spscqueue;
 static VA ServerNetworkHandler;
 static string AdminGuild;
+
+
 // 执行后端指令
 static bool runcmd(std::string cmd) {
 	if (p_spscqueue != 0) {
@@ -25,35 +27,6 @@ static void changeMOTD(std::string motd) {
 		ServerNetworkHandler, &motd, true);
 }
 
-/* Something From BDX */
-struct MCRESULT {
-	unsigned char filler[4];
-	operator bool() {
-		return filler[0];
-	}
-	bool isSuccess() {
-		return operator bool();
-	}
-};
-template<class T>
-struct LocateS {
-	static T* _srv;
-	T& operator*() {
-		return *_srv;
-	}
-	T* operator->() {
-		return _srv;
-	}
-	operator T& () {
-		return *_srv;
-	}
-	static void assign(const T& srv) {
-#ifdef LIGHTBASE_EXPORTS
-		LOG("[LocateService] located", typeid(decltype(_srv)).name(), "->", (void*)&srv);
-#endif
-		_srv = (T*)&srv;
-	}
-};
 
 
 /* Color Code */
@@ -110,16 +83,8 @@ std::string static stringToUTF8(const std::string& str)
 	return retStr;
 }
 
-class MinecraftCommands;
-class MinecraftCommands {
-public:
-	static MCRESULT _runcmd(void* origin, const string& cmd, int unk1, bool unk2) {
-		MCRESULT rv;
-		/*SymCall("?executeCommand@MinecraftCommands@@QEBA?AUMCRESULT@@V?$shared_ptr@VCommandContext@@@std@@_N@Z", void, MinecraftCommands*, MCRESULT*, shared_ptr<CommandContext>, bool)(LocateS<MinecraftCommands>::_srv,&rv,std::make_shared<CommandContext>(std::forward<TP>(cmd),(CommandOrigin*)origin),false);*/
-		SYMCALL(void, MSSYM_MD5_2f44106d21f04bf0ef021570ea279df0, LocateS<MinecraftCommands>::_srv, &rv, &origin, cmd, unk1, unk2);
-		return rv;
-	}
-};
+
+
 
 std::string static replace_all_distinct(std::string str, std::string old_value, std::string new_value)
 {
@@ -130,6 +95,27 @@ std::string static replace_all_distinct(std::string str, std::string old_value, 
 	}
 	return   str;
 }
+
+struct CommandOrigin {
+
+};
+
+struct Minecraft {
+};
+
+struct MinecraftCommands;
+static MinecraftCommands* commands;
+struct MinecraftCommands {
+	bool static _runcmd(void* origin, const string& cmd, int unk1, bool unk2) {
+		/*SymCall("?executeCommand@MinecraftCommands@@QEBA?AUMCRESULT@@V?$shared_ptr@VCommandContext@@@std@@_N@Z", void, MinecraftCommands*, MCRESULT*, shared_ptr<CommandContext>, bool)(LocateS<MinecraftCommands>::_srv,&rv,std::make_shared<CommandContext>(std::forward<TP>(cmd),(CommandOrigin*)origin),false);*/
+		//SymCall("?requestCommandExecution@MinecraftCommands@@QEBA?AUMCRESULT@@V?$unique_ptr@VCommandOrigin@@U?$default_delete@VCommandOrigin@@@std@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@H_N@Z", void, MinecraftCommands*, MCRESULT*, void**, string const&, int, bool)(LocateS<MinecraftCommands>::_srv, &rv, &origin, cmd, unk1, unk2);
+		bool rv;
+		SYMCALL(void,
+			MSSYM_MD5_2f44106d21f04bf0ef021570ea279df0,
+			commands, &rv, &origin, cmd, unk1, unk2);
+		return rv;
+	}
+};
 
 // 方块坐标结构体
 struct BPos3 {
@@ -251,6 +237,12 @@ struct Vec3 {
 
 };
 
+
+struct ActorUniqueID {
+	unsigned long id;
+	ActorUniqueID() { id = -1; }
+};
+
 struct Actor {
 	// 取方块源
 	BlockSource* getRegion() {
@@ -311,19 +303,65 @@ struct Actor {
 			&en_name, getEntityTypeId());
 		return en_name;
 	}
+
+	// 获取UniqueId
+	ActorUniqueID getUniqueID() {
+		return SYMCALL(ActorUniqueID,
+			MSSYM_B1QE11getUniqueIDB1AA5ActorB2AAE21QEBAAEBUActorUniqueIDB2AAA2XZ,
+			this);
+	}
 };
 struct Mob : Actor {
 
 };
 
+struct Item {
+
+	// 取物品名称
+	std::string getName() {
+		std::string str;
+		SYMCALL(__int64,
+			MSSYM_MD5_6d581a35d7ad70fd364b60c3ebe93394,
+			this, &str);
+		return str;
+	}
+
+
+};
 
 struct ItemStack {
+
+	string getDescriptionId() {
+		std::string str;
+		SYMCALL(VA,
+			MSSYM_MD5_bd9055ba5b9a3d9d0513b31a8fccae4b,
+			this, &str);
+		return str;
+	}
+
+
+	string getRawNameId() {
+		std::string str;
+		SYMCALL(VA,
+			MSSYM_MD5_2f9d68ca736b0da0c26f063f568898bc,
+			this, &str);
+		return str;
+	}
+
 	// 取物品ID
 	short getId() {
 		return SYMCALL(short,
 			MSSYM_B1QA5getIdB1AE13ItemStackBaseB2AAA7QEBAFXZ,
 			this);
 	}
+
+	Item* getItem() {
+		return SYMCALL(Item*,
+			MSSYM_B1QA7getItemB1AE13ItemStackBaseB2AAE12QEBAPEBVItemB2AAA2XZ,
+			this);
+	}
+
+
 	// 取物品特殊值
 	short getAuxValue() {
 		return SYMCALL(short,
@@ -352,6 +390,13 @@ struct ItemStack {
 	}
 };
 
+struct Level {
+
+};
+
+static void dummy() {
+}
+static void* FAKE_PORGVTBL[26];
 struct Player : Actor {
 
 	//跨服传送
@@ -406,19 +451,19 @@ struct Player : Actor {
 
 
 
-	//以玩家权限执行命令 - 来源 BDX
-	static void dummy() {
-	}
-	static void* FAKE_PORGVTBL[26];
-	bool runcmdAs(Player* wp, string cmd) {
+	//以玩家权限执行命令 - 参考 BDX
+
+	bool runcmdAs(string cmd) {
 		void** filler[5];
-		SYMCALL(void, MSSYM_B2QQE200PlayerCommandOriginB2AAA4QEAAB1AE10AEAVPlayerB3AAAA1Z, filler, this);
+		SYMCALL(void,
+			MSSYM_B2QQE200PlayerCommandOriginB2AAA4QEAAB1AE10AEAVPlayerB3AAAA1Z,
+			filler, this);
 		if (FAKE_PORGVTBL[1] == NULL) {
 			memcpy(FAKE_PORGVTBL, ((void**)filler[0]) - 1, sizeof(FAKE_PORGVTBL));
 			FAKE_PORGVTBL[1] = (void*)dummy;
 		}
 		filler[0] = FAKE_PORGVTBL + 1;
-		return MinecraftCommands::_runcmd(filler, std::move(cmd), 4, 1);
+		return MinecraftCommands::_runcmd(filler, cmd, 4, 1);
 	}
 
 	// 重设服务器玩家名
@@ -458,10 +503,6 @@ struct CommandRequestPacket {
 		std::string str = std::string(*(std::string*)((VA)this + 40));
 		return str;
 	}
-};
-
-struct CommandOrigin {
-
 };
 
 struct ModalFormResponsePacket {

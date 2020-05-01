@@ -118,8 +118,8 @@ private:
 	}
 public:
 	unsigned formid;
-	string title = "信息";
-	string content = "消息内容";
+	string title = u8"信息";
+	string content = u8"消息内容";
 
 	//生成表单,且生成一个ID
 	ModalForm() {
@@ -160,8 +160,8 @@ struct ButtonsForm {
 	}
 public:
 	unsigned formid;
-	string title = "信息";
-	string content = "消息内容";
+	string title = u8"信息";
+	string content = u8"消息内容";
 
 	/*
 	void SetButtonGroup(std::vector<FormButton> fb, std::vector<FunctionButton> func) {
@@ -205,7 +205,7 @@ public:
 		ButtonString += "{\"text\":\"" + fb.text + "\"";
 		if (fb.haveimage) {
 			string imgtype = (fb.isimgurl ? "url" : "path");
-			ButtonString += ",\"image\":{\"type\":\"" + imgtype + "\",\"data\":\"" + fb.imgpath + "\"";
+			ButtonString += ",\"image\":{\"type\":\"" + imgtype + "\",\"data\":\"" + fb.imgpath + "\"}";
 		}
 		ButtonString += "}";
 		buttons[formid][buttonNum] = func;
@@ -221,20 +221,29 @@ public:
 
 static void ParseFormCallback(Player* player, unsigned fid, string selected) {
 	cout << "Form Select Handling -> Player: " + player->getRealNameTag() + " FormID: " << fid << " Selected: " << selected << " FormType: " << fids[fid] << endl;
-	if (fids[fid]) {
-		cout << "This form has been destoryed!" << endl;
+	if (!fids[fid]) {
 		return;
 	}
 	int rselected = 0;
+	if (selected == "null") {
+		//啥也没选,关闭了表单
+		return;
+	}
 	if (selected == "true") {
 		rselected = 0;
-	}else if (selected == "false") {
+	}
+	else if (selected == "false") {
 		rselected = 1;
 	}
 	else {
 		rselected = atoi(selected.c_str());
 	}
-	cout << "The command could be " << buttons[fid][rselected].command << " isconsole: " << buttons[fid][rselected].isconsole << endl;
+	if (buttons[fid][rselected].isconsole) {
+		runcmd(buttons[fid][rselected].command);
+	}
+	else {
+		player->runcmdAs(buttons[fid][rselected].command);
+	}
 	destroyForm(fid);
 }
 
