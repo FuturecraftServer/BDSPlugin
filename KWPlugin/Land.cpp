@@ -12,7 +12,7 @@ public:
 	}
 
 	string static getLandName(string landid) {
-		return CConfig::GetValueString("Land", landid, "name", u8"Î´ÃüÃûÁìµØ");
+		return CConfig::GetValueString("Land", landid, "name", "æœªå‘½åé¢†åœ°");
 	}
 
 	void static setLandName(string landid,string name) {

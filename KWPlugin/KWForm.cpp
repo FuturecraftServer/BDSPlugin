@@ -13,12 +13,12 @@ using namespace std;
 static std::map<unsigned, int> fids;
 
 struct FunctionButton {
-	int type = 1;//1 - Íæ¼ÒÆÕÍ¨Ö¸Áî 2 - Íæ¼Ò×Ô¶¨ÒåÖ¸Áî 3 - ¿ØÖÆÌ¨Ö¸Áî
-	string command = "NaN";//Ö¸Áî
+	int type = 1;//1 - ç©å®¶æ™®é€šæŒ‡ä»¤ 2 - ç©å®¶è‡ªå®šä¹‰æŒ‡ä»¤ 3 - æ§åˆ¶å°æŒ‡ä»¤
+	string command = "NaN";//æŒ‡ä»¤
 };
 
 struct FormButton {
-	string text = u8"°´Å¥";
+	string text = "æŒ‰é’®";
 	bool haveimage = false;
 	bool isimgurl = false;
 	string imgpath;
@@ -45,7 +45,7 @@ static void sendRawForm(VA Player, string json, unsigned fid) {
 	_sendForm(Player, json, fid);
 }
 
-// Ïú»ÙÒÑÊ¹ÓÃµÄid
+// é”€æ¯å·²ä½¿ç”¨çš„id
 static bool destroyForm(unsigned fid)
 {
 	if (fids[fid]) {
@@ -67,7 +67,7 @@ static unsigned GenerateFormID() {
 
 struct CustomForm {
 private:
-	// ·¢ËÍÒ»¸öSimpleFormµÄ±íµ¥Êı¾İ°ü
+	// å‘é€ä¸€ä¸ªSimpleFormçš„è¡¨å•æ•°æ®åŒ…
 	void sendForm(VA pPlayer)
 	{
 		_sendForm(pPlayer, formstring, formid);
@@ -77,20 +77,20 @@ public:
 	unsigned formid;
 	string formstring = "{\"content\":[";
 	string ButtonString = "";
-	string title = "ĞÅÏ¢";
+	string title = "ä¿¡æ¯";
 
-	//Éú³É±íµ¥,ÇÒÉú³ÉÒ»¸öID
+	//ç”Ÿæˆè¡¨å•,ä¸”ç”Ÿæˆä¸€ä¸ªID
 	CustomForm() {
 		formid = GenerateFormID();
 		fids[formid] = 1;
 	}
 
-	//Ìí¼Ó±êÇ©
+	//æ·»åŠ æ ‡ç­¾
 	void AddLabel(string text) {
 		formstring += "{\"type\":\"label\",\"text\":\"" + text + "\"},";
 	}
 
-	//ÉèÖÃ±íµ¥±êÌâ
+	//è®¾ç½®è¡¨å•æ ‡é¢˜
 	void SetTitle(string title) {
 		this->title = title;
 	}
@@ -107,17 +107,17 @@ private:
 	int buttoncount = 0;
 	string formstring = "";
 	string ButtonString = "";
-	// ·¢ËÍÒ»¸öSimpleFormµÄ±íµ¥Êı¾İ°ü
+	// å‘é€ä¸€ä¸ªSimpleFormçš„è¡¨å•æ•°æ®åŒ…
 	void sendForm(VA pPlayer)
 	{
 		_sendForm(pPlayer, formstring, formid);
 	}
 public:
 	unsigned formid;
-	string title = u8"ĞÅÏ¢";
-	string content = u8"ÏûÏ¢ÄÚÈİ";
+	string title = "ä¿¡æ¯";
+	string content = "æ¶ˆæ¯å†…å®¹";
 
-	//Éú³É±íµ¥,ÇÒÉú³ÉÒ»¸öID
+	//ç”Ÿæˆè¡¨å•,ä¸”ç”Ÿæˆä¸€ä¸ªID
 	ModalForm() {
 		formid = GenerateFormID();
 		fids[formid] = 2;
@@ -139,7 +139,7 @@ public:
 	}
 
 	void releaseForm(VA Player) {
-		if (buttoncount != 2) ButtonString = u8"\"button1\":\"È·ÈÏ\",\"button2\":\"È¡Ïû\"";
+		if (buttoncount != 2) ButtonString = "\"button1\":\"ç¡®è®¤\",\"button2\":\"å–æ¶ˆ\"";
 		formstring = "{\"type\":\"modal\",\"title\":\"" + title + "\",\"content\":\"" + content + "\"," + ButtonString + "}";
 		sendForm(Player);
 	}
@@ -149,15 +149,15 @@ struct ButtonsForm {
 	int buttonNum = 0;
 	string formstring = "";
 	string ButtonString = "";
-	// ·¢ËÍÒ»¸öSimpleFormµÄ±íµ¥Êı¾İ°ü
+	// å‘é€ä¸€ä¸ªSimpleFormçš„è¡¨å•æ•°æ®åŒ…
 	void sendForm(VA pPlayer)
 	{
 		_sendForm(pPlayer, formstring, formid);
 	}
 public:
 	unsigned formid;
-	string title = u8"ĞÅÏ¢";
-	string content = u8"ÏûÏ¢ÄÚÈİ";
+	string title = "ä¿¡æ¯";
+	string content = "æ¶ˆæ¯å†…å®¹";
 
 	/*
 	void SetButtonGroup(std::vector<FormButton> fb, std::vector<FunctionButton> func) {
@@ -182,7 +182,7 @@ public:
 	}
 	*/
 
-	//Éú³É±íµ¥,ÇÒÉú³ÉÒ»¸öID
+	//ç”Ÿæˆè¡¨å•,ä¸”ç”Ÿæˆä¸€ä¸ªID
 	ButtonsForm() {
 		formid = GenerateFormID();
 		fids[formid] = 3;
@@ -215,8 +215,8 @@ public:
 	}
 };
 
-/* Custum Form ²»Ö§³Ö°´Å¥
-	//Ìí¼Ó°´Å¥×é
+/* Custum Form ä¸æ”¯æŒæŒ‰é’®
+	//æ·»åŠ æŒ‰é’®ç»„
 	void SetButtonGroup(std::vector<FormButton> fb, std::vector<FunctionButton> func) {
 		formstring += "{\"buttons\": [";
 		for (int i = 0; i < fb.size() - 1; i++) {
@@ -240,7 +240,7 @@ public:
 	*/
 
 	/*
-	// ´´½¨Ò»¸ö¼òÒ×±íµ¥×Ö·û´®
+	// åˆ›å»ºä¸€ä¸ªç®€æ˜“è¡¨å•å­—ç¬¦ä¸²
 	std::string createSimpleFormString(std::string title, std::string content, Json::Value & bttxts) {
 		Json::Value jv;
 		jv["type"] = "form";
@@ -250,7 +250,7 @@ public:
 		return jv.toStyledString();
 	}
 
-	// ´´½¨Ò»¸ö¹Ì¶¨Ä£°å±íµ¥×Ö·û´®
+	// åˆ›å»ºä¸€ä¸ªå›ºå®šæ¨¡æ¿è¡¨å•å­—ç¬¦ä¸²
 	std::string createModalFormString(std::string title, std::string content, std::string button1, std::string button2) {
 		Json::Value jv;
 		jv["type"] = "modal";

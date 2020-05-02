@@ -58,19 +58,19 @@ public:
 		if (isAdmin(player->getRealNameTag(), name)) {
 			string requester = CConfig::GetValueString("Guild", "Request", name, "NaN");
 			if (requester == "NaN") {
-				player->sendMsg("Ã»ÓÐÇëÇó!");
+				player->sendMsg("æ²¡æœ‰è¯·æ±‚!");
 			}
 			else {
 				if (isInGuild(requester)) {
-					player->sendMsg("Í¬ÒâÊ§°Ü,¶Ô·½ÒÑ¾­¼ÓÈë¹«»á");
+					player->sendMsg("åŒæ„å¤±è´¥,å¯¹æ–¹å·²ç»åŠ å…¥å…¬ä¼š");
 					return;
 				}
 				JoinGuild(name, requester);
-				player->sendMsg("Í¬Òâ³É¹¦");
+				player->sendMsg("åŒæ„æˆåŠŸ");
 			}
 		}
 		else {
-			player->sendMsg("Äã²»ÊÇ¹«»á¹ÜÀíÔ±!");
+			player->sendMsg("ä½ ä¸æ˜¯å…¬ä¼šç®¡ç†å‘˜!");
 		}
 	}
 
@@ -80,7 +80,7 @@ public:
 
 	void static RemoveGuild(string name, Player* player) {
 		if (isAdmin(player->getRealNameTag(), name)) CConfig::SetValueString("Guild", name, "admin", "NaN");
-		player->sendMsg("³É¹¦½âÉ¢¹«»á!");
+		player->sendMsg("æˆåŠŸè§£æ•£å…¬ä¼š!");
 	}
 
 	void static ExitGuild(string name, Player* player) {
@@ -89,10 +89,10 @@ public:
 			CConfig::SetValueString("Guild", guild, "Player", replace_all_distinct(GetPlayers(guild), player->getRealNameTag() + ",", ""));
 			CConfig::SetValueString("Guild", "Player", player->getRealNameTag(), "NaN");
 
-			player->sendMsg("³É¹¦ÍË³ö¹«»á!");
+			player->sendMsg("æˆåŠŸé€€å‡ºå…¬ä¼š!");
 		}
 		else {
-			player->sendMsg("Äã»¹Î´¼ÓÈë¹«»á!");
+			player->sendMsg("ä½ è¿˜æœªåŠ å…¥å…¬ä¼š!");
 		}
 	}
 };

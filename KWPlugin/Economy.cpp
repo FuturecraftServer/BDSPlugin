@@ -29,20 +29,20 @@ public:
 	}
 
 	void static DailySign(Player* player) {
-		char tick[MAX_PATH];  //ÓÃÓÚ´æ´¢¸ñÊ½µÄÊ±¼ä
-		struct tm t;     //tm½á¹¹Ö¸Õë
-		time_t now;     //ÉùÃ÷time_tÀàĞÍ±äÁ¿
-		time(&now);      //»ñÈ¡ÏµÍ³ÈÕÆÚºÍÊ±¼ä
-		localtime_s(&t, &now);   //»ñÈ¡µ±µØÈÕÆÚºÍÊ±¼ä
+		char tick[MAX_PATH];  //ç”¨äºå­˜å‚¨æ ¼å¼çš„æ—¶é—´
+		struct tm t;     //tmç»“æ„æŒ‡é’ˆ
+		time_t now;     //å£°æ˜time_tç±»å‹å˜é‡
+		time(&now);      //è·å–ç³»ç»Ÿæ—¥æœŸå’Œæ—¶é—´
+		localtime_s(&t, &now);   //è·å–å½“åœ°æ—¥æœŸå’Œæ—¶é—´
 		strftime(tick, _countof(tick), "%Y%m%d", &t);
 		if (CConfig::GetValueString("Economy", "sign", player->getRealNameTag(), "0") == tick) {
-			player->sendMsg("Äã½ñÌìÒÑ¾­Ç©¹ıµ½ÁË!");
+			player->sendMsg("ä½ ä»Šå¤©å·²ç»ç­¾è¿‡åˆ°äº†!");
 			return;
 		}
 		else {
 			GivePlayerMoney(player->getRealNameTag(), GetPriceToDo("DailySign"));
 			CConfig::SetValueString("Economy", "sign", player->getRealNameTag(), tick);
-			player->sendMsg("Ç©µ½³É¹¦! " + intToString(GetPriceToDo("DailySign")) + " ½ğ±Ò Get~");
+			player->sendMsg("ç­¾åˆ°æˆåŠŸ! " + intToString(GetPriceToDo("DailySign")) + " é‡‘å¸ Get~");
 		}
 	}
 

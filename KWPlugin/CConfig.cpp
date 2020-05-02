@@ -5,7 +5,7 @@
 #include <fstream>
 
 using namespace std;
-// 获取BDS完整程序路径
+// 鑾峰彇BDS瀹屾暣绋嬪簭璺緞
 static char localpath[MAX_PATH] = { 0 };
 static std::string getLocalPath() {
 	if (!localpath[0]) {
@@ -40,7 +40,7 @@ public:
 
 	bool static SetValueString(string filepath, string section, string key, string value = "") {
 		filepath = getLocalPath() + "Plugin\\" + filepath + ".ini";
-		//cout << u8"File Path: " << filepath << endl << u8"Section: " << section << endl << "Key: " << key << endl << "Value: " << value << endl;
+		//cout << "File Path: " << filepath << endl << "Section: " << section << endl << "Key: " << key << endl << "Value: " << value << endl;
 		CSimpleIniA ini;
 		ini.SetUnicode();
 		ini.LoadFile(filepath.c_str());

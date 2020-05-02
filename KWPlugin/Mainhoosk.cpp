@@ -15,21 +15,21 @@ static bool reNameByUuid(std::string, std::string);
 static std::map<std::string, bool> canUnpairChest;
 
 
-// Î¬¶ÈID×ª»»ÎªÖĞÎÄ×Ö·û
+// ç»´åº¦IDè½¬æ¢ä¸ºä¸­æ–‡å­—ç¬¦
 static std::string toDimenStr(int dimensionId) {
 	switch (dimensionId) {
-	case 0:return u8"Ö÷ÊÀ½ç";
-	case 1:return u8"µØÓü";
-	case 2:return u8"Ä©µØ";
+	case 0:return "ä¸»ä¸–ç•Œ";
+	case 1:return "åœ°ç‹±";
+	case 2:return "æœ«åœ°";
 	default:
 		break;
 	}
-	return u8"Î´ÖªÎ¬¶È";
+	return "æœªçŸ¥ç»´åº¦";
 }
 
 static VA p_level;
 
-// ÖØÉèĞÂÃû×Ö
+// é‡è®¾æ–°åå­—
 static bool reNameByUuid(std::string uuid, std::string newName) {
 	bool ret = false;
 	Player* taget = onlinePlayers[uuid];
@@ -42,7 +42,7 @@ static bool reNameByUuid(std::string uuid, std::string newName) {
 
 
 
-// ÅĞ¶ÏÖ¸ÕëÊÇ·ñÎªÍæ¼ÒÁĞ±íÖĞÖ¸Õë
+// åˆ¤æ–­æŒ‡é’ˆæ˜¯å¦ä¸ºç©å®¶åˆ—è¡¨ä¸­æŒ‡é’ˆ
 static bool checkIsPlayer(void* mp) {
 	std::map<std::string, Player*>::iterator iter;
 	for (iter = onlinePlayers.begin(); iter != onlinePlayers.end(); iter++) {
@@ -55,21 +55,21 @@ static bool checkIsPlayer(void* mp) {
 
 static std::string oldseedstr;
 
-/**************** ²å¼şHOOKÇøÓò ****************/
+/**************** æ’ä»¶HOOKåŒºåŸŸ ****************/
 
-// ±ê×¼Êä³ö¾ä±ú³£Á¿
+// æ ‡å‡†è¾“å‡ºå¥æŸ„å¸¸é‡
 static const VA STD_COUT_HANDLE = SYM_OBJECT(VA,
 	MSSYM_B2UUA3impB2UQA4coutB1AA3stdB2AAA23VB2QDA5basicB1UA7ostreamB1AA2DUB2QDA4charB1UA6traitsB1AA1DB1AA3stdB3AAAA11B1AA1A); //140721370820768
 
 
-// »ñÈ¡Ö¸Áî¶ÓÁĞ
+// è·å–æŒ‡ä»¤é˜Ÿåˆ—
 THook2(_JS_GETSPSCQUEUE, VA, MSSYM_MD5_3b8fb7204bf8294ee636ba7272eec000,
 	VA _this) {
 	p_spscqueue = original(_this);
 	return p_spscqueue;
 }
 
-// »ñÈ¡Íæ¼Ò³õÊ¼»¯Ê±µØÍ¼»ù±¾ĞÅÏ¢
+// è·å–ç©å®¶åˆå§‹åŒ–æ—¶åœ°å›¾åŸºæœ¬ä¿¡æ¯
 THook2(_JS_PLAYERINIT, Player*, MSSYM_MD5_c4b0cddb50ed88e87acce18b5bd3fb8a,
 	Player* _this, VA level, __int64 a3, int a4, __int64 a5, __int64 a6, void* uuid, std::string& struuid, __int64* a9, __int64 a10, __int64 a11) {
 	p_level = level;
@@ -77,14 +77,14 @@ THook2(_JS_PLAYERINIT, Player*, MSSYM_MD5_c4b0cddb50ed88e87acce18b5bd3fb8a,
 }
 
 
-// ±£´æÉèÖÃÎÄ¼şÖĞµØÍ¼ÖÖ×Ó×Ö·û
+// ä¿å­˜è®¾ç½®æ–‡ä»¶ä¸­åœ°å›¾ç§å­å­—ç¬¦
 THook2(_JS_GETOLDSEEDSTR, UINT, MSSYM_MD5_d2496e689e9641a96868df357e31ad87,
 	std::string* pSeedstr, VA a2) {
 	oldseedstr = std::string(*pSeedstr);
 	return original(pSeedstr, a2);
 }
 
-// ¸ÄĞ´·¢ĞÅÓÎÏ·ĞÅÏ¢°üÖĞÖÖ×ÓĞÅÏ¢ÎªÉèÖÃÎÄ¼şÖĞĞÅÏ¢
+// æ”¹å†™å‘ä¿¡æ¸¸æˆä¿¡æ¯åŒ…ä¸­ç§å­ä¿¡æ¯ä¸ºè®¾ç½®æ–‡ä»¶ä¸­ä¿¡æ¯
 THook2(_JS_HIDESEEDPACKET, void,
 	MSSYM_B1QA5writeB1AE15StartGamePacketB2AAE21UEBAXAEAVBinaryStreamB3AAAA1Z,
 	VA _this, VA a2) {
@@ -94,7 +94,7 @@ THook2(_JS_HIDESEEDPACKET, void,
 	return original(_this, a2);
 }
 
-// ·şÎñÆ÷ºóÌ¨ÊäÈëÖ¸Áî
+// æœåŠ¡å™¨åå°è¾“å…¥æŒ‡ä»¤
 
 THook(bool,
 	MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e,
@@ -104,7 +104,7 @@ THook(bool,
 
 /*
 //TODO: Unknown Function Usage
-// ·şÎñÆ÷ºóÌ¨Ö¸ÁîÊä³ö
+// æœåŠ¡å™¨åå°æŒ‡ä»¤è¾“å‡º
 THook2(_JS_ONSERVERCMDOUTPUT, VA,
 	MSSYM_MD5_b5f2f0a753fc527db19ac8199ae8f740,
 	VA handle, char* str, VA size) {
@@ -124,7 +124,7 @@ THook2(_JS_ONSERVERCMDOUTPUT, VA,
 }
 */
 
-//Íæ¼Òµã»ğ
+//ç©å®¶ç‚¹ç«
 THook(bool,
 	MSSYM_B2QUA5useOnB1AE17FlintAndSteelItemB2AAA4MEBAB1UE14NAEAVItemStackB2AAA9AEAVActorB2AAA9VBlockPosB2AAA4EMMMB1AA1Z,
 	__int64 a1, const ItemStack* a2, BlockSource* a3, BlockPos* bp) {
@@ -132,7 +132,7 @@ THook(bool,
 	return PlayerEvent::PlaceFire(player, bp) ? original(a1, a2, a3, bp) : false;
 }
 
-// Íæ¼ÒÑ¡Ôñ±íµ¥
+// ç©å®¶é€‰æ‹©è¡¨å•
 THook(void,
 	MSSYM_MD5_8b7f7560f9f8353e6e9b16449ca999d2,
 	VA _this, VA id, VA handle, ModalFormResponsePacket** fp) {
@@ -154,11 +154,11 @@ THook(void,
 	MSSYM_MD5_21204897709106ba1d290df17fead479,
 	VA _this, string& servername, bool shouldannounce) {
 	ServerNetworkHandler = _this;
-	//Õâ¸ö´¿´âÊÇ×¥È¡servernetworkhandlerµÄ!
+	//è¿™ä¸ªçº¯ç²¹æ˜¯æŠ“å–servernetworkhandlerçš„!
 	original(_this, servername, shouldannounce);
 }
 
-// Íæ¼Ò²Ù×÷ÎïÆ·
+// ç©å®¶æ“ä½œç‰©å“
 THook(bool,
 	MSSYM_B1QA9useItemOnB1AA8GameModeB2AAA4UEAAB1UE14NAEAVItemStackB2AAE12AEBVBlockPosB2AAA9EAEBVVec3B2AAA9PEBVBlockB3AAAA1Z,
 	void* _this, ItemStack* item, BlockPos* pBlkpos, unsigned __int8 a4, void* v5, Block* pBlk) {
@@ -167,7 +167,7 @@ THook(bool,
 }
 
 
-//Íæ¼ÒÊ¹ÎïÆ·Õ¹Ê¾¿òµôÂä
+//ç©å®¶ä½¿ç‰©å“å±•ç¤ºæ¡†æ‰è½
 THook(void, MSSYM_B1QE14dropFramedItemB1AE19ItemFrameBlockActorB2AAE20QEAAXAEAVBlockSourceB3AAUA1NB1AA1Z,
 	void* _this, BlockSource* blk, char* v3) {
 	auto real_this = reinterpret_cast<void*>(reinterpret_cast<VA>(_this) - 248);
@@ -176,7 +176,7 @@ THook(void, MSSYM_B1QE14dropFramedItemB1AE19ItemFrameBlockActorB2AAE20QEAAXAEAVB
 	PlayerEvent::BreakItemFrame(player, pBlkpos);
 }
 
-//Íæ¼Ò·ÅÖÃ·½¿é
+//ç©å®¶æ”¾ç½®æ–¹å—
 THook(bool,
 	MSSYM_B1QA8mayPlaceB1AE11BlockSourceB2AAA4QEAAB1UE10NAEBVBlockB2AAE12AEBVBlockPosB2AAE10EPEAVActorB3AAUA1NB1AA1Z,
 	BlockSource* _this, Block* a2, BlockPos* a3, unsigned __int8 a4, Player* a5, bool a6) {
@@ -189,7 +189,7 @@ THook(bool,
 }
 
 /*
-// Íæ¼Ò·ÅÖÃ·½¿é
+// ç©å®¶æ”¾ç½®æ–¹å—
 THook2(_JS_ONPLACEDBLOCK, __int64,
 	MSSYM_B1QE21checkBlockPermissionsB1AE11BlockSourceB2AAA4QEAAB1UE10NAEAVActorB2AAE12AEBVBlockPosB2AAE14EAEBVItemStackB3AAUA1NB1AA1Z,
 	void* _this, Player* pPlayer, const Block* pBlk, BlockPos* pBlkpos, bool _bool) {
@@ -204,7 +204,7 @@ THook2(_JS_ONPLACEDBLOCK, __int64,
 */
 
 
-//´óÏä×ÓºÏ²¢
+//å¤§ç®±å­åˆå¹¶
 THook(void,
 	MSSYM_B1QA8pairWithB1AE15ChestBlockActorB2AAE10QEAAXPEAV1B2AUA1NB1AA1Z,
 	BlockActor* _this, BlockActor* a2, char a3) {
@@ -217,7 +217,7 @@ THook(void,
 
 }
 
-// Íæ¼ÒÆÆ»µ·½¿é
+// ç©å®¶ç ´åæ–¹å—
 THook(bool,
 	MSSYM_B2QUE20destroyBlockInternalB1AA8GameModeB2AAA4AEAAB1UE13NAEBVBlockPosB2AAA1EB1AA1Z,
 	void* _this, BlockPos* pBlkpos) {
@@ -232,7 +232,7 @@ THook(bool,
 	}
 }
 
-//Ïä×Ó±»ÒÆ³ı
+//ç®±å­è¢«ç§»é™¤
 THook(void,
 	MSSYM_B1QA8onRemoveB1AE10ChestBlockB2AAE20UEBAXAEAVBlockSourceB2AAE12AEBVBlockPosB3AAAA1Z,
 	Block* _this, BlockSource* a2, BlockPos* a3) {
@@ -244,7 +244,7 @@ THook(void,
 	}
 }
 
-// Íæ¼Ò¿ªÏä×¼±¸
+// ç©å®¶å¼€ç®±å‡†å¤‡
 THook(bool,
 	MSSYM_B1QA3useB1AE10ChestBlockB2AAA4UEBAB1UE11NAEAVPlayerB2AAE12AEBVBlockPosB3AAAA1Z,
 	void* _this, Player* pPlayer, BlockPos* pBlkpos) {
@@ -254,7 +254,7 @@ THook(bool,
 	return PlayerEvent::ReadyOpenBox(pPlayer, pBlockSource, pBlkpos) ? original(_this, pPlayer, pBlkpos) : false;
 }
 
-//Ïä×ÓÊÇ·ñºÏ²¢
+//ç®±å­æ˜¯å¦åˆå¹¶
 THook(bool,
 	MSSYM_B2QUE11canOpenThisB1AE15ChestBlockActorB2AAA4MEBAB1UE16NAEAVBlockSourceB3AAAA1Z,
 	ChestBlockActor* _this, struct BlockSource* a2) {
@@ -262,7 +262,7 @@ THook(bool,
 	return original(_this, a2);
 }
 
-//Ïä×Ó½â³ıºÏ²¢
+//ç®±å­è§£é™¤åˆå¹¶
 THook(void,
 	MSSYM_B1QA6unpairB1AE15ChestBlockActorB2AAE20QEAAXAEAVBlockSourceB3AAAA1Z,
 	ChestBlockActor* _this, BlockSource* a2)
@@ -277,7 +277,7 @@ THook(void,
 
 }
 
-// Íæ¼Ò¿ªÍ°×¼±¸
+// ç©å®¶å¼€æ¡¶å‡†å¤‡
 THook2(_JS_ONBARRELBLOCKUSE, bool,
 	MSSYM_B1QA3useB1AE11BarrelBlockB2AAA4UEBAB1UE11NAEAVPlayerB2AAE12AEBVBlockPosB3AAAA1Z,
 	void* _this, Player* pPlayer, BlockPos* pBlkpos) {
@@ -286,8 +286,8 @@ THook2(_JS_ONBARRELBLOCKUSE, bool,
 	return PlayerEvent::ReadyOpenBusket(pPlayer, pBlockSource, pBlkpos) ? original(_this, pPlayer, pBlkpos) : false;
 }
 
-// Íæ¼Ò¹Ø±ÕÏä×Ó
-// ÔİÊ±²»ÔÊĞíPreverse Event
+// ç©å®¶å…³é—­ç®±å­
+// æš‚æ—¶ä¸å…è®¸Preverse Event
 THook2(_JS_ONSTOPOPENCHEST, void,
 	MSSYM_B1QA8stopOpenB1AE15ChestBlockActorB2AAE15UEAAXAEAVPlayerB3AAAA1Z,
 	void* _this, Player* pPlayer) {
@@ -297,7 +297,7 @@ THook2(_JS_ONSTOPOPENCHEST, void,
 	original(_this, pPlayer);
 }
 
-// Íæ¼Ò¹Ø±ÕÄ¾Í°
+// ç©å®¶å…³é—­æœ¨æ¡¶
 THook2(_JS_STOPOPENBARREL, void,
 	MSSYM_B1QA8stopOpenB1AE16BarrelBlockActorB2AAE15UEAAXAEAVPlayerB3AAAA1Z,
 	void* _this, Player* pPlayer) {
@@ -307,7 +307,7 @@ THook2(_JS_STOPOPENBARREL, void,
 	original(_this, pPlayer);
 }
 
-// Íæ¼Ò·ÅÈëÈ¡³öÊıÁ¿
+// ç©å®¶æ”¾å…¥å–å‡ºæ•°é‡
 THook2(_JS_ONSETSLOT, void,
 	MSSYM_B1QA7setSlotB1AE26LevelContainerManagerModelB2AAE28UEAAXHAEBUContainerItemStackB3AAUA1NB1AA1Z,
 	LevelContainerManagerModel* _this, int a2, ContainerItemStack* a3) {
@@ -325,8 +325,8 @@ THook2(_JS_ONSETSLOT, void,
 	}
 }
 
-// Íæ¼ÒÇĞ»»Î¬¶È
-// Ôİ²»Ö§³ÖPreverse Event
+// ç©å®¶åˆ‡æ¢ç»´åº¦
+// æš‚ä¸æ”¯æŒPreverse Event
 THook2(_JS_ONCHANGEDIMENSION, bool,
 	MSSYM_B2QUE21playerChangeDimensionB1AA5LevelB2AAA4AEAAB1UE11NPEAVPlayerB2AAE26AEAVChangeDimensionRequestB3AAAA1Z,
 	void* _this, Player* pPlayer, void* req) {
@@ -340,7 +340,7 @@ THook2(_JS_ONCHANGEDIMENSION, bool,
 	return original(_this, pPlayer, req);
 }
 
-//¼ÓÔØÖ¸Áî
+//åŠ è½½æŒ‡ä»¤
 THook(void,
 	MSSYM_B1QE13initCoreEnumsB1AE17MinecraftCommandsB2AAA5QEAAXB1UE20NAEBVBaseGameVersionB3AAAA1Z,
 	MinecraftCommands* a0, VA a1, VA a2) {
@@ -348,7 +348,7 @@ THook(void,
 	original(a0, a1, a2);
 }
 
-// ÃüÃûÉúÎïËÀÍö
+// å‘½åç”Ÿç‰©æ­»äº¡
 THook2(_JS_ONMOBDIE, void,
 	MSSYM_B1QA3dieB1AA3MobB2AAE26UEAAXAEBVActorDamageSourceB3AAAA1Z,
 	Mob* _this, void* dmsg) {
@@ -373,7 +373,7 @@ THook2(_JS_ONMOBDIE, void,
 		Json::Value jv;
 		jv["mobname"] = mob_name;
 		if (_this->getEntityTypeId() == 1) {
-			// Î´ÖªÀàĞÍ£¬¿ÉÄÜÊÇÍæ¼Ò
+			// æœªçŸ¥ç±»å‹ï¼Œå¯èƒ½æ˜¯ç©å®¶
 			if (checkIsPlayer(_this)) {
 				addPlayerInfo(jv, (Player*)_this);
 				std::string playertype;				// IDA Player::getEntityTypeId
@@ -396,7 +396,7 @@ THook2(_JS_ONMOBDIE, void,
 	original(_this, dmsg);
 }
 
-// Íæ¼ÒÖØÉú
+// ç©å®¶é‡ç”Ÿ
 THook2(_JS_PLAYERRESPAWN, void, MSSYM_B1QA7respawnB1AA6PlayerB2AAA7UEAAXXZ,
 	Player* pPlayer) {
 	PlayerEvent::ReSpawn(pPlayer);
@@ -404,7 +404,7 @@ THook2(_JS_PLAYERRESPAWN, void, MSSYM_B1QA7respawnB1AA6PlayerB2AAA7UEAAXXZ,
 	return;
 }
 
-// ÁÄÌìÏûÏ¢
+// èŠå¤©æ¶ˆæ¯
 THook2(_JS_ONCHAT, void,
 	MSSYM_MD5_ad251f2fd8c27eb22c0c01209e8df83c,
 	void* _this, std::string& player_name, std::string& target, std::string& msg, std::string& chat_style) {
@@ -423,7 +423,7 @@ THook2(_JS_ONCHAT, void,
 	original(_this, player_name, target, msg, chat_style);
 }
 
-// ÊäÈëÎÄ±¾
+// è¾“å…¥æ–‡æœ¬
 THook2(JS_ONINPUTTEXT, void,
 	MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkIdentifierB2AAE14AEBVTextPacketB3AAAA1Z,
 	VA _this, VA id, TextPacket* tp) {
@@ -433,7 +433,7 @@ THook2(JS_ONINPUTTEXT, void,
 }
 
 
-// ÊäÈëÖ¸Áî
+// è¾“å…¥æŒ‡ä»¤
 THook2(_JS_ONINPUTCOMMAND, void,
 	MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkIdentifierB2AAE24AEBVCommandRequestPacketB3AAAA1Z,
 	VA _this, VA id, CommandRequestPacket* crp) {
@@ -443,7 +443,7 @@ THook2(_JS_ONINPUTCOMMAND, void,
 }
 
 
-// Íæ¼Ò¼ÓÔØÃû×Ö
+// ç©å®¶åŠ è½½åå­—
 THook2(_JS_ONCREATEPLAYER, Player*,
 	MSSYM_B2QUE15createNewPlayerB1AE20ServerNetworkHandlerB2AAE20AEAAAEAVServerPlayerB2AAE21AEBVNetworkIdentifierB2AAE21AEBVConnectionRequestB3AAAA1Z,
 	VA a1, VA a2, VA** a3) {
@@ -455,7 +455,7 @@ THook2(_JS_ONCREATEPLAYER, Player*,
 }
 
 
-//Â©¶·µÄTick
+//æ¼æ–—çš„Tick
 THook(void,
 	MSSYM_B1QA4tickB1AE16HopperBlockActorB2AAE20UEAAXAEAVBlockSourceB3AAAA1Z,
 	BlockActor* _this, BlockSource* blocksource) {
@@ -468,7 +468,7 @@ THook(void,
 	}
 }
 
-//»îÈûÍÆ·½¿é
+//æ´»å¡æ¨æ–¹å—
 THook(bool,
 	MSSYM_B2QUE19attachedBlockWalkerB1AE16PistonBlockActorB2AAA4AEAAB1UE16NAEAVBlockSourceB2AAE12AEBVBlockPosB2AAA2EEB1AA1Z,
 	BlockActor* _this, BlockSource* a2, BlockPos* a3, unsigned __int8 a4, unsigned __int8 a5) {
@@ -478,7 +478,7 @@ THook(bool,
 	if (bid == -198 || bid == -196 || bid == 61 || bid == 23 || bid == 58 || bid == 125) {
 		return false;
 	}
-	if (bid == 54) {//ÍÆÏä×Ó
+	if (bid == 54) {//æ¨ç®±å­
 		if (LockBox::isLockBox(a3->getPosition()->toNormalString())) {
 			return false;
 		}
@@ -487,7 +487,7 @@ THook(bool,
 }
 //
 
-// Íæ¼ÒÀë¿ªÓÎÏ·
+// ç©å®¶ç¦»å¼€æ¸¸æˆ
 THook2(_JS_ONPLAYERLEFT, void,
 	MSSYM_B2QUE12onPlayerLeftB1AE20ServerNetworkHandlerB2AAE21AEAAXPEAVServerPlayerB3AAUA1NB1AA1Z,
 	VA _this, Player* pPlayer, char v3) {
@@ -499,7 +499,7 @@ THook2(_JS_ONPLAYERLEFT, void,
 	original(_this, pPlayer, v3);
 }
 
-// Íæ¼ÒÒÆ¶¯ĞÅÏ¢¹¹Öş
+// ç©å®¶ç§»åŠ¨ä¿¡æ¯æ„ç­‘
 THook2(_JS_ONMOVE, __int64,
 	MSSYM_B2QQE170MovePlayerPacketB2AAA4QEAAB1AE10AEAVPlayerB2AAE14W4PositionModeB1AA11B1AA2HHB1AA1Z,
 	void* _this, Player* pPlayer, char v3, int v4, int v5) {
@@ -513,7 +513,7 @@ THook2(_JS_ONMOVE, __int64,
 
 }
 
-// Íæ¼Ò¹¥»÷Ê±´¥·¢µ÷ÓÃ
+// ç©å®¶æ”»å‡»æ—¶è§¦å‘è°ƒç”¨
 THook2(_JS_ONATTACK, bool,
 	MSSYM_B1QA6attackB1AA6PlayerB2AAA4UEAAB1UE10NAEAVActorB3AAAA1Z,
 	Player* class_this, Actor* pactor) {
@@ -525,10 +525,10 @@ THook2(_JS_ONATTACK, bool,
 #pragma endregion
 
 void init() {
-	std::cout << u8"Init KWPlugin V1.0.7 Release (branch Master) FutureCraft Original" << std::endl << "For Minecraft Bedrock Edition 1.14.60.5" << std::endl << "Build: " << __DATE__ << " " << __TIME__ << endl << "Path: " << getLocalPath() << endl;
-	std::cout << u8"Copyright @Kengwang  All rights reserved" << std::endl;
+	std::cout << "Init KWPlugin V1.0.7 Release (branch Master) FutureCraft Original" << std::endl << "For Minecraft Bedrock Edition 1.14.60.5" << std::endl << "Build: " << __DATE__ << " " << __TIME__ << endl << "Path: " << getLocalPath() << endl;
+	std::cout << "Copyright @Kengwang  All rights reserved" << std::endl;
 	cout << "Loading Plugin Settings" << endl;
-	AdminGuild = CConfig::GetValueString("Settings", "Settings", "AdminGuild", u8"FutureCraft¹ÜÀíÔ±");
+	AdminGuild = CConfig::GetValueString("Settings", "Settings", "AdminGuild", "FutureCraftç®¡ç†å‘˜");
 	cout << "Plugin Settings Done! Have Fun~" << endl;
 }
 

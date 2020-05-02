@@ -18,7 +18,7 @@ public:
 				int rc = count / CConfig::GetValueInt("ChestShop", std::to_string(item->getId()), "count", 64);
 				int rprice = rc * price;
 				Economy::GivePlayerMoney(player->getRealNameTag(), rprice);
-				player->sendMsg("³É¹¦ÊÛ³ö " + item->getName() + " * " + std::to_string(item->getStackSize()) + " = " + std::to_string(rprice));
+				player->sendMsg("æˆåŠŸå”®å‡º " + item->getName() + " * " + std::to_string(item->getStackSize()) + " = " + std::to_string(rprice));
 				return 1;
 			}
 			else {
@@ -62,7 +62,7 @@ public:
 		if (id == "-1" || select == -1) return false;
 		int price = CConfig::GetValueInt("ChestShop", id, "buy", 0);
 		if (Economy::GetPlayerMoney(player->getRealNameTag()) < price) {
-			player->sendMsg("ÄúµÄÓà¶î²»×ãÒÔ¹ºÂò!");
+			player->sendMsg("æ‚¨çš„ä½™é¢ä¸è¶³ä»¥è´­ä¹°!");
 			return false;
 		}
 		Economy::RemovePlayerMoney(player->getRealNameTag(),price);

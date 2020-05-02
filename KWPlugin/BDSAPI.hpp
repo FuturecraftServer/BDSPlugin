@@ -12,7 +12,7 @@ static VA p_spscqueue;
 static VA ServerNetworkHandler;
 static string AdminGuild;
 
-//UTF-8 ×ª GBK
+//UTF-8 è½¬ GBK
 static std::string UTF8ToGBK(const char* strUTF8)
 {
 	int len = MultiByteToWideChar(CP_UTF8, 0, strUTF8, -1, NULL, 0);
@@ -29,7 +29,7 @@ static std::string UTF8ToGBK(const char* strUTF8)
 	return strTemp;
 }
 
-// Ö´ĞĞºó¶ËÖ¸Áî
+// æ‰§è¡Œåç«¯æŒ‡ä»¤
 static bool runcmd(std::string cmd) {
 	if (p_spscqueue != 0) {
 		return SYMCALL(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e, p_spscqueue, cmd);
@@ -46,37 +46,37 @@ static void changeMOTD(std::string motd) {
 
 
 /* Color Code */
-const string TEXTFORMATE_BLACK = "¡ì0";
-const string TEXTFORMATE_DARKBLUE = "¡ì1";
-const string TEXTFORMATE_DARKGREEN = "¡ì2";
-const string TEXTFORMATE_DARKAQUA = "¡ì3";
-const string TEXTFORMATE_DARKRED = "¡ì4";
-const string TEXTFORMATE_DARKPURPLE = "¡ì5";
-const string TEXTFORMATE_GLOD = "¡ì6";
-const string TEXTFORMATE_GREY = "¡ì7";
-const string TEXTFORMATE_DARKGREY = "¡ì8";
-const string TEXTFORMATE_BLUE = "¡ì9";
-const string TEXTFORMATE_GREEN = "¡ìa";
-const string TEXTFORMATE_AUQA = "¡ìb";
-const string TEXTFORMATE_RED = "¡ìc";
-const string TEXTFORMATE_LIGHTPURPLE = "¡ìd";
-const string TEXTFORMATE_YELLOW = "¡ìe";
-const string TEXTFORMATE_WHITE = "¡ìf";
+const string TEXTFORMATE_BLACK = "Â§0";
+const string TEXTFORMATE_DARKBLUE = "Â§1";
+const string TEXTFORMATE_DARKGREEN = "Â§2";
+const string TEXTFORMATE_DARKAQUA = "Â§3";
+const string TEXTFORMATE_DARKRED = "Â§4";
+const string TEXTFORMATE_DARKPURPLE = "Â§5";
+const string TEXTFORMATE_GLOD = "Â§6";
+const string TEXTFORMATE_GREY = "Â§7";
+const string TEXTFORMATE_DARKGREY = "Â§8";
+const string TEXTFORMATE_BLUE = "Â§9";
+const string TEXTFORMATE_GREEN = "Â§a";
+const string TEXTFORMATE_AUQA = "Â§b";
+const string TEXTFORMATE_RED = "Â§c";
+const string TEXTFORMATE_LIGHTPURPLE = "Â§d";
+const string TEXTFORMATE_YELLOW = "Â§e";
+const string TEXTFORMATE_WHITE = "Â§f";
 
 /* Format Code */
-const string TEXTFORMATE_RANDOM = "¡ìk";
-const string TEXTFORMATE_BOLD = "¡ìl";
-const string TEXTFORMATE_DELETELINE = "¡ìm";
-const string TEXTFORMATE_UNDERLINE = "¡ìn";
-const string TEXTFORMATE_ITALY = "¡ìo";
-const string TEXTFORMATE_RESET = "¡ìr";
+const string TEXTFORMATE_RANDOM = "Â§k";
+const string TEXTFORMATE_BOLD = "Â§l";
+const string TEXTFORMATE_DELETELINE = "Â§m";
+const string TEXTFORMATE_UNDERLINE = "Â§n";
+const string TEXTFORMATE_ITALY = "Â§o";
+const string TEXTFORMATE_RESET = "Â§r";
 const string TEXTFORMATE_NEWLINE = "\\n";
 
 std::string static stringToUTF8(const std::string& str)
 {
 	int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
 
-	wchar_t* pwBuf = new wchar_t[nwLen + 1];//Ò»¶¨Òª¼Ó1£¬²»È»»á³öÏÖÎ²°Í 
+	wchar_t* pwBuf = new wchar_t[nwLen + 1];//ä¸€å®šè¦åŠ 1ï¼Œä¸ç„¶ä¼šå‡ºç°å°¾å·´ 
 	ZeroMemory(pwBuf, nwLen * 2 + 2);
 
 	::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
@@ -133,7 +133,7 @@ struct MinecraftCommands {
 	}
 };
 
-// ·½¿é×ø±ê½á¹¹Ìå
+// æ–¹å—åæ ‡ç»“æ„ä½“
 struct BPos3 {
 	INT32 x;
 	INT32 y;
@@ -152,11 +152,11 @@ struct BPos3 {
 };
 
 struct BlockLegacy {
-	// »ñÈ¡·½¿éÃû
+	// è·å–æ–¹å—å
 	auto getFullName() const {				// IDA BlockLegacy::~BlockLegacy
 		return (std::string&) * (__int64*)((__int64)this + 104);
 	}
-	// »ñÈ¡·½¿éIDºÅ
+	// è·å–æ–¹å—IDå·
 	auto getBlockItemID() const {
 		return SYMCALL(short,
 			MSSYM_B1QE14getBlockItemIdB1AE11BlockLegacyB2AAA7QEBAFXZ,
@@ -165,14 +165,14 @@ struct BlockLegacy {
 };
 
 struct BlockPos {
-	// »ñÈ¡×ø±êÊı×éÍ·
+	// è·å–åæ ‡æ•°ç»„å¤´
 	BPos3* getPosition() const {
 		return reinterpret_cast<BPos3*>(reinterpret_cast<VA>(this));
 	}
 };
 
 struct Block {
-	// »ñÈ¡Ô´
+	// è·å–æº
 	const BlockLegacy* getLegacyBlock() const {
 		return SYMCALL(const BlockLegacy*,
 			MSSYM_B1QE14getLegacyBlockB1AA5BlockB2AAE19QEBAAEBVBlockLegacyB2AAA2XZ,
@@ -181,11 +181,11 @@ struct Block {
 };
 
 struct BlockActor {
-	// È¡·½¿é
+	// å–æ–¹å—
 	Block* getBlock() {
 		return *reinterpret_cast<Block**>(reinterpret_cast<VA>(this) + 16);
 	}
-	// È¡·½¿éÎ»ÖÃ
+	// å–æ–¹å—ä½ç½®
 	BlockPos* getPosition() {				// IDA BlockActor::BlockActor
 		return reinterpret_cast<BlockPos*>(reinterpret_cast<VA>(this) + 44);
 	}
@@ -193,7 +193,7 @@ struct BlockActor {
 
 
 struct BlockSource {
-	// È¡·½¿é
+	// å–æ–¹å—
 	Block* getBlock(const BlockPos* blkpos) {
 		return SYMCALL(Block*,
 			MSSYM_B1QA8getBlockB1AE11BlockSourceB2AAE13QEBAAEBVBlockB2AAE12AEBVBlockPosB3AAAA1Z,
@@ -227,7 +227,7 @@ struct ChestBlockActor :BlockActor {
 };
 
 struct MCUUID {
-	// È¡uuid×Ö·û´®
+	// å–uuidå­—ç¬¦ä¸²
 	std::string toString() {
 		std::string s;
 		SYMCALL(std::string&, MSSYM_MD5_40e8abf6eb08f7ee446159cdd0a7f283, this, &s);
@@ -235,7 +235,7 @@ struct MCUUID {
 	}
 };
 
-// Íæ¼Ò×ø±ê½á¹¹Ìå
+// ç©å®¶åæ ‡ç»“æ„ä½“
 struct Vec3 {
 	float x;
 	float y;
@@ -260,12 +260,12 @@ struct ActorUniqueID {
 };
 
 struct Actor {
-	// È¡·½¿éÔ´
+	// å–æ–¹å—æº
 	BlockSource* getRegion() {
 		return *reinterpret_cast<BlockSource**>(reinterpret_cast<VA>(this) + 414 * sizeof(void*));
 	}
 
-	// »ñÈ¡ÉúÎïÃû³ÆĞÅÏ¢
+	// è·å–ç”Ÿç‰©åç§°ä¿¡æ¯
 	std::string getNameTag() {
 		return SYMCALL(std::string&,
 			MSSYM_MD5_7044ab83168b0fd345329e6566fd47fd,
@@ -273,7 +273,7 @@ struct Actor {
 		//return ;
 	}
 
-	// »ñÈ¡ÉúÎïµ±Ç°Ëù´¦Î¬¶ÈID
+	// è·å–ç”Ÿç‰©å½“å‰æ‰€å¤„ç»´åº¦ID
 	int getDimensionId() {
 		int dimensionId;
 		SYMCALL(int&,
@@ -282,18 +282,18 @@ struct Actor {
 		return dimensionId;
 	}
 
-	// ÊÇ·ñĞü¿Õ
+	// æ˜¯å¦æ‚¬ç©º
 	const BYTE isStand() {				// IDA MovePlayerPacket::MovePlayerPacket
 		return *reinterpret_cast<BYTE*>(reinterpret_cast<VA>(this) + 376);
 	}
 
-	// »ñÈ¡ÉúÎïµ±Ç°ËùÔÚ×ø±ê
+	// è·å–ç”Ÿç‰©å½“å‰æ‰€åœ¨åæ ‡
 	Vec3* getPos() {
 		return SYMCALL(Vec3*,
 			MSSYM_B1QA6getPosB1AA5ActorB2AAE12UEBAAEBVVec3B2AAA2XZ, this);
 	}
 
-	// »ñÈ¡ÉúÎïÀàĞÍ
+	// è·å–ç”Ÿç‰©ç±»å‹
 	std::string getTypeName() {
 		std::string actor_typename;
 		SYMCALL(std::string&,
@@ -302,16 +302,16 @@ struct Actor {
 		return actor_typename;
 	}
 
-	// »ñÈ¡ÊµÌåÀàĞÍ
+	// è·å–å®ä½“ç±»å‹
 	int getEntityTypeId() {
 		return SYMCALL(int,
 			MSSYM_B1QE15getEntityTypeIdB1AA5ActorB2AAA4UEBAB1QE12AW4ActorTypeB2AAA2XZ,
 			this);
-		//		if (t == 1)		// Î´ÖªÀàĞÍ£¬¿ÉÄÜÊÇÍæ¼Ò
+		//		if (t == 1)		// æœªçŸ¥ç±»å‹ï¼Œå¯èƒ½æ˜¯ç©å®¶
 		//			return 319;
 	}
 
-	// »ñÈ¡ÊµÌåÃû³Æ
+	// è·å–å®ä½“åç§°
 	std::string getEntityTypeName() {
 		std::string en_name;
 		SYMCALL(std::string&,
@@ -320,7 +320,7 @@ struct Actor {
 		return en_name;
 	}
 
-	// »ñÈ¡UniqueId
+	// è·å–UniqueId
 	ActorUniqueID getUniqueID() {
 		return SYMCALL(ActorUniqueID,
 			MSSYM_B1QE11getUniqueIDB1AA5ActorB2AAE21QEBAAEBUActorUniqueIDB2AAA2XZ,
@@ -333,7 +333,7 @@ struct Mob : Actor {
 
 struct Item {
 
-	// È¡ÎïÆ·Ãû³Æ
+	// å–ç‰©å“åç§°
 	std::string getName() {
 		std::string str;
 		SYMCALL(__int64,
@@ -364,7 +364,7 @@ struct ItemStack {
 		return str;
 	}
 
-	// È¡ÎïÆ·ID
+	// å–ç‰©å“ID
 	short getId() {
 		return SYMCALL(short,
 			MSSYM_B1QA5getIdB1AE13ItemStackBaseB2AAA7QEBAFXZ,
@@ -378,13 +378,13 @@ struct ItemStack {
 	}
 
 
-	// È¡ÎïÆ·ÌØÊâÖµ
+	// å–ç‰©å“ç‰¹æ®Šå€¼
 	short getAuxValue() {
 		return SYMCALL(short,
 			MSSYM_B1QE11getAuxValueB1AE13ItemStackBaseB2AAA7QEBAFXZ,
 			this);
 	}
-	// È¡ÎïÆ·Ãû³Æ
+	// å–ç‰©å“åç§°
 	std::string getName() {
 		std::string str;
 		SYMCALL(__int64,
@@ -392,13 +392,13 @@ struct ItemStack {
 			this, &str);
 		return str;
 	}
-	// È¡ÈİÆ÷ÄÚÊıÁ¿
+	// å–å®¹å™¨å†…æ•°é‡
 	int getStackSize() {
 		return SYMCALL(int,
 			MSSYM_B1QA8getCountB1AE18ContainerItemStackB2AAA7QEBAHXZ,
 			this);
 	}
-	// ÅĞ¶ÏÊÇ·ñ¿ÕÈİÆ÷
+	// åˆ¤æ–­æ˜¯å¦ç©ºå®¹å™¨
 	bool isNull() {
 		return SYMCALL(bool,
 			MSSYM_B1QA6isNullB1AE13ItemStackBaseB2AAA4QEBAB1UA3NXZ,
@@ -417,7 +417,7 @@ static void dummy() {
 static void* FAKE_PORGVTBL[26];
 struct Player : Actor {
 
-	//¿ç·ş´«ËÍ
+	//è·¨æœä¼ é€
 	void transferServer(std::string server, int port) {
 		WBStream ws;
 		ws.apply(VarUInt(server.size()));
@@ -437,12 +437,12 @@ struct Player : Actor {
 		return true;
 	}
 
-	// È¡uuid
+	// å–uuid
 	MCUUID* getUuid() {				// IDA ServerNetworkHandler::_createNewPlayer
 		return (MCUUID*)((char*)this + 3192);
 	}
 
-	// ¸ù¾İµØÍ¼ĞÅÏ¢»ñÈ¡Íæ¼Òxuid
+	// æ ¹æ®åœ°å›¾ä¿¡æ¯è·å–ç©å®¶xuid
 	std::string& getXuid(VA level) {
 		return SYMCALL(std::string&, MSSYM_MD5_337bfad553c289ba4656ac43dcb60748,
 			level, (char*)this + 3192);
@@ -464,13 +464,13 @@ struct Player : Actor {
 	void sendMsg(std::string msg) {
 		msg = replace_all_distinct(msg, "\\", "\\\\");
 		msg = replace_all_distinct(msg, "\"", "\\\"");
-		msg = stringToUTF8(msg);
+		//msg = stringToUTF8(msg);
 		runcmd("tellraw " + this->getRealNameTag() + " { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");
 	}
 
 
 
-	//ÒÔÍæ¼ÒÈ¨ÏŞÖ´ĞĞÃüÁî - ²Î¿¼ BDX
+	//ä»¥ç©å®¶æƒé™æ‰§è¡Œå‘½ä»¤ - å‚è€ƒ BDX
 
 	bool runcmdAs(string cmd) {
 		void** filler[5];
@@ -485,7 +485,7 @@ struct Player : Actor {
 		return MinecraftCommands::_runcmd(filler, cmd, 4, 1);
 	}
 
-	// ÖØÉè·şÎñÆ÷Íæ¼ÒÃû
+	// é‡è®¾æœåŠ¡å™¨ç©å®¶å
 	void reName(std::string name) {
 		SYMCALL(void, MSSYM_B1QA7setNameB1AA6PlayerB2AAA9UEAAXAEBVB2QDA5basicB1UA6stringB1AA2DUB2QDA4charB1UA6traitsB1AA1DB1AA3stdB2AAA1VB2QDA9allocatorB1AA1DB1AA12B2AAA3stdB3AAAA1Z,
 			this, name);
@@ -499,7 +499,7 @@ struct ContainerItemStack
 };
 
 struct ContainerManagerModel {
-	// È¡¿ªÈİÕß
+	// å–å¼€å®¹è€…
 	Player* getPlayer() {				// IDA ContainerManagerModel::ContainerManagerModel
 		return *reinterpret_cast<Player**>(reinterpret_cast<VA>(this) + 8);
 	}
@@ -509,7 +509,7 @@ struct LevelContainerManagerModel
 };
 
 struct TextPacket {
-	// È¡ÊäÈëÎÄ±¾
+	// å–è¾“å…¥æ–‡æœ¬
 	std::string toString() {			// IDA ServerNetworkHandler::handle
 		std::string str = std::string(*(std::string*)((VA)this + 80));
 		return str;
@@ -517,7 +517,7 @@ struct TextPacket {
 };
 
 struct CommandRequestPacket {
-	// È¡ÃüÁîÎÄ±¾
+	// å–å‘½ä»¤æ–‡æœ¬
 	std::string toString() {			// IDA ServerNetworkHandler::handle
 		std::string str = std::string(*(std::string*)((VA)this + 40));
 		return str;
@@ -525,11 +525,11 @@ struct CommandRequestPacket {
 };
 
 struct ModalFormResponsePacket {
-	// È¡·¢Æğ±íµ¥ID
+	// å–å‘èµ·è¡¨å•ID
 	UINT getFormId() {
 		return *(UINT*)((VA)this + 40);
 	}
-	// È¡Ñ¡ÔñĞòºÅ
+	// å–é€‰æ‹©åºå·
 	std::string getSelectStr() {
 		std::string x = *(std::string*)((VA)this + 48);
 		int l = x.length();

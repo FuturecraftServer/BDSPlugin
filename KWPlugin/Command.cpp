@@ -64,99 +64,99 @@ public:
 
 	bool static ProcessCommand(vector<string> param, Player* player) {
 		if (param[0] == "/money" && param.size() == 1) {
-			player->sendMsg("ÄãµÄÓà¶îÎª: ¡ìl¡ìa" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
+			player->sendMsg("ä½ çš„ä½™é¢ä¸º: Â§lÂ§a" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
 		}
 		else if (param[0] == "money") {
 			if (param.size() == 2) {
-				cout << u8"ËûµÄÓà¶îÎª: " << intToString(Economy::GetPlayerMoney(param[1])) << endl;
+				cout << "ä»–çš„ä½™é¢ä¸º: " << intToString(Economy::GetPlayerMoney(param[1])) << endl;
 			}
 			else {
-				cout << u8"ÓÃ·¨: /money <Íæ¼ÒÃû>" << endl;
+				cout << "ç”¨æ³•: /money <ç©å®¶å>" << endl;
 			}
 		}
 		else if (param[0] == "/pay") {
 			if (param.size() != 3) {
-				player->sendMsg("ÓÃ·¨: /pay <Íæ¼ÒÃû> <½ğ¶î>");
+				player->sendMsg("ç”¨æ³•: /pay <ç©å®¶å> <é‡‘é¢>");
 				return true;
 			}
 			int willgive = atoi(param[2].c_str());
 			if (Economy::GetPlayerMoney(player->getRealNameTag()) < willgive && !isAdmin(player)) {
-				player->sendMsg("ÄãµÄÓà¶îÎª: ¡ìl¡ìc" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
-				player->sendMsg("²»×ãÒÔÖ§¸¶ ¡ìl¡ìc" + param[2]);
+				player->sendMsg("ä½ çš„ä½™é¢ä¸º: Â§lÂ§c" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
+				player->sendMsg("ä¸è¶³ä»¥æ”¯ä»˜ Â§lÂ§c" + param[2]);
 			}
 			else {
 				if (willgive <= 0) {
-					player->sendMsg("½ğ¶îÊäÈëÓĞÎó " + param[2]);
+					player->sendMsg("é‡‘é¢è¾“å…¥æœ‰è¯¯ " + param[2]);
 					return true;
 				}
 				Economy::GivePlayerMoney(param[1], willgive);
 				if (!isAdmin(player)) {
 					Economy::RemovePlayerMoney(player->getRealNameTag(), willgive);
 				}
-				player->sendMsg("³É¹¦¸ø ¡ìa¡ìl" + param[1] + " ¡ìr½ğ¶î ¡ìa¡ìl" + param[2]);
-				player->sendMsg("ÄãµÄÓà¶îÎª: ¡ìl¡ìa" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
+				player->sendMsg("æˆåŠŸç»™ Â§aÂ§l" + param[1] + " Â§ré‡‘é¢ Â§aÂ§l" + param[2]);
+				player->sendMsg("ä½ çš„ä½™é¢ä¸º: Â§lÂ§a" + intToString(Economy::GetPlayerMoney(player->getRealNameTag())));
 				string sendoutuuid = NametoUuid[param[1]];
-				if (sendoutuuid != "") {//Íæ¼ÒÔÚÏß
-					onlinePlayers[sendoutuuid]->sendMsg("Íæ¼Ò: " + player->getRealNameTag() + " ¸øÄã×ªÕË ¡ìl¡ìa" + param[2]);
-					onlinePlayers[sendoutuuid]->sendMsg("Äãµ±Ç°Óà¶îÎª: ¡ìl¡ìa" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getRealNameTag())));
+				if (sendoutuuid != "") {//ç©å®¶åœ¨çº¿
+					onlinePlayers[sendoutuuid]->sendMsg("ç©å®¶: " + player->getRealNameTag() + " ç»™ä½ è½¬è´¦ Â§lÂ§a" + param[2]);
+					onlinePlayers[sendoutuuid]->sendMsg("ä½ å½“å‰ä½™é¢ä¸º: Â§lÂ§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getRealNameTag())));
 				}
 			}
 		}
 
 		else if (param[0] == "/tpa") {
 			if (param.size() != 2) {
-				player->sendMsg("ÓÃ·¨: /tpa <Íæ¼ÒÃû>");
+				player->sendMsg("ç”¨æ³•: /tpa <ç©å®¶å>");
 				return true;
 			}
 			if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("TPA")) {
 				string sendoutuuid = NametoUuid[param[1]];
-				if (sendoutuuid != "") {//Íæ¼ÒÔÚÏß
+				if (sendoutuuid != "") {//ç©å®¶åœ¨çº¿
 					CConfig::SetValueString("TPA", param[1], "from", player->getRealNameTag());
 					CConfig::SetValueString("TPA", param[1], "time", intToString(time(NULL)));
-					onlinePlayers[sendoutuuid]->sendMsg("Íæ¼Ò: " + player->getRealNameTag() + " ÇëÇótpaµ½ÄãÕâÀï ¡ìl¡ìa");
-					onlinePlayers[sendoutuuid]->sendMsg("ÊäÈë ¡ìl¡ìa/tpayes ¡ìr¼´¿ÉÍ¬ÒâÇëÇó");
-					onlinePlayers[sendoutuuid]->sendMsg("ÊäÈë ¡ìl¡ìc/tpano ¡ìr¼´¿É²»Í¬ÒâÇëÇó");
-					onlinePlayers[sendoutuuid]->sendMsg("¸ÃÇëÇó ¡ìl¡ìa60Ãë ¡ìrºó¹ıÆÚ,µ½Ê±ºò¿ÉÒÔºöÂÔ");
-					player->sendMsg("·¢ËÍÇëÇó¡ìl¡ìa³É¹¦!¡ìrÔÚ60ÃëÄÚ¶Ô·½¿ÉÒÔ½ÓÊÜÄãµÄÇëÇó");
+					onlinePlayers[sendoutuuid]->sendMsg("ç©å®¶: " + player->getRealNameTag() + " è¯·æ±‚tpaåˆ°ä½ è¿™é‡Œ Â§lÂ§a");
+					onlinePlayers[sendoutuuid]->sendMsg("è¾“å…¥ Â§lÂ§a/tpayes Â§rå³å¯åŒæ„è¯·æ±‚");
+					onlinePlayers[sendoutuuid]->sendMsg("è¾“å…¥ Â§lÂ§c/tpano Â§rå³å¯ä¸åŒæ„è¯·æ±‚");
+					onlinePlayers[sendoutuuid]->sendMsg("è¯¥è¯·æ±‚ Â§lÂ§a60ç§’ Â§råè¿‡æœŸ,åˆ°æ—¶å€™å¯ä»¥å¿½ç•¥");
+					player->sendMsg("å‘é€è¯·æ±‚Â§lÂ§aæˆåŠŸ!Â§råœ¨60ç§’å†…å¯¹æ–¹å¯ä»¥æ¥å—ä½ çš„è¯·æ±‚");
 				}
 				else {
-					player->sendMsg("Íæ¼Ò: " + param[1] + " ²»ÔÚÏß!");
+					player->sendMsg("ç©å®¶: " + param[1] + " ä¸åœ¨çº¿!");
 					return true;
 				}
 			}
 			else {
-				player->sendMsg("ÄãµÄÓà¶î²»×ãÒÔÊ¹ÓÃtpa");
+				player->sendMsg("ä½ çš„ä½™é¢ä¸è¶³ä»¥ä½¿ç”¨tpa");
 			}
 		}
 		else if (param[0] == "/tpayes") {
 			if (atoi(CConfig::GetValueString("TPA", player->getRealNameTag(), "time", "NaN").c_str()) < time(NULL) - 61)
 			{
-				player->sendMsg("¡ìl¡ìcËùÓĞÇëÇóÒÑ¹ıÆÚ!");
+				player->sendMsg("Â§lÂ§cæ‰€æœ‰è¯·æ±‚å·²è¿‡æœŸ!");
 				return true;
 			}
 			string from = CConfig::GetValueString("TPA", player->getRealNameTag(), "from", "");
 			string sendoutuuid = NametoUuid[from];
-			if (sendoutuuid != "") {//Íæ¼ÒÔÚÏß
+			if (sendoutuuid != "") {//ç©å®¶åœ¨çº¿
 				CConfig::SetValueString("TPA", player->getRealNameTag(), "time", intToString(0));
 				runcmd("tp " + from + " " + player->getRealNameTag());
 				Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("TPA"));
-				onlinePlayers[sendoutuuid]->sendMsg("³É¹¦TPAµ½" + player->getRealNameTag());
-				player->sendMsg("Íæ¼Ò " + from + " ÒÑ³É¹¦TPAµ½´Ë´¦");
+				onlinePlayers[sendoutuuid]->sendMsg("æˆåŠŸTPAåˆ°" + player->getRealNameTag());
+				player->sendMsg("ç©å®¶ " + from + " å·²æˆåŠŸTPAåˆ°æ­¤å¤„");
 			}
 			else {
-				player->sendMsg("¡ìl¡ìcÇëÇó·¢ÆğÕßÒÑÏÂÏß!");
+				player->sendMsg("Â§lÂ§cè¯·æ±‚å‘èµ·è€…å·²ä¸‹çº¿!");
 			}
 		}
 		else if (param[0] == "/tpano") {
 			string from = CConfig::GetValueString("TPA", player->getRealNameTag(), "from", "");
 			string sendoutuuid = NametoUuid[from];
-			if (sendoutuuid != "") {//Íæ¼ÒÔÚÏß
+			if (sendoutuuid != "") {//ç©å®¶åœ¨çº¿
 				CConfig::SetValueString("TPA", player->getRealNameTag(), "time", intToString(0));
-				onlinePlayers[sendoutuuid]->sendMsg("Íæ¼Ò: " + player->getRealNameTag() + " ¾Ü¾øÁËÄãµÄTPAÇëÇó");
-				player->sendMsg("³É¹¦¾Ü¾ø " + from + " µÄTPAÇëÇó");
+				onlinePlayers[sendoutuuid]->sendMsg("ç©å®¶: " + player->getRealNameTag() + " æ‹’ç»äº†ä½ çš„TPAè¯·æ±‚");
+				player->sendMsg("æˆåŠŸæ‹’ç» " + from + " çš„TPAè¯·æ±‚");
 			}
 			else {
-				player->sendMsg("¡ìl¡ìcÇëÇó·¢ÆğÕßÒÑÏÂÏß!");
+				player->sendMsg("Â§lÂ§cè¯·æ±‚å‘èµ·è€…å·²ä¸‹çº¿!");
 			}
 		}
 
@@ -164,45 +164,45 @@ public:
 			if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("LockBox")) {
 				Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("LockBox"));
 				LockBox::RequestLockBox(player->getRealNameTag());
-				player->sendMsg("Çëµã»÷ÒªËøµÄÏä×Ó!");
+				player->sendMsg("è¯·ç‚¹å‡»è¦é”çš„ç®±å­!");
 			}
 			else {
-				player->sendMsg("ÄãµÄÓà¶î²»×ã!");
+				player->sendMsg("ä½ çš„ä½™é¢ä¸è¶³!");
 			}
 		}
 		else if (param[0] == "/unlockbox") {
 			LockBox::RequestUnLockBox(player->getRealNameTag());
-			player->sendMsg("Çëµã»÷Òª½âËøµÄÏä×Ó!");
+			player->sendMsg("è¯·ç‚¹å‡»è¦è§£é”çš„ç®±å­!");
 		}
 		else if (param[0] == "/g") {
 			if (param[1] == "join") {
 				if (Guild::isInGuild(player->getRealNameTag())) {
-					player->sendMsg("Äãµ±Ç°ÒÑÔÚ¹«»áÖĞ, ÊäÈë /g exit À´ÍË³öµ±Ç°¹«»á");
+					player->sendMsg("ä½ å½“å‰å·²åœ¨å…¬ä¼šä¸­, è¾“å…¥ /g exit æ¥é€€å‡ºå½“å‰å…¬ä¼š");
 					return true;
 				}
 				if (param.size() == 3) {
 					if (Guild::isGuildSet(param[2])) {
 						Guild::RequestJoin(param[2], player->getRealNameTag());
 						string sendoutuuid = NametoUuid[Guild::GetAdmin(param[2])];
-						if (sendoutuuid != "") {//Íæ¼ÒÔÚÏß						
-							onlinePlayers[sendoutuuid]->sendMsg("Íæ¼Ò: " + player->getRealNameTag() + " ÇëÇó¼ÓÈë¹«»á " + param[2]);
-							onlinePlayers[sendoutuuid]->sendMsg("ÊäÈë ¡ìl¡ìa/g accept ¡ìr¼´¿ÉÍ¬ÒâÇëÇó");
-							player->sendMsg("³É¹¦·¢ËÍÇëÇó¸ø¹«»á¹ÜÀíÔ±!");
+						if (sendoutuuid != "") {//ç©å®¶åœ¨çº¿						
+							onlinePlayers[sendoutuuid]->sendMsg("ç©å®¶: " + player->getRealNameTag() + " è¯·æ±‚åŠ å…¥å…¬ä¼š " + param[2]);
+							onlinePlayers[sendoutuuid]->sendMsg("è¾“å…¥ Â§lÂ§a/g accept Â§rå³å¯åŒæ„è¯·æ±‚");
+							player->sendMsg("æˆåŠŸå‘é€è¯·æ±‚ç»™å…¬ä¼šç®¡ç†å‘˜!");
 							return true;
 
 						}
 						else {
-							player->sendMsg("¡ìl¡ìc¹«»á¹ÜÀíÔ±ÒÑÏÂÏß! ÔÚÏßºó¿ÉÍ¨¹ı ¡ìl¡ìa/g accept ¡ìrÍ¬ÒâÇëÇó");
+							player->sendMsg("Â§lÂ§cå…¬ä¼šç®¡ç†å‘˜å·²ä¸‹çº¿! åœ¨çº¿åå¯é€šè¿‡ Â§lÂ§a/g accept Â§råŒæ„è¯·æ±‚");
 							return true;
 
 						}
 					}
 					else {
-						player->sendMsg("¹«»á²»´æÔÚ!");
+						player->sendMsg("å…¬ä¼šä¸å­˜åœ¨!");
 					}
 				}
 				else {
-					player->sendMsg("ÓÃ·¨: /g join <¹«»áÃû>");
+					player->sendMsg("ç”¨æ³•: /g join <å…¬ä¼šå>");
 				}
 			}
 			if (param[1] == "accept") {
@@ -210,8 +210,8 @@ public:
 			}
 			if (param[1] == "create") {
 				if (Guild::isInGuild(player->getRealNameTag())) {
-					player->sendMsg("ÄãÒÑ¾­ÔÚ¹«»áÁË!");
-					player->sendMsg("¿ÉÒÔÊäÈë /g exit À´ÍË³öµ±Ç°¹«»á");
+					player->sendMsg("ä½ å·²ç»åœ¨å…¬ä¼šäº†!");
+					player->sendMsg("å¯ä»¥è¾“å…¥ /g exit æ¥é€€å‡ºå½“å‰å…¬ä¼š");
 				}
 				else {
 					if (param.size() == 3) {
@@ -219,19 +219,19 @@ public:
 							if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("CreateGuild")) {
 								Guild::CreateGuild(param[2], player->getRealNameTag());
 								Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("CreateGuild"));
-								player->sendMsg("³É¹¦´´½¨¹«»á!");
+								player->sendMsg("æˆåŠŸåˆ›å»ºå…¬ä¼š!");
 							}
 							else {
-								player->sendMsg("ÄãµÄÓà¶î²»×ã!");
+								player->sendMsg("ä½ çš„ä½™é¢ä¸è¶³!");
 							}
 						}
 						else
 						{
-							player->sendMsg("¸Ã¹«»áÒÑ³ÉÁ¢");
+							player->sendMsg("è¯¥å…¬ä¼šå·²æˆç«‹");
 						}
 					}
 					else {
-						player->sendMsg("ÓÃ·¨: /g create <¹«»áÃû> ");
+						player->sendMsg("ç”¨æ³•: /g create <å…¬ä¼šå> ");
 					}
 				}
 			}
@@ -244,69 +244,69 @@ public:
 			if (param[1] == "member") {
 				if (Guild::isInGuild(player->getRealNameTag())) {
 					string guild = Guild::PlayerInWhich(player->getRealNameTag());
-					player->sendMsg(guild + " ³ÉÔ±ÓĞ:");
+					player->sendMsg(guild + " æˆå‘˜æœ‰:");
 					player->sendMsg(Guild::GetPlayers(guild));
 				}
 				else {
-					player->sendMsg("Äã»¹Î´¼ÓÈë»ò´´½¨¹«»á");
+					player->sendMsg("ä½ è¿˜æœªåŠ å…¥æˆ–åˆ›å»ºå…¬ä¼š");
 				}
 			}
 		}
 		else if (param[0] == "/chunck" && isAdmin(player)) {
-			player->sendMsg("µ±Ç°ÔÚ " + Land::PlayerChunckId(player->getPos()));
+			player->sendMsg("å½“å‰åœ¨ " + Land::PlayerChunckId(player->getPos()));
 		}
 		else if (param[0] == "/l") {
 			if (param[1] == "buy") {
 				if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("BuyLand")) {
 					if (Land::isLandOwned(Land::PlayerChunckId(player->getPos()))) {
-						player->sendMsg("ÁìµØÒÑ±»¹ºÂò! Äã¿ÉÒÔÊäÈë ¡ìa/l info¡ìr ²é¿´ÏêÏ¸ĞÅÏ¢");
+						player->sendMsg("é¢†åœ°å·²è¢«è´­ä¹°! ä½ å¯ä»¥è¾“å…¥ Â§a/l infoÂ§r æŸ¥çœ‹è¯¦ç»†ä¿¡æ¯");
 					}
 					else {
 						if (Guild::isInGuild(player->getNameTag())) {
 							Land::GiveLand(Land::PlayerChunckId(player->getPos()), Guild::getPlayerGuildName(player->getRealNameTag()));
 							Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("BuyLand"));
-							player->sendMsg("ÄúÒÑ³É¹¦¹ºÂòÁìµØ! ÁìµØ±àºÅ" + Land::PlayerChunckId(player->getPos()));
+							player->sendMsg("æ‚¨å·²æˆåŠŸè´­ä¹°é¢†åœ°! é¢†åœ°ç¼–å·" + Land::PlayerChunckId(player->getPos()));
 						}
 						else {
-							player->sendMsg("Äã»¹Î´¼ÓÈë¹«»á,ÇëÏÈ´´½¨»ò¼ÓÈëÒ»¸ö¹«»á");
+							player->sendMsg("ä½ è¿˜æœªåŠ å…¥å…¬ä¼š,è¯·å…ˆåˆ›å»ºæˆ–åŠ å…¥ä¸€ä¸ªå…¬ä¼š");
 						}
 					}
 				}
 				else {
-					player->sendMsg("ÄãµÄÓà¶î²»×ãÒÔ¹ºÂò!");
+					player->sendMsg("ä½ çš„ä½™é¢ä¸è¶³ä»¥è´­ä¹°!");
 				}
 			}
 			if (param[1] == "info") {
 				if (!Land::isLandOwned(Land::PlayerChunckId(player->getPos()))) {
-					player->sendMsg("µ±Ç°ÁìµØÔİÎ´±»¹ºÂò ÊäÈë ¡ìa/l buy¡ìr ¹ºÂò´ËÁìµØ");
+					player->sendMsg("å½“å‰é¢†åœ°æš‚æœªè¢«è´­ä¹° è¾“å…¥ Â§a/l buyÂ§r è´­ä¹°æ­¤é¢†åœ°");
 				}
 				else {
 					string chuck = Land::PlayerChunckId(player->getPos());
-					player->sendMsg("ÁìµØ±àºÅ: " + chuck);
-					player->sendMsg("ÁìµØÃû³Æ: " + Land::getLandName(chuck) == u8"Î´ÃüÃûÁìµØ" ? "Î´ÃüÃûÁìµØ" : Land::getLandName(chuck));
-					player->sendMsg("ÁìµØ¹«»á: " + Land::getLandOwner(chuck));
+					player->sendMsg("é¢†åœ°ç¼–å·: " + chuck);
+					player->sendMsg("é¢†åœ°åç§°: " + Land::getLandName(chuck));
+					player->sendMsg("é¢†åœ°å…¬ä¼š: " + Land::getLandOwner(chuck));
 				}
 			}
 			if (param[1] == "name") {
 				string chunck = Land::PlayerChunckId(player->getPos());
 
 				if (!Land::isLandOwned(chunck)) {
-					player->sendMsg("µ±Ç°ÁìµØÔİÎ´±»¹ºÂò ÊäÈë ¡ìa/l buy¡ìr ¹ºÂò´ËÁìµØ");
+					player->sendMsg("å½“å‰é¢†åœ°æš‚æœªè¢«è´­ä¹° è¾“å…¥ Â§a/l buyÂ§r è´­ä¹°æ­¤é¢†åœ°");
 				}
 				else {
 					if (param.size() == 3) {
 
 						if (Guild::isInGuild(player->getRealNameTag(), Land::getLandOwner(chunck))) {
 							Land::setLandName(chunck, param[2]);
-							player->sendMsg("³É¹¦ÉèÖÃ");
+							player->sendMsg("æˆåŠŸè®¾ç½®");
 
 						}
 						else {
-							player->sendMsg("Äã²»ÊÇ´ËÁìµØ³ÉÔ±");
+							player->sendMsg("ä½ ä¸æ˜¯æ­¤é¢†åœ°æˆå‘˜");
 						}
 					}
 					else {
-						player->sendMsg("ÓÃ·¨ /l name <ÁìµØÃû³Æ>");
+						player->sendMsg("ç”¨æ³• /l name <é¢†åœ°åç§°>");
 					}
 				}
 			}
@@ -321,30 +321,30 @@ public:
 		}
 		else if (param[0] == "/cs" && isAdmin(player)) {
 			ChestShop::RequestSetChestShop(player);
-			player->sendMsg("Çëµã»÷ChestShop");
+			player->sendMsg("è¯·ç‚¹å‡»ChestShop");
 		}
 		else if (param[0] == "/buy") {
 			if (param.size() != 2) {
-				player->sendMsg("²ÎÊıÌîĞ´´íÎó!");
+				player->sendMsg("å‚æ•°å¡«å†™é”™è¯¯!");
 			}
 			else {
 				ShopItem item = ShopItem(param[1]);
 				cout << "The data id is: " << item.dataid << endl;
 				if (Economy::GetPlayerMoney(player->getRealNameTag()) < item.buyprice) {
-					player->sendMsg("ÄãµÄÓà¶î²»×ãÒÔ¹ºÂò " + UTF8ToGBK(item.name.c_str()) + " * " + std::to_string(item.cont) + " = " + std::to_string(item.buyprice));
+					player->sendMsg("ä½ çš„ä½™é¢ä¸è¶³ä»¥è´­ä¹° " + UTF8ToGBK(item.name.c_str()) + " * " + std::to_string(item.cont) + " = " + std::to_string(item.buyprice));
 				}
 				else {
 					Economy::RemovePlayerMoney(player->getRealNameTag(), item.buyprice);
 					player->addItem(item.nameid, std::to_string(item.cont), std::to_string(item.dataid));
-					player->sendMsg("ÄúÒÑ³É¹¦¹ºÂò " + UTF8ToGBK(item.name.c_str()) + " * " + std::to_string(item.cont) + " = " + std::to_string(item.buyprice));
+					player->sendMsg("æ‚¨å·²æˆåŠŸè´­ä¹° " + UTF8ToGBK(item.name.c_str()) + " * " + std::to_string(item.cont) + " = " + std::to_string(item.buyprice));
 				}
 			}
 		}
 		else if (param[0] == "/buyshop") {
 			vector<ShopItem> items = Shop::GetShopSellItem();
 			ButtonsForm form = ButtonsForm();
-			form.SetTitle(u8"¹ºÂòÉÌµê");
-			form.SetText(u8"»¶Ó­À´µ½¹ºÂòÉÌµê! Äã¿ÉÒÔÔÚÕâÀïÂòµ½ÄãÏëÒªµÄ¶«Î÷!");
+			form.SetTitle("è´­ä¹°å•†åº—");
+			form.SetText("æ¬¢è¿æ¥åˆ°è´­ä¹°å•†åº—! ä½ å¯ä»¥åœ¨è¿™é‡Œä¹°åˆ°ä½ æƒ³è¦çš„ä¸œè¥¿!");
 			for (int i = 0; i < items.size(); i++)
 			{
 				ShopItem item = items[i];
@@ -363,8 +363,8 @@ public:
 		else if (param[0] == "/sellshop") {
 			vector<ShopItem> items = Shop::GetShopSellItem();
 			ButtonsForm form = ButtonsForm();
-			form.SetTitle(u8"»ØÊÕÉÌµê");
-			form.SetText(u8"»¶Ó­À´µ½»ØÊÕÉÌµê! Äã¿ÉÒÔÔÚÕâÀï½«ÎïÆ·¶Ò»»³É»õ±Ò!");
+			form.SetTitle("å›æ”¶å•†åº—");
+			form.SetText("æ¬¢è¿æ¥åˆ°å›æ”¶å•†åº—! ä½ å¯ä»¥åœ¨è¿™é‡Œå°†ç‰©å“å…‘æ¢æˆè´§å¸!");
 			for (int i = 0; i < items.size(); i++)
 			{
 				ShopItem item = items[i];
@@ -383,7 +383,7 @@ public:
 		}
 		else if (param[0] == "/sell") {
 			if (param.size() != 2) {
-				player->sendMsg("²ÎÊıÌîĞ´´íÎó!");
+				player->sendMsg("å‚æ•°å¡«å†™é”™è¯¯!");
 			}
 			else {
 				ItemStack* onhand = player->getSelectedItem();
@@ -392,56 +392,56 @@ public:
 					if (onhand->getStackSize() >= shopitem.cont) {
 						Economy::GivePlayerMoney(player->getRealNameTag(), shopitem.sellprice);
 						runcmd("clear " + player->getRealNameTag() + " " + shopitem.nameid + " " + std::to_string(shopitem.dataid) + " " + std::to_string(shopitem.cont));
-						player->sendMsg("³É¹¦»ØÊÕ " + shopitem.name + " * " + std::to_string(shopitem.cont) + " = " + std::to_string(shopitem.sellprice));
+						player->sendMsg("æˆåŠŸå›æ”¶ " + shopitem.name + " * " + std::to_string(shopitem.cont) + " = " + std::to_string(shopitem.sellprice));
 					}
 					else {
-						player->sendMsg("»ØÊÕµÄÎïÆ·ÊıÁ¿²»¹»!");
+						player->sendMsg("å›æ”¶çš„ç‰©å“æ•°é‡ä¸å¤Ÿ!");
 
 					}
 				}
 				else {
-					player->sendMsg("ÇëÏÈ½«Òª»ØÊÕµÄÎïÆ··ÅÔÚÊÖÉÏÔÙ½øĞĞ»ØÊÕ!");
+					player->sendMsg("è¯·å…ˆå°†è¦å›æ”¶çš„ç‰©å“æ”¾åœ¨æ‰‹ä¸Šå†è¿›è¡Œå›æ”¶!");
 				}
 			}
 		}
 		else if (param[0] == "/maincity") {
 			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "maincity"));
-			player->sendMsg("ÄúÒÑ³É¹¦»Ø³Ç");
+			player->sendMsg("æ‚¨å·²æˆåŠŸå›åŸ");
 		}
 		else if (param[0] == "/setmaincity" && isAdmin(player)) {
 			CConfig::SetValueString("Settings", "Settings", "maincity", player->getPos()->toNormalString());
-			player->sendMsg("³É¹¦ÉèÖÃÖ÷³Ç!");
+			player->sendMsg("æˆåŠŸè®¾ç½®ä¸»åŸ!");
 		}
 		else if (param[0] == "/setdarkroom" && isAdmin(player)) {
 			CConfig::SetValueString("Settings", "Settings", "darkroom", player->getPos()->toNormalString());
-			player->sendMsg("³É¹¦ÉèÖÃĞ¡ºÚÎİ!");
+			player->sendMsg("æˆåŠŸè®¾ç½®å°é»‘å±‹!");
 		}
 		else if (param[0] == "/darkroom" && isAdmin(player)) {
 			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
 			CConfig::SetValueString("Player", "Darkroom", param[1], "true");
 			string sendoutuuid = NametoUuid[param[1]];
-			if (sendoutuuid != "") {//Íæ¼ÒÔÚÏß	
-				onlinePlayers[sendoutuuid]->sendMsg("Äã±»¹Øµ½ÁËĞ¡ºÚÎİ");
+			if (sendoutuuid != "") {//ç©å®¶åœ¨çº¿	
+				onlinePlayers[sendoutuuid]->sendMsg("ä½ è¢«å…³åˆ°äº†å°é»‘å±‹");
 			}
-			player->sendMsg("³É¹¦ÈÃËûµ½ÁËĞ¡ºÚÎİ");
+			player->sendMsg("æˆåŠŸè®©ä»–åˆ°äº†å°é»‘å±‹");
 		}
 		else if (param[0] == "/openroom" && isAdmin(player)) {
 			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "maincity"));
 			CConfig::SetValueString("Player", "Darkroom", param[1], "false");
 			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
-			if (sendoutuuid != "") {//Íæ¼ÒÔÚÏß	
-				onlinePlayers[sendoutuuid]->sendMsg("¹ÜÀíÔ±°ÑÄã·ÅÁË³öÀ´");
+			if (sendoutuuid != "") {//ç©å®¶åœ¨çº¿	
+				onlinePlayers[sendoutuuid]->sendMsg("ç®¡ç†å‘˜æŠŠä½ æ”¾äº†å‡ºæ¥");
 			}
-			player->sendMsg("³É¹¦ÈÃËû³öÀ´ÁË");
+			player->sendMsg("æˆåŠŸè®©ä»–å‡ºæ¥äº†");
 		}
 		else if (param[0] == "/home") {
 			if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("TPHome")) {
-				player->sendMsg("ÄãµÄÓà¶î²»×ãÒÔÖ´ĞĞ´Ë²Ù×÷");
+				player->sendMsg("ä½ çš„ä½™é¢ä¸è¶³ä»¥æ‰§è¡Œæ­¤æ“ä½œ");
 			}
 			else {
 				string home = CConfig::GetValueString("Player", player->getRealNameTag(), "home", "NaN");
 				if (home == "NaN") {
-					player->sendMsg("Äã»¹Ã»ÓĞÉèÖÃHome");
+					player->sendMsg("ä½ è¿˜æ²¡æœ‰è®¾ç½®Home");
 				}
 				else {
 					runcmd("tp " + player->getRealNameTag() + " " + home);
@@ -451,12 +451,12 @@ public:
 		}
 		else if (param[0] == "/sethome") {
 			if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("SetHome")) {
-				player->sendMsg("ÄãµÄÓà¶î²»×ãÒÔÖ´ĞĞ´Ë²Ù×÷");
+				player->sendMsg("ä½ çš„ä½™é¢ä¸è¶³ä»¥æ‰§è¡Œæ­¤æ“ä½œ");
 			}
 			else {
 				CConfig::SetValueString("Player", player->getRealNameTag(), "home", player->getPos()->toNormalString());
 				Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("SetHome"));
-				player->sendMsg("³É¹¦ÉèÖÃHome!");
+				player->sendMsg("æˆåŠŸè®¾ç½®Home!");
 			}
 		}
 		/*TODO
@@ -471,10 +471,10 @@ public:
 			Economy::SetPriceToDo(param[1], param[2]);
 		}
 		else if (param[0] == "/setshop" && isAdmin(player)) {
-			//   /setshop <ÂòÈë¼Û¸ñ> <ÊÛ³ö¼Û¸ñ> <ÆğÂôÊıÁ¿>
+			//   /setshop <ä¹°å…¥ä»·æ ¼> <å”®å‡ºä»·æ ¼> <èµ·å–æ•°é‡>
 			ItemStack* item = player->getSelectedItem();
 			if (item->isNull()) {
-				player->sendMsg("ÇëÏÈÑ¡ÖĞÒ»¸ö¶«Î÷! ");
+				player->sendMsg("è¯·å…ˆé€‰ä¸­ä¸€ä¸ªä¸œè¥¿! ");
 				return true;
 			}
 			ShopItem shopitem = ShopItem(item->getId(), item->getAuxValue());
@@ -485,7 +485,7 @@ public:
 			shopitem.nameid = item->getRawNameId();
 			shopitem.texture = "textures/items/" + item->getRawNameId();
 			shopitem.SaveItem();
-			player->sendMsg("ÉÌÆ·ÉèÖÃ³É¹¦!");
+			player->sendMsg("å•†å“è®¾ç½®æˆåŠŸ!");
 		}
 		else {
 			return false;
@@ -500,39 +500,39 @@ public:
 	bool static ProcessConsoleCommand(vector<string> param) {
 		if (param[0] == "money") {
 			if (param.size() == 2) {
-				cout << u8"ËûµÄÓà¶îÎª: " << intToString(Economy::GetPlayerMoney(param[1])) << endl;
+				cout << "ä»–çš„ä½™é¢ä¸º: " << intToString(Economy::GetPlayerMoney(param[1])) << endl;
 			}
 			else {
-				cout << u8"ÓÃ·¨: money <Íæ¼ÒÃû>" << endl;
+				cout << "ç”¨æ³•: money <ç©å®¶å>" << endl;
 			}
 		}
 		else if (param[0] == "pay") {
 			if (param.size() == 3) {
-				cout << u8"¸øÇ®³É¹¦! ËûµÄÓà¶îÄ¿Ç°Îª: " << Economy::GivePlayerMoney(param[1], atoi(param[2].c_str())) << endl;
+				cout << "ç»™é’±æˆåŠŸ! ä»–çš„ä½™é¢ç›®å‰ä¸º: " << Economy::GivePlayerMoney(param[1], atoi(param[2].c_str())) << endl;
 				string sendoutuuid = NametoUuid[param[1]];
-				if (sendoutuuid != "") {//Íæ¼ÒÔÚÏß
-					onlinePlayers[sendoutuuid]->sendMsg("¹ÜÀíÔ± ¸øÄã×ªÕË ¡ìl¡ìa" + param[2]);
-					onlinePlayers[sendoutuuid]->sendMsg("Äãµ±Ç°Óà¶îÎª: ¡ìl¡ìa" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getRealNameTag())));
+				if (sendoutuuid != "") {//ç©å®¶åœ¨çº¿
+					onlinePlayers[sendoutuuid]->sendMsg("ç®¡ç†å‘˜ ç»™ä½ è½¬è´¦ Â§lÂ§a" + param[2]);
+					onlinePlayers[sendoutuuid]->sendMsg("ä½ å½“å‰ä½™é¢ä¸º: Â§lÂ§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getRealNameTag())));
 				}
 			}
 			else {
-				cout << u8"ÓÃ·¨: pay <Íæ¼ÒÃû> <ÊıÁ¿>" << endl;
+				cout << "ç”¨æ³•: pay <ç©å®¶å> <æ•°é‡>" << endl;
 			}
 		}
 		else if (param[0] == "setadminguild") {
 			CConfig::SetValueString("Settings", "Settings", "AdminGuild", param[1]);
 			AdminGuild = param[1];
-			cout << u8"Admin Guild Now Is: " << AdminGuild << endl;
-			CConfig::GetSectionKeys("Guild", u8"FutureCraft¹ÜÀíÔ±");
+			cout << "Admin Guild Now Is: " << AdminGuild << endl;
+			CConfig::GetSectionKeys("Guild", "FutureCraftç®¡ç†å‘˜");
 		}
 		else if (param[0] == "darkroom") {
 			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
 			CConfig::SetValueString("Player", "Darkroom", param[1], "true");
 			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
-			if (sendoutuuid != "") {//Íæ¼ÒÔÚÏß	
-				onlinePlayers[sendoutuuid]->sendMsg("Äã±»¹Øµ½ÁËĞ¡ºÚÎİ");
+			if (sendoutuuid != "") {//ç©å®¶åœ¨çº¿	
+				onlinePlayers[sendoutuuid]->sendMsg("ä½ è¢«å…³åˆ°äº†å°é»‘å±‹");
 			}
-			cout << u8"³É¹¦ÈÃËûµ½ÁËĞ¡ºÚÎİ" << endl;
+			cout << "æˆåŠŸè®©ä»–åˆ°äº†å°é»‘å±‹" << endl;
 		}
 		else if (param[0] == "setprice") {
 			Economy::SetPriceToDo(param[1], param[2]);
@@ -541,10 +541,10 @@ public:
 			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "maincity"));
 			CConfig::SetValueString("Player", "Darkroom", param[1], "false");
 			string sendoutuuid = NametoUuid[Guild::GetAdmin(param[1])];
-			if (sendoutuuid != "") {//Íæ¼ÒÔÚÏß	
-				onlinePlayers[sendoutuuid]->sendMsg("¹ÜÀíÔ±°ÑÄã·ÅÁË³öÀ´");
+			if (sendoutuuid != "") {//ç©å®¶åœ¨çº¿	
+				onlinePlayers[sendoutuuid]->sendMsg("ç®¡ç†å‘˜æŠŠä½ æ”¾äº†å‡ºæ¥");
 			}
-			cout << u8"³É¹¦ÈÃËû³öÀ´ÁË" << endl;
+			cout << "æˆåŠŸè®©ä»–å‡ºæ¥äº†" << endl;
 		}
 		else {
 			return false;

@@ -30,7 +30,7 @@ public:
 
 	void static RequestTP(Player* player) {
 		CConfig::SetValueString("AwardBox", "RequestTP", player->getRealNameTag(), player->getPos()->toNormalString());
-		player->sendMsg("Çëµã»÷½±ÀøÏä");
+		player->sendMsg("è¯·ç‚¹å‡»å¥–åŠ±ç®±");
 	}
 
 	bool static isRequestTP(Player* player) {
@@ -53,7 +53,7 @@ public:
 	void static RequestSet(Player* player, string count, bool isonce) {
 		CConfig::SetValueString("AwardBox", "Request", player->getRealNameTag(), count);
 		CConfig::SetValueString("AwardBox", "Request", player->getRealNameTag() + "_type", isonce ? "once" : "mult");
-		player->sendMsg("Çëµã»÷½±ÀøÏä!");
+		player->sendMsg("è¯·ç‚¹å‡»å¥–åŠ±ç®±!");
 	}
 
 	bool static isRequestSetBox(Player* player) {

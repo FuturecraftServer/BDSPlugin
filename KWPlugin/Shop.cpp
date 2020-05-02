@@ -20,7 +20,7 @@ struct ShopItem {
 		this->buyprice = CConfig::GetValueInt("Shop", "buy", this->uniqueid, 0);
 		this->sellprice = CConfig::GetValueInt("Shop", "sell", this->uniqueid, 0);
 		this->cont = CConfig::GetValueInt("Shop", "count", this->uniqueid, 0);
-		this->name = CConfig::GetValueString("Shop", "name", this->uniqueid, u8"未知商品");
+		this->name = CConfig::GetValueString("Shop", "name", this->uniqueid, "鏈煡鍟嗗搧");
 		this->texture = CConfig::GetValueString("Shop", "texture", this->uniqueid, "NaN");
 		this->nameid = CConfig::GetValueString("Shop", "nameid", this->uniqueid, "NaN");
 	}
@@ -32,7 +32,7 @@ struct ShopItem {
 		this->buyprice = CConfig::GetValueInt("Shop", "buy", this->uniqueid, 0);
 		this->sellprice = CConfig::GetValueInt("Shop", "sell", this->uniqueid, 0);
 		this->cont = CConfig::GetValueInt("Shop", "count", this->uniqueid, 0);
-		this->name = CConfig::GetValueString("Shop", "name", this->uniqueid, u8"未知商品");
+		this->name = CConfig::GetValueString("Shop", "name", this->uniqueid, "鏈煡鍟嗗搧");
 		this->texture = CConfig::GetValueString("Shop", "texture", this->uniqueid, "NaN");
 		this->nameid = CConfig::GetValueString("Shop", "nameid", this->uniqueid, "NaN");
 
@@ -48,7 +48,7 @@ struct ShopItem {
 		this->buyprice = CConfig::GetValueInt("Shop", "buy", uniqueid, 0);
 		this->sellprice = CConfig::GetValueInt("Shop", "sell", uniqueid, 0);
 		this->cont = CConfig::GetValueInt("Shop", "count", uniqueid, 0);
-		this->name = CConfig::GetValueString("Shop", "name", uniqueid, u8"未知商品");
+		this->name = CConfig::GetValueString("Shop", "name", uniqueid, "鏈煡鍟嗗搧");
 		this->texture = CConfig::GetValueString("Shop", "texture", uniqueid, "NaN");
 		this->nameid = CConfig::GetValueString("Shop", "nameid", uniqueid, "NaN");
 	}

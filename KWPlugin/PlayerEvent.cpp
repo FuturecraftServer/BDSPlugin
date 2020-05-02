@@ -19,7 +19,7 @@ public:
 		}
 		int rselected = 0;
 		if (selected == "null") {
-			//É¶Ò²Ã»Ñ¡,¹Ø±ÕÁË±íµ¥
+			//å•¥ä¹Ÿæ²¡é€‰,å…³é—­äº†è¡¨å•
 			return;
 		}
 		if (selected == "true") {
@@ -50,8 +50,8 @@ public:
 				runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
 				CConfig::SetValueString("Player", "Darkroom", player->getRealNameTag(), "true");
 				string sendoutuuid = NametoUuid[player->getRealNameTag()];
-				if (sendoutuuid != "") {//Íæ¼ÒÔÚÏß	
-					onlinePlayers[sendoutuuid]->sendMsg("Äã±»¹Øµ½ÁËÐ¡ºÚÎÝ");
+				if (sendoutuuid != "") {//çŽ©å®¶åœ¨çº¿	
+					onlinePlayers[sendoutuuid]->sendMsg("ä½ è¢«å…³åˆ°äº†å°é»‘å±‹");
 				}
 				return false;
 			}
@@ -70,7 +70,7 @@ public:
 
 
 	void static SelectForm(Player* player, UINT fid, string selected) {
-		//´Ë·½·¨·ÏÆú,ÇëÖ±½Óµ½KWFormÄÚ¸ü¸Ä
+		//æ­¤æ–¹æ³•åºŸå¼ƒ,è¯·ç›´æŽ¥åˆ°KWFormå†…æ›´æ”¹
 		if (selected == "null") {
 			selected = "-1";
 		}
@@ -87,11 +87,11 @@ public:
 				return false;
 			}
 			else if (ret == -1) {
-				player->sendMsg("ÔÝ²»Ö§³ÖÊÛ³ö " + item->getName() + " * " + std::to_string(item->getStackSize()));
+				player->sendMsg("æš‚ä¸æ”¯æŒå”®å‡º " + item->getName() + " * " + std::to_string(item->getStackSize()));
 				return true;
 			}
 			else if (ret == 2) {
-				player->sendMsg("ÄúËùÊÛ³öµÄÊýÁ¿²»×ã");
+				player->sendMsg("æ‚¨æ‰€å”®å‡ºçš„æ•°é‡ä¸è¶³");
 				return true;
 			}
 		}
@@ -105,7 +105,7 @@ public:
 
 	bool static PlaceBlock(Player* player, short blockid, BlockPos* position) {
 		if (!Land::canLandModifyBlock(Land::BlockChunckId(position->getPosition()), player)) {
-			player->sendMsg("ÄãÎÞ·¨ÔÚ´ËÁìµØ·ÅÖÃ·½¿é!");
+			player->sendMsg("ä½ æ— æ³•åœ¨æ­¤é¢†åœ°æ”¾ç½®æ–¹å—!");
 			return false;
 		}
 		return true;
@@ -115,13 +115,13 @@ public:
 
 
 		if (!Land::canLandModifyBlock(Land::BlockChunckId(blockpos->getPosition()), player)) {
-			player->sendMsg("ÄãÎÞ·¨ÔÚ´ËÁìµØÆÆ»µ·½¿é!");
+			player->sendMsg("ä½ æ— æ³•åœ¨æ­¤é¢†åœ°ç ´åæ–¹å—!");
 			return false;
 		}
 
 		if (block->getLegacyBlock()->getBlockItemID() == 54) {
 			if (LockBox::isLockBox(blockpos->getPosition()->toNormalString())) {
-				player->sendMsg("ÇëÏÈÊ¹ÓÃ /unlockbox ½âËø´ËÏä×Ó");
+				player->sendMsg("è¯·å…ˆä½¿ç”¨ /unlockbox è§£é”æ­¤ç®±å­");
 				return false;
 			}
 		}
@@ -148,7 +148,7 @@ public:
 		if (AwardBox::isAwardBox(blockposition)) {
 			int aw = AwardBox::getAward(blockposition, player);
 			Economy::GivePlayerMoney(player->getRealNameTag(), aw);
-			player->sendMsg("ÄúÒÑ»ñµÃ " + std::to_string(aw));
+			player->sendMsg("æ‚¨å·²èŽ·å¾— " + std::to_string(aw));
 			return false;
 		}
 
@@ -156,17 +156,17 @@ public:
 			return true;
 		}
 		if (!LockBox::HavePermission(player->getRealNameTag(), blockposition->getPosition()->toNormalString())) {
-			player->sendMsg("ÄúÃ»ÓÐÈ¨ÏÞ´ò¿ª´ËÏä×Ó!");
+			player->sendMsg("æ‚¨æ²¡æœ‰æƒé™æ‰“å¼€æ­¤ç®±å­!");
 			return false;
 		}
 		if (LockBox::isRequestLockBox(player->getRealNameTag())) {
 			LockBox::SetPermission(player->getRealNameTag(), blockposition->getPosition()->toNormalString());
-			player->sendMsg("ÄúÒÑ³É¹¦ÉÏËø!");
+			player->sendMsg("æ‚¨å·²æˆåŠŸä¸Šé”!");
 			return false;
 		}
 		if (LockBox::isRequestUnLockBox(player->getRealNameTag())) {
 			LockBox::RemoveLockBox(blockposition->getPosition()->toNormalString());
-			player->sendMsg("ÄúÒÑ³É¹¦½âËø!");
+			player->sendMsg("æ‚¨å·²æˆåŠŸè§£é”!");
 
 		}
 		return true;
@@ -185,29 +185,29 @@ public:
 
 	void static Spawn(Player* player) {
 		if (!Guild::isInGuild(player->getRealNameTag(), AdminGuild)) {
-			SYMCALL(void, MSSYM_B1QA9setCanFlyB1AA5ActorB2AAA5QEAAXB1UA1NB1AA1Z, player, false); //ÉèÖÃÍæ¼Ò²»¿É·ÉÐÐ
+			SYMCALL(void, MSSYM_B1QA9setCanFlyB1AA5ActorB2AAA5QEAAXB1UA1NB1AA1Z, player, false); //è®¾ç½®çŽ©å®¶ä¸å¯é£žè¡Œ
 		}
 		if (CConfig::GetValueString("Player", "Darkroom", player->getRealNameTag(), "false") == "true") {
 			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
-			player->sendMsg("ÄãÒÑ±»¹ØÔÚÐ¡ºÚÎÝ·´Ë¼.");
+			player->sendMsg("ä½ å·²è¢«å…³åœ¨å°é»‘å±‹åæ€.");
 		}
 	}
 
 
 	bool static Move(Player* player) {
-		//½øÈëÐÂÁìµØ
+		//è¿›å…¥æ–°é¢†åœ°
 		string chunckid = Land::PlayerChunckId(player->getPos());
 		string playername = player->getRealNameTag();
 		if (chunckid != PlayerLastLandId[playername]) {
-			//½øÈëÁËÐÂÇø¿é
+			//è¿›å…¥äº†æ–°åŒºå—
 			PlayerLastLandId[playername] = chunckid;
 			if (Land::isLandOwned(chunckid)) {
 				PlayerLastinLand[playername] = true;
-				runcmd("title " + playername + u8" actionbar ÄúÒÑ½øÈë " + Land::getLandName(chunckid) + u8" ¡ìrÁìµØ¹«»á: " + Land::getLandOwner(chunckid));
+				runcmd("title " + playername + " actionbar æ‚¨å·²è¿›å…¥ " + Land::getLandName(chunckid) + " Â§ré¢†åœ°å…¬ä¼š: " + Land::getLandOwner(chunckid));
 			}
 			else {
 				if (PlayerLastinLand[playername]) {
-					runcmd("title " + playername + u8" actionbar ÄúÒÑ½øÈë Ò°Íâ, ´ËµØÔÝÎ´¹ºÂò");
+					runcmd("title " + playername + " actionbar æ‚¨å·²è¿›å…¥ é‡Žå¤–, æ­¤åœ°æš‚æœªè´­ä¹°");
 					PlayerLastinLand[playername] = false;
 				}
 			}
@@ -218,11 +218,11 @@ public:
 	void static ReSpawn(Player* player) {
 		if (CConfig::GetValueString("Player", "Darkroom", player->getRealNameTag(), "false") == "true") {
 			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));
-			player->sendMsg("ÄãÒÑ±»¹ØÔÚÐ¡ºÚÎÝ·´Ë¼.");
+			player->sendMsg("ä½ å·²è¢«å…³åœ¨å°é»‘å±‹åæ€.");
 		}
 	}
 
-	// ÖØÉèÐÂÃû×Ö
+	// é‡è®¾æ–°åå­—
 	static bool reNameByUuid(std::string uuid, std::string newName) {
 		bool ret = false;
 		Player* taget = onlinePlayers[uuid];
@@ -234,7 +234,7 @@ public:
 	}
 
 	bool static Command(Player* player, std::string command) {
-		if (Command::onPlayerSendCommand(command, player)) return false; //ÎÊÎªÊ²Ã´,ÒªÀ¹½ØÏÂÀ´Ëû±¾À´µÄProcess
+		if (Command::onPlayerSendCommand(command, player)) return false; //é—®ä¸ºä»€ä¹ˆ,è¦æ‹¦æˆªä¸‹æ¥ä»–æœ¬æ¥çš„Process
 		return true;
 	}
 
@@ -247,7 +247,7 @@ public:
 				return true;
 			}
 			else {
-				player->sendMsg("ÄãÎÞ·¨ÔÚ´ËÁìµØ¹¥»÷Ëû!");
+				player->sendMsg("ä½ æ— æ³•åœ¨æ­¤é¢†åœ°æ”»å‡»ä»–!");
 				return false;
 			}
 		return true;
