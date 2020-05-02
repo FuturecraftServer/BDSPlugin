@@ -21,7 +21,7 @@ public:
 	}
 
 	int static GetPriceToDo(std::string things) {
-		return CConfig::GetValueInt("Economy", "Price", things, 9999999);
+		return CConfig::GetValueInt("Economy", "Price", things, 0);
 	}
 
 	int static SetPriceToDo(std::string things,std::string price) {

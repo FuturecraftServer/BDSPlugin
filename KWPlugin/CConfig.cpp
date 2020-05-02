@@ -78,9 +78,6 @@ public:
 				ret.push_back(i->pItem);
 			}
 		}
-		else {
-			cout << "Section no keys" << endl;
-		}
 		return ret;
 	}
 

@@ -104,6 +104,24 @@ public:
 		}
 
 		else if (param[0] == "/tpa") {
+			if (param.size() == 1) {
+				ButtonsForm form;
+				form.SetTitle("TPA");
+				form.SetText("请选择你要传送到的玩家:");
+				map<string, string>::iterator iter;
+				for (iter = NametoUuid.begin(); iter != NametoUuid.end(); iter++) {
+					FormButton btn;
+					FunctionButton funbtn;
+					btn.haveimage = true;
+					btn.imgpath = "textures/ui/icon_steve";
+					btn.text = iter->first;
+					funbtn.command = "/tpa " + iter->first;
+					funbtn.type = 2;
+					form.AddButton(btn,funbtn);
+				}
+				form.releaseForm((VA)player);
+				return true;
+			}
 			if (param.size() != 2) {
 				player->sendMsg("用法: /tpa <玩家名>");
 				return true;
@@ -523,7 +541,6 @@ public:
 			CConfig::SetValueString("Settings", "Settings", "AdminGuild", param[1]);
 			AdminGuild = param[1];
 			cout << "Admin Guild Now Is: " << AdminGuild << endl;
-			CConfig::GetSectionKeys("Guild", "FutureCraft管理员");
 		}
 		else if (param[0] == "darkroom") {
 			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "darkroom", "0 0 0"));

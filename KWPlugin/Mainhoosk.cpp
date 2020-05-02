@@ -254,26 +254,28 @@ THook(bool,
 	return PlayerEvent::ReadyOpenBox(pPlayer, pBlockSource, pBlkpos) ? original(_this, pPlayer, pBlkpos) : false;
 }
 
-//箱子是否合并
+/*
+//箱子是否可以打开
 THook(bool,
 	MSSYM_B2QUE11canOpenThisB1AE15ChestBlockActorB2AAA4MEBAB1UE16NAEAVBlockSourceB3AAAA1Z,
 	ChestBlockActor* _this, struct BlockSource* a2) {
 	//_this->tick(a2);
 	return original(_this, a2);
-}
+}*/
 
 //箱子解除合并
 THook(void,
 	MSSYM_B1QA6unpairB1AE15ChestBlockActorB2AAE20QEAAXAEAVBlockSourceB3AAAA1Z,
 	ChestBlockActor* _this, BlockSource* a2)
 {
-
+	if (LockBox::isLockBox(_this->getPosition()->getPosition()->toNormalString())) {
+		return;
+	}
 	original(_this, a2);
 	/*
 		ChestBlockActor* v4=(ChestBlockActor*) a2->getBlockEntity(*((char*)_this + 134), *((char*)_this + 12), *((char*)_this + 135));
 		_this->pairWith(v4, ~*((char*)v4 + 532) & 1);
 		*/
-	_this->tick(a2);
 
 }
 
@@ -525,7 +527,7 @@ THook2(_JS_ONATTACK, bool,
 #pragma endregion
 
 void init() {
-	std::cout << "Init KWPlugin V1.0.7 Release (branch Master) FutureCraft Original" << std::endl << "For Minecraft Bedrock Edition 1.14.60.5" << std::endl << "Build: " << __DATE__ << " " << __TIME__ << endl << "Path: " << getLocalPath() << endl;
+	std::cout << "Init KWPlugin V1.0.7 Release (branch Master)" << std::endl << "For Minecraft Bedrock Edition 1.14.60.5" << std::endl << "Build: " << __DATE__ << " " << __TIME__ << endl << "Path: " << getLocalPath() << endl;
 	std::cout << "Copyright @Kengwang  All rights reserved" << std::endl;
 	cout << "Loading Plugin Settings" << endl;
 	AdminGuild = CConfig::GetValueString("Settings", "Settings", "AdminGuild", "FutureCraft管理员");
