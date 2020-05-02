@@ -525,8 +525,8 @@ THook2(_JS_ONATTACK, bool,
 #pragma endregion
 
 void init() {
-	std::cout << u8"Init KWPlugin V1.0.6 alpha (branch Master) FutureCraft Original" << std::endl << "Build: " << __DATE__ << " " << __TIME__ << endl << "Path: " << getLocalPath() << endl;
-	std::cout << u8"Copyright Kengwang All rights reserved" << std::endl;
+	std::cout << u8"Init KWPlugin V1.0.7 Release (branch Master) FutureCraft Original" << std::endl << "For Minecraft Bedrock Edition 1.14.60.5" << std::endl << "Build: " << __DATE__ << " " << __TIME__ << endl << "Path: " << getLocalPath() << endl;
+	std::cout << u8"Copyright @Kengwang  All rights reserved" << std::endl;
 	cout << "Loading Plugin Settings" << endl;
 	AdminGuild = CConfig::GetValueString("Settings", "Settings", "AdminGuild", u8"FutureCraft¹ÜÀíÔ±");
 	cout << "Plugin Settings Done! Have Fun~" << endl;

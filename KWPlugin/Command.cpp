@@ -216,7 +216,6 @@ public:
 				else {
 					if (param.size() == 3) {
 						if (!Guild::isGuildSet(param[2])) {
-							player->sendMsg(param[2] + " 不存在");
 							if (Economy::GetPlayerMoney(player->getRealNameTag()) >= Economy::GetPriceToDo("CreateGuild")) {
 								Guild::CreateGuild(param[2], player->getRealNameTag());
 								Economy::RemovePlayerMoney(player->getRealNameTag(), Economy::GetPriceToDo("CreateGuild"));
@@ -534,6 +533,9 @@ public:
 				onlinePlayers[sendoutuuid]->sendMsg("你被关到了小黑屋");
 			}
 			cout << u8"成功让他到了小黑屋" << endl;
+		}
+		else if (param[0] == "setprice") {
+			Economy::SetPriceToDo(param[1], param[2]);
 		}
 		else if (param[0] == "openroom") {
 			runcmd("tp " + param[1] + " " + CConfig::GetValueString("Settings", "Settings", "maincity"));
