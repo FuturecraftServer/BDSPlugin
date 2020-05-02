@@ -13,12 +13,12 @@ using namespace std;
 static std::map<unsigned, int> fids;
 
 struct FunctionButton {
-	bool isconsole = false;//是否为控制台指令
+	int type = 1;//1 - 玩家普通指令 2 - 玩家自定义指令 3 - 控制台指令
 	string command = "NaN";//指令
 };
 
 struct FormButton {
-	string text = "按钮";
+	string text = u8"按钮";
 	bool haveimage = false;
 	bool isimgurl = false;
 	string imgpath;
@@ -30,10 +30,6 @@ static std::map<unsigned, std::map<int, FunctionButton>> buttons;
 static void _sendForm(VA pPlayer, string json, unsigned formid) {
 	if (pPlayer == 0)
 		return;
-	//保存Form
-	ofstream SaveFile("log.log");
-	SaveFile << json;
-	SaveFile.close();
 	auto payload = json;
 	WBStream ws;
 	ws.apply(VarUInt(formid));
@@ -218,35 +214,6 @@ public:
 		sendForm(player);
 	}
 };
-
-static void ParseFormCallback(Player* player, unsigned fid, string selected) {
-	cout << "Form Select Handling -> Player: " + player->getRealNameTag() + " FormID: " << fid << " Selected: " << selected << " FormType: " << fids[fid] << endl;
-	if (!fids[fid]) {
-		return;
-	}
-	int rselected = 0;
-	if (selected == "null") {
-		//啥也没选,关闭了表单
-		return;
-	}
-	if (selected == "true") {
-		rselected = 0;
-	}
-	else if (selected == "false") {
-		rselected = 1;
-	}
-	else {
-		rselected = atoi(selected.c_str());
-	}
-	if (buttons[fid][rselected].isconsole) {
-		runcmd(buttons[fid][rselected].command);
-	}
-	else {
-		player->runcmdAs(buttons[fid][rselected].command);
-	}
-	destroyForm(fid);
-}
-
 
 /* Custum Form 不支持按钮
 	//添加按钮组

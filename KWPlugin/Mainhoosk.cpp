@@ -15,14 +15,6 @@ static bool reNameByUuid(std::string, std::string);
 static std::map<std::string, bool> canUnpairChest;
 
 
-// 调试信息
-template<typename T>
-static void PR(T arg) {
-#ifndef RELEASED
-	std::cout << arg << std::endl;
-#endif // !RELEASED
-}
-
 // 维度ID转换为中文字符
 static std::string toDimenStr(int dimensionId) {
 	switch (dimensionId) {
@@ -61,39 +53,6 @@ static bool checkIsPlayer(void* mp) {
 	return false;
 }
 
-/*
-// 发送指定玩家一个表单
-static UINT sendSimpleForm(char* uuid, char* title, char* content, char* buttons) {
-	if (!onlinePlayers[uuid])
-		return 0;
-	Json::Value bts;
-	Json::Value ja = toJson(buttons);
-	for (int i = 0; i < ja.size(); i++) {
-		Json::Value bt;
-		bt["text"] = ja[i];
-		bts.append(bt);
-	}
-	std::string str = createSimpleFormString(title, content, bts);
-	return sendForm((VA)onlinePlayers[uuid], str);
-}
-*/
-/*
-// 发送指定玩家一个模板对话框
-static UINT sendModalForm(char* uuid, char* title, char* content, char* button1, char* button2) {
-	if (!onlinePlayers[uuid])
-		return 0;
-	std::string str = createModalFormString(title, content, button1, button2);
-	return sendForm((VA)onlinePlayers[uuid], str);
-}
-
-// 发送指定玩家一个自定义GUI界面
-static UINT sendCustomForm(char* uuid, char* json) {
-	Player* p = onlinePlayers[uuid];
-	if (p == NULL)
-		return 0;
-	return sendForm((VA)p, json);
-}
-*/
 static std::string oldseedstr;
 
 /**************** 插件HOOK区域 ****************/
@@ -102,7 +61,7 @@ static std::string oldseedstr;
 static const VA STD_COUT_HANDLE = SYM_OBJECT(VA,
 	MSSYM_B2UUA3impB2UQA4coutB1AA3stdB2AAA23VB2QDA5basicB1UA7ostreamB1AA2DUB2QDA4charB1UA6traitsB1AA1DB1AA3stdB3AAAA11B1AA1A); //140721370820768
 
-/*
+
 // 获取指令队列
 THook2(_JS_GETSPSCQUEUE, VA, MSSYM_MD5_3b8fb7204bf8294ee636ba7272eec000,
 	VA _this) {
@@ -134,7 +93,7 @@ THook2(_JS_HIDESEEDPACKET, void,
 	}
 	return original(_this, a2);
 }
-*/
+
 // 服务器后台输入指令
 
 THook(bool,
@@ -184,7 +143,7 @@ THook(void,
 		UINT fid = fmp->getFormId();
 		// TODO
 		//if (destroyForm(fid)) {
-		ParseFormCallback(p, fid, fmp->getSelectStr());
+		PlayerEvent::ParseFormCallback(p, fid, fmp->getSelectStr());
 		return;
 		//}
 	}
@@ -273,6 +232,7 @@ THook(bool,
 	}
 }
 
+//箱子被移除
 THook(void,
 	MSSYM_B1QA8onRemoveB1AE10ChestBlockB2AAE20UEBAXAEAVBlockSourceB2AAE12AEBVBlockPosB3AAAA1Z,
 	Block* _this, BlockSource* a2, BlockPos* a3) {
@@ -294,13 +254,15 @@ THook(bool,
 	return PlayerEvent::ReadyOpenBox(pPlayer, pBlockSource, pBlkpos) ? original(_this, pPlayer, pBlkpos) : false;
 }
 
+//箱子是否合并
 THook(bool,
 	MSSYM_B2QUE11canOpenThisB1AE15ChestBlockActorB2AAA4MEBAB1UE16NAEAVBlockSourceB3AAAA1Z,
 	ChestBlockActor* _this, struct BlockSource* a2) {
-	_this->tick(a2);
+	//_this->tick(a2);
 	return original(_this, a2);
 }
 
+//箱子解除合并
 THook(void,
 	MSSYM_B1QA6unpairB1AE15ChestBlockActorB2AAE20QEAAXAEAVBlockSourceB3AAAA1Z,
 	ChestBlockActor* _this, BlockSource* a2)
@@ -378,10 +340,12 @@ THook2(_JS_ONCHANGEDIMENSION, bool,
 	return original(_this, pPlayer, req);
 }
 
+//加载指令
 THook(void,
 	MSSYM_B1QE13initCoreEnumsB1AE17MinecraftCommandsB2AAA5QEAAXB1UE20NAEBVBaseGameVersionB3AAAA1Z,
 	MinecraftCommands* a0, VA a1, VA a2) {
 	commands = a0;
+	original(a0, a1, a2);
 }
 
 // 命名生物死亡

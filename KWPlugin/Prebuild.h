@@ -15,6 +15,9 @@
 // C++标准库 头文件
 #include <iostream>
 #include <string>
+#include <vector>
+#include <algorithm>// std::replace_if
+#include <time.h>
 #include <unordered_map>
 #include <chrono>
 #include <map>

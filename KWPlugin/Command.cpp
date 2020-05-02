@@ -1,12 +1,9 @@
 #pragma once
+
 #include "Prebuild.h" //Prebuild Header
-#include <string>
-#include <vector>
-#include <algorithm>// std::replace_if
 #include "BDSAPI.hpp"
 #include "Economy.cpp"
 #include "LockBox.cpp"
-#include <time.h>
 #include "Guild.cpp"
 #include "RPG.cpp"
 #include "Land.cpp"
@@ -17,7 +14,6 @@
 
 static std::map<std::string, Player*> onlinePlayers;
 static std::map<std::string, std::string> NametoUuid;
-
 
 using namespace std;
 
@@ -288,7 +284,7 @@ public:
 				else {
 					string chuck = Land::PlayerChunckId(player->getPos());
 					player->sendMsg("领地编号: " + chuck);
-					player->sendMsg("领地名称: " + Land::getLandName(chuck));
+					player->sendMsg("领地名称: " + Land::getLandName(chuck) == u8"未命名领地" ? "未命名领地" : Land::getLandName(chuck));
 					player->sendMsg("领地公会: " + Land::getLandOwner(chuck));
 				}
 			}
@@ -328,10 +324,48 @@ public:
 			ChestShop::RequestSetChestShop(player);
 			player->sendMsg("请点击ChestShop");
 		}
-		else if (param[0] == "/shop") {
+		else if (param[0] == "/buy") {
+			if (param.size() != 2) {
+				player->sendMsg("参数填写错误!");
+			}
+			else {
+				ShopItem item = ShopItem(param[1]);
+				cout << "The data id is: " << item.dataid << endl;
+				if (Economy::GetPlayerMoney(player->getRealNameTag()) < item.buyprice) {
+					player->sendMsg("你的余额不足以购买 " + UTF8ToGBK(item.name.c_str()) + " * " + std::to_string(item.cont) + " = " + std::to_string(item.buyprice));
+				}
+				else {
+					Economy::RemovePlayerMoney(player->getRealNameTag(), item.buyprice);
+					player->addItem(item.nameid, std::to_string(item.cont), std::to_string(item.dataid));
+					player->sendMsg("您已成功购买 " + UTF8ToGBK(item.name.c_str()) + " * " + std::to_string(item.cont) + " = " + std::to_string(item.buyprice));
+				}
+			}
+		}
+		else if (param[0] == "/buyshop") {
 			vector<ShopItem> items = Shop::GetShopSellItem();
 			ButtonsForm form = ButtonsForm();
+			form.SetTitle(u8"购买商店");
 			form.SetText(u8"欢迎来到购买商店! 你可以在这里买到你想要的东西!");
+			for (int i = 0; i < items.size(); i++)
+			{
+				ShopItem item = items[i];
+				FormButton fb;
+				FunctionButton	funb;
+				fb.text = item.name + " * " + std::to_string(item.cont) + " = " + std::to_string(item.buyprice);
+				fb.haveimage = true;
+				fb.isimgurl = false;
+				fb.imgpath = item.texture;
+				funb.command = "/buy " + item.uniqueid;
+				funb.type = 2;
+				form.AddButton(fb, funb);
+			}
+			form.releaseForm((VA)player);
+		}
+		else if (param[0] == "/sellshop") {
+			vector<ShopItem> items = Shop::GetShopSellItem();
+			ButtonsForm form = ButtonsForm();
+			form.SetTitle(u8"回收商店");
+			form.SetText(u8"欢迎来到回收商店! 你可以在这里将物品兑换成货币!");
 			for (int i = 0; i < items.size(); i++)
 			{
 				ShopItem item = items[i];
@@ -341,10 +375,35 @@ public:
 				fb.haveimage = true;
 				fb.isimgurl = false;
 				fb.imgpath = item.texture;
-				funb.command = "/buy " + item.uniqueid;
-				form.AddButton(fb,funb);
+				funb.command = "/sell " + item.uniqueid;
+				funb.type = 2;
+				form.AddButton(fb, funb);
 			}
 			form.releaseForm((VA)player);
+
+		}
+		else if (param[0] == "/sell") {
+			if (param.size() != 2) {
+				player->sendMsg("参数填写错误!");
+			}
+			else {
+				ItemStack* onhand = player->getSelectedItem();
+				ShopItem shopitem = ShopItem(onhand->getId(), onhand->getAuxValue());
+				if (shopitem.uniqueid == param[1]) {
+					if (onhand->getStackSize() >= shopitem.cont) {
+						Economy::GivePlayerMoney(player->getRealNameTag(), shopitem.sellprice);
+						runcmd("clear " + player->getRealNameTag() + " " + shopitem.nameid + " " + std::to_string(shopitem.dataid) + " " + std::to_string(shopitem.cont));
+						player->sendMsg("成功回收 " + shopitem.name + " * " + std::to_string(shopitem.cont) + " = " + std::to_string(shopitem.sellprice));
+					}
+					else {
+						player->sendMsg("回收的物品数量不够!");
+
+					}
+				}
+				else {
+					player->sendMsg("请先将要回收的物品放在手上再进行回收!");
+				}
+			}
 		}
 		else if (param[0] == "/maincity") {
 			runcmd("tp " + player->getRealNameTag() + " " + CConfig::GetValueString("Settings", "Settings", "maincity"));
@@ -413,20 +472,21 @@ public:
 			Economy::SetPriceToDo(param[1], param[2]);
 		}
 		else if (param[0] == "/setshop" && isAdmin(player)) {
-		//   /setshop <买入价格> <售出价格> <起卖数量>
+			//   /setshop <买入价格> <售出价格> <起卖数量>
 			ItemStack* item = player->getSelectedItem();
 			if (item->isNull()) {
 				player->sendMsg("请先选中一个东西! ");
 				return true;
 			}
 			ShopItem shopitem = ShopItem(item->getId(), item->getAuxValue());
-			shopitem.sellprice = atoi(param[1].c_str());
-			shopitem.buyprice = atoi(param[2].c_str());
+			shopitem.buyprice = atoi(param[1].c_str());
+			shopitem.sellprice = atoi(param[2].c_str());
 			shopitem.cont = atoi(param[3].c_str());
 			shopitem.name = item->getName();
+			shopitem.nameid = item->getRawNameId();
 			shopitem.texture = "textures/items/" + item->getRawNameId();
 			shopitem.SaveItem();
-			player->sendMsg(u8"商品设置成功!");
+			player->sendMsg("商品设置成功!");
 		}
 		else {
 			return false;
@@ -452,8 +512,8 @@ public:
 				cout << u8"给钱成功! 他的余额目前为: " << Economy::GivePlayerMoney(param[1], atoi(param[2].c_str())) << endl;
 				string sendoutuuid = NametoUuid[param[1]];
 				if (sendoutuuid != "") {//玩家在线
-					onlinePlayers[sendoutuuid]->sendMsg(u8"管理员 给你转账 §l§a" + param[2]);
-					onlinePlayers[sendoutuuid]->sendMsg(u8"你当前余额为: §l§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getRealNameTag())));
+					onlinePlayers[sendoutuuid]->sendMsg("管理员 给你转账 §l§a" + param[2]);
+					onlinePlayers[sendoutuuid]->sendMsg("你当前余额为: §l§a" + intToString(Economy::GetPlayerMoney(onlinePlayers[sendoutuuid]->getRealNameTag())));
 				}
 			}
 			else {
@@ -491,3 +551,4 @@ public:
 	}
 
 };
+

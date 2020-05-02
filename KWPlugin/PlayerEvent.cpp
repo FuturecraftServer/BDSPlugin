@@ -11,6 +11,39 @@ static std::map<std::string, bool> PlayerLastinLand;
 
 class PlayerEvent {
 public:
+
+	static void ParseFormCallback(Player* player, unsigned fid, string selected) {
+		//cout << "Form Select Handling -> Player: " + player->getRealNameTag() + " FormID: " << fid << " Selected: " << selected << " FormType: " << fids[fid] << endl;
+		if (!fids[fid]) {
+			return;
+		}
+		int rselected = 0;
+		if (selected == "null") {
+			//啥也没选,关闭了表单
+			return;
+		}
+		if (selected == "true") {
+			rselected = 0;
+		}
+		else if (selected == "false") {
+			rselected = 1;
+		}
+		else {
+			rselected = atoi(selected.c_str());
+		}
+		//cout << "The type is: " << buttons[fid][rselected].type << " and the command will be: " << buttons[fid][rselected].command << endl;
+		if (buttons[fid][rselected].type == 3) {
+			runcmd(buttons[fid][rselected].command);
+		}
+		else if (buttons[fid][rselected].type == 2) {
+			Command::onPlayerSendCommand(buttons[fid][rselected].command, player);
+		}
+		else {
+			player->runcmdAs(buttons[fid][rselected].command);
+		}
+		destroyForm(fid);
+	}
+
 	bool static UseItem(Player* player, ItemStack* item, BlockPos* blockpos, Block* pBlk) {
 		if (item->getId() == 383) {
 			if (item->getAuxValue() == 83) {
