@@ -27,6 +27,7 @@ public:
 	}
 
 	void static RemoveLockBox(string blockpos) {
+
 		CConfig::SetValueString("LockBox", blockpos, "owner", "NaN");
 	}
 
@@ -36,6 +37,10 @@ public:
 
 	bool static isRequestUnLockBox(string player) {
 		return CConfig::GetValueString("LockBox", "RequestUn", player, "false") == "true";
+	}
+
+	void static StopRequestUnLockBox(string player) {
+		CConfig::SetValueString("LockBox", "RequestUn", player, "false");
 	}
 
 	bool static CheckDropper(BlockPos* blockpos) {

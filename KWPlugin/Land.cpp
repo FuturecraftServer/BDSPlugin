@@ -38,8 +38,8 @@ public:
 		CConfig::SetValueString("Land", landid, "modblock", "0");
 	}
 
-	bool static canLandModifyBlock(string landid, Player* breaker) {
-		if (Guild::isInGuild(breaker->getRealNameTag(), CConfig::GetValueString("Land", landid, "guild", AdminGuild)) || CConfig::GetValueInt("Land", landid, "modblock", 0) == 1 || !Land::isLandOwned(landid)) return true;
+	bool static canLandModifyBlock(string landid, string breaker) {
+		if (Guild::isInGuild(breaker, CConfig::GetValueString("Land", landid, "guild", AdminGuild)) || CConfig::GetValueInt("Land", landid, "modblock", 0) == 1 || !Land::isLandOwned(landid)) return true;
 		return false;
 	}
 

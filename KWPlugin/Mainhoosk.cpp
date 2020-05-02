@@ -168,19 +168,22 @@ THook(bool,
 
 
 //玩家使物品展示框掉落
-THook(void, MSSYM_B1QE14dropFramedItemB1AE19ItemFrameBlockActorB2AAE20QEAAXAEAVBlockSourceB3AAUA1NB1AA1Z,
-	void* _this, BlockSource* blk, char* v3) {
-	auto real_this = reinterpret_cast<void*>(reinterpret_cast<VA>(_this) - 248);
-	auto pBlkpos = reinterpret_cast<BlockActor*>(real_this)->getPosition();
-	auto player = *reinterpret_cast<Player**>(reinterpret_cast<VA>(_this) + 8);
-	PlayerEvent::BreakItemFrame(player, pBlkpos);
+THook(void, MSSYM_B1QE17playerWillDestroyB1AE14ItemFrameBlockB2AAA4UEBAB1UE11NAEAVPlayerB2AAE12AEBVBlockPosB2AAA9AEBVBlockB3AAAA1Z,
+	Block* _this, Player* a2, BlockPos* a3, Block* a4) {
+	PlayerEvent::BreakItemFrame(a2, a3);
 }
 
 //玩家放置方块
 THook(bool,
 	MSSYM_B1QA8mayPlaceB1AE11BlockSourceB2AAA4QEAAB1UE10NAEBVBlockB2AAE12AEBVBlockPosB2AAE10EPEAVActorB3AAUA1NB1AA1Z,
 	BlockSource* _this, Block* a2, BlockPos* a3, unsigned __int8 a4, Player* a5, bool a6) {
-	bool ret = PlayerEvent::PlaceBlock(a5, a2->getLegacyBlock()->getBlockItemID(), a3);
+	bool ret = false;
+	if (checkIsPlayer(a5)) {
+		ret = PlayerEvent::PlaceBlock(a5, a2, a3);
+	}
+	else {
+		ret = true;
+	}
 	if (ret)
 		return original(_this, a2, a3, a4, a5, a6);
 	else {
@@ -217,19 +220,40 @@ THook(void,
 
 }
 
+/* 有BUG,废弃
 // 玩家破坏方块
 THook(bool,
-	MSSYM_B2QUE20destroyBlockInternalB1AA8GameModeB2AAA4AEAAB1UE13NAEBVBlockPosB2AAA1EB1AA1Z,
-	void* _this, BlockPos* pBlkpos) {
-	auto pPlayer = *reinterpret_cast<Player**>(reinterpret_cast<VA>(_this) + 8);
-	auto pBlockSource = *(BlockSource**)(*((__int64*)_this + 1) + 840i64);
+	MSSYM_B1QE12destroyBlockB1AA8GameModeB2AAA4UEAAB1UE13NAEBVBlockPosB2AAA1EB1AA1Z,
+	void* _this, BlockPos* pBlkpos, bool a3) {
+	Player* pPlayer = reinterpret_cast<Player*>(reinterpret_cast<VA>(_this) + 1);
+	BlockSource* pBlockSource = reinterpret_cast<BlockSource*>(reinterpret_cast<VA>(_this) + 801);
 	auto pBlk = pBlockSource->getBlock(pBlkpos);
 	if (PlayerEvent::BreakBlock(pPlayer, pBlk, pBlkpos)) {
-		return original(_this, pBlkpos);
+		return original(_this, pBlkpos, a3);
 	}
 	else {
 		return false;
 	}
+}
+*/
+
+//玩家破坏方块
+THook(bool,
+	MSSYM_B1QE28checkBlockDestroyPermissionsB1AE11BlockSourceB2AAA4QEAAB1UE10NAEAVActorB2AAE12AEBVBlockPosB2AAE13AEBVItemStackB3AAUA1NB1AA1Z,
+	BlockSource* _this, Player* a2, BlockPos* a3, ItemStack* a4, bool a5) {
+	if (checkIsPlayer(a2)) {
+		if (PlayerEvent::BreakBlock(a2, _this->getBlock(a3), a3)) {
+			return original(_this, a2, a3, a4, a5);
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return original(_this, a2, a3, a4, a5);
+
+	}
+
 }
 
 //箱子被移除
@@ -248,7 +272,7 @@ THook(void,
 THook(bool,
 	MSSYM_B1QA3useB1AE10ChestBlockB2AAA4UEBAB1UE11NAEAVPlayerB2AAE12AEBVBlockPosB3AAAA1Z,
 	void* _this, Player* pPlayer, BlockPos* pBlkpos) {
-	auto pBlockSource = (BlockSource*)*((__int64*)pPlayer + 105);
+	auto pBlockSource = (BlockSource*)*((__int64*)pPlayer + 100);
 	((ChestBlockActor*)(pBlockSource->getBlockEntity(pBlkpos)))->tick(pBlockSource);
 	//auto pBlk = pBlockSource->getBlock(pBlkpos);
 	return PlayerEvent::ReadyOpenBox(pPlayer, pBlockSource, pBlkpos) ? original(_this, pPlayer, pBlkpos) : false;

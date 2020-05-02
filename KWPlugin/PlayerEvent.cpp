@@ -99,12 +99,18 @@ public:
 	}
 
 	bool static BreakItemFrame(Player* player, BlockPos* position) {
-		cout << "Player: " << player << " Break Frame " << position->getPosition()->toNormalString() << endl;
-		return false;
+		//cout << "Player: " << player << " Break Frame " << position->getPosition()->toNormalString() << endl;
+		if (!Land::canLandModifyBlock(Land::BlockChunckId(position->getPosition()), player->getRealNameTag())) {
+			player->sendMsg("你无法破坏此物品展示框!");
+			return false;
+		}
+		return true;
 	}
 
-	bool static PlaceBlock(Player* player, short blockid, BlockPos* position) {
-		if (!Land::canLandModifyBlock(Land::BlockChunckId(position->getPosition()), player)) {
+	bool static PlaceBlock(Player* player, Block* block, BlockPos* position) {
+		//cout << "Player: " << player->getRealNameTag() << " Try to place " << block->getLegacyBlock()->getFullName() << " at " << position->getPosition()->toNormalString() << endl;
+
+		if (!Land::canLandModifyBlock(Land::BlockChunckId(position->getPosition()), player->getRealNameTag())) {
 			player->sendMsg("你无法在此领地放置方块!");
 			return false;
 		}
@@ -113,8 +119,8 @@ public:
 
 	bool static BreakBlock(Player* player, const Block* block, BlockPos* blockpos) {
 
-
-		if (!Land::canLandModifyBlock(Land::BlockChunckId(blockpos->getPosition()), player)) {
+		//cout << "Player: " << player->getRealNameTag() << " Try to break " << block->getLegacyBlock()->getFullName() << " at " << blockpos->getPosition()->toNormalString() << endl;
+		if (!Land::canLandModifyBlock(Land::BlockChunckId(blockpos->getPosition()), player->getRealNameTag())) {
 			player->sendMsg("你无法在此领地破坏方块!");
 			return false;
 		}
@@ -166,6 +172,7 @@ public:
 		}
 		if (LockBox::isRequestUnLockBox(player->getRealNameTag())) {
 			LockBox::RemoveLockBox(blockposition->getPosition()->toNormalString());
+			LockBox::StopRequestUnLockBox(player->getRealNameTag());
 			player->sendMsg("您已成功解锁!");
 
 		}
