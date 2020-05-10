@@ -8,6 +8,7 @@
 #include <mutex>
 
 #include "PlayerEvent.cpp"
+#include "Event.cpp"
 
 
 static bool runcmd(std::string);
@@ -150,6 +151,7 @@ THook(void,
 	original(_this, id, handle, fp);
 }
 
+//服务器MOTD加载
 THook(void,
 	MSSYM_MD5_21204897709106ba1d290df17fead479,
 	VA _this, string& servername, bool shouldannounce) {
@@ -219,6 +221,87 @@ THook(void,
 	}
 
 }
+
+//生物自动生成
+THook(bool,
+	MSSYM_B1QE15checkSpawnRulesB1AA3MobB2AAA4UEAAB1UA1NB1UA1NB1AA1Z,
+	Mob* _this, bool a2) {
+	//cout << "Checking can spawn " << _this->getEntityTypeId() << " (" << _this->getEntityTypeName() << ") at " << _this->getPos()->toNormalString();
+	if (Event::canSpawn(_this)) {
+		//cout << " >>> can spawn" << endl;
+		return original(_this, a2);
+	}
+	else {
+		//cout << " >>> no spawn" << endl;
+		return false;
+	}
+}
+
+/* 废弃无用
+//修改玩家权限
+THook(void,
+	MSSYM_B1QE20setPlayerPermissionsB1AA9AbilitiesB2AAE28QEAAXW4PlayerPermissionLevelB3AAAA1Z,
+	VA _this, unsigned int level) {
+	cout << "Setting Level to " << level << endl;
+	original(_this, level);
+}
+*/
+
+/*无用
+//修改玩家成员属性
+THook(void,
+	MSSYM_B1QA7executeB1AE14AbilityCommandB2AAE22UEBAXAEBVCommandOriginB2AAE17AEAVCommandOutputB3AAAA1Z,
+	VA* _this, PlayerCommandOrigin* a2, VA* a3) {
+	int* alilityIndex = (int*)((char*)_this + 200);
+	int value=*((char*)_this + 232);
+	cout << "Player: " << a2->getName() << " trys to set ability " << alilityIndex << " to " << value << endl;
+	original(_this, a2, a3);
+}
+*/
+
+//玩家更改游戏模式
+THook(void,
+	MSSYM_B1QE17setPlayerGameTypeB1AA6PlayerB2AAE15UEAAXW4GameTypeB3AAAA1Z,
+	Player* _this, int gametype) {
+	//0 - 生存模式    1 - 创造模式    2 - 冒险模式  3 -    5 - 默认
+	//cout << "Player " << _this->getRealNameTag() << " is changing gametype to " << gametype;
+	if (Command::isAdmin(_this)) {
+		original(_this, gametype);
+	}
+	else {
+		_this->sendMsg("无法修改您的游戏模式,因为你不在管理员公会 (已将你的游戏模式设置成生存)");
+		original(_this, 0);
+	}
+}
+
+/*
+
+//玩家选择物品
+THook(void,
+	MSSYM_B1QE10selectItemB1AE12ServerPlayerB2AAE18QEAAXAEBVItemStackB2AAA4AEBHB1AA1Z,
+	Player* _this, ItemStack* item, int* maxNumSlots) {
+	if (PlayerEvent::MouseClickItem(_this, item)) {
+		original(_this,  item, maxNumSlots);
+	}
+	else {
+		cout << "Find Somebody Cheating" << endl;
+		item->set(0);
+	}
+}
+*/
+
+THook(int,
+	MSSYM_B1QE15getEnchantLevelB1AE12EnchantUtilsB2AAA9SAHW4TypeB1AA7EnchantB2AAE17AEBVItemStackBaseB3AAAA1Z,
+	int a1, ItemStack* a2) {
+	int ori = original(a1, a2);
+	//cout << "Checking Enchaned item " << a2->getName() << " type: " << a1 << " level: " << ori << endl;
+	if (!Event::checkItemEnchantLevel(a2, a1, ori)) {
+		a2->set(0);
+		return 1;
+	}
+	return ori;
+}
+
 
 /* 有BUG,废弃
 // 玩家破坏方块

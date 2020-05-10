@@ -182,6 +182,7 @@
     <ClCompile Include="ChestShop.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="Economy.cpp" />
+    <ClCompile Include="Event.cpp" />
     <ClCompile Include="Guild.cpp" />
     <ClCompile Include="Land.cpp" />
     <ClCompile Include="LockBox.cpp" />

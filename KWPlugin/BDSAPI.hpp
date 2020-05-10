@@ -116,6 +116,16 @@ struct CommandOrigin {
 
 };
 
+struct PlayerCommandOrigin : CommandOrigin {
+	string getName() {
+		string ret = "";
+		SYMCALL(void,
+			MSSYM_MD5_f06c875725b706052352defa04006bd9,
+			&ret, this);
+		return ret;
+	}
+};
+
 struct Minecraft {
 };
 
@@ -345,8 +355,10 @@ struct Item {
 
 };
 
+
 struct ItemStack {
 
+	//获取翻译后的名称
 	string getDescriptionId() {
 		std::string str;
 		SYMCALL(VA,
@@ -355,7 +367,7 @@ struct ItemStack {
 		return str;
 	}
 
-
+	//获取原生名称(命令中的)
 	string getRawNameId() {
 		std::string str;
 		SYMCALL(VA,
@@ -371,12 +383,24 @@ struct ItemStack {
 			this);
 	}
 
+	//是否附魔
+	bool isEnchanted() {
+		return SYMCALL(bool,
+			MSSYM_B1QE11isEnchantedB1AE13ItemStackBaseB2AAA4QEBAB1UA3NXZ,
+			this);
+	}
+
 	Item* getItem() {
 		return SYMCALL(Item*,
 			MSSYM_B1QA7getItemB1AE13ItemStackBaseB2AAE12QEBAPEBVItemB2AAA2XZ,
 			this);
 	}
 
+	void set(int cont) {
+		SYMCALL(void,
+			MSSYM_B1QA3setB1AE13ItemStackBaseB2AAA6QEAAXHB1AA1Z,
+			this, cont);
+	}
 
 	// 取物品特殊值
 	short getAuxValue() {
@@ -398,11 +422,24 @@ struct ItemStack {
 			MSSYM_B1QA8getCountB1AE18ContainerItemStackB2AAA7QEBAHXZ,
 			this);
 	}
+
 	// 判断是否空容器
 	bool isNull() {
 		return SYMCALL(bool,
 			MSSYM_B1QA6isNullB1AE13ItemStackBaseB2AAA4QEBAB1UA3NXZ,
 			this);
+	}
+};
+
+struct EnchantUtils {
+	int static getEnchantLevel(int enchantType, ItemStack* stack) {
+		return SYMCALL(int,
+			MSSYM_B1QE15getEnchantLevelB1AE12EnchantUtilsB2AAA9SAHW4TypeB1AA7EnchantB2AAE17AEBVItemStackBaseB3AAAA1Z,
+			enchantType, stack);
+	}
+
+	int static getEnchantEnchantLevel() {
+
 	}
 };
 
@@ -416,6 +453,16 @@ static void dummy() {
 }
 static void* FAKE_PORGVTBL[26];
 struct Player : Actor {
+
+	bool isCreative() {
+		return SYMCALL(bool,
+			MSSYM_B1QE10isCreativeB1AA6PlayerB2AAA4UEBAB1UA3NXZ,
+			this);
+	}
+
+	void SetAsSurvivalAbility() {
+
+	}
 
 	//跨服传送
 	void transferServer(std::string server, int port) {
@@ -470,6 +517,7 @@ struct Player : Actor {
 
 
 
+
 	//以玩家权限执行命令 - 参考 BDX
 
 	bool runcmdAs(string cmd) {
@@ -489,6 +537,24 @@ struct Player : Actor {
 	void reName(std::string name) {
 		SYMCALL(void, MSSYM_B1QA7setNameB1AA6PlayerB2AAA9UEAAXAEBVB2QDA5basicB1UA6stringB1AA2DUB2QDA4charB1UA6traitsB1AA1DB1AA3stdB2AAA1VB2QDA9allocatorB1AA1DB1AA12B2AAA3stdB3AAAA1Z,
 			this, name);
+	}
+
+
+	//踢出玩家
+	void kick() {
+		runcmd("kick " + this->getRealNameTag());
+	}
+
+	void Cheating(string reason) {
+		this->sendMsg("You are cheating");
+		string name = this->getRealNameTag();
+		this->kick();
+		string msg = name + " is Cheating! (" + reason + ")";
+		msg = replace_all_distinct(msg, "\\", "\\\\");
+		msg = replace_all_distinct(msg, "\"", "\\\"");
+		runcmd("tellraw @a { \"rawtext\": [{\"text\": \"" + msg + "\"}]}");
+		std::cout << name << " is cheating (" << reason << ")" << std::endl;
+
 	}
 };
 

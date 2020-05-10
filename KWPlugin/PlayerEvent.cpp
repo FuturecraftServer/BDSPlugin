@@ -5,12 +5,22 @@
 #include "RPG.cpp"
 #include "Land.cpp"
 #include "ChestShop.cpp"
+#include "Event.cpp"
 
 static std::map<std::string, std::string> PlayerLastLandId;
 static std::map<std::string, bool> PlayerLastinLand;
 
 class PlayerEvent {
 public:
+
+	static bool MouseClickItem(Player* player, ItemStack* item) {
+		if (!Event::checkItemEnchant(item)) {
+			item->set(0);
+			player->Cheating("_INVALED_ENCHANT_ON_MOUSE_CLICK");
+			return false;
+		}		
+		return true;
+	}
 
 	static void ParseFormCallback(Player* player, unsigned fid, string selected) {
 		//cout << "Form Select Handling -> Player: " + player->getRealNameTag() + " FormID: " << fid << " Selected: " << selected << " FormType: " << fids[fid] << endl;
@@ -56,6 +66,13 @@ public:
 				return false;
 			}
 		}
+
+		if (!Event::checkItemEnchant(item)) {
+			item->set(0);
+			player->Cheating("_INVALED_ENCHANT_ON_USE_ITEM_");
+			return false;
+		}
+
 		return true;
 	}
 
@@ -94,6 +111,9 @@ public:
 				player->sendMsg("您所售出的数量不足");
 				return true;
 			}
+		}
+		if (!Event::checkItemEnchant(item)) {
+			player->Cheating("_INVALIED_ENCHANT_ON_CHEST_");
 		}
 		return true;
 	}

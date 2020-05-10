@@ -11,11 +11,24 @@ public:
 		return CConfig::GetValueString("Land", landid, "guild", "NaN") != "NaN";
 	}
 
+	bool static canLandSpawn(string landid, int mobid) {
+		string list = CConfig::GetValueString("Land", landid, "nospawn", "NaN");
+		//cout <<" ["<< landid<<"] Spawn is " << list;
+		if (list == "all") return false;
+		if (list == "NaN") return true;
+		if (list.find(std::to_string(mobid) + ",")== list.npos) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	string static getLandName(string landid) {
 		return CConfig::GetValueString("Land", landid, "name", "未命名领地");
 	}
 
-	void static setLandName(string landid,string name) {
+	void static setLandName(string landid, string name) {
 		CConfig::SetValueString("Land", landid, "name", name);
 	}
 
