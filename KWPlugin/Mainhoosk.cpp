@@ -28,7 +28,7 @@ static std::string toDimenStr(int dimensionId) {
 	return "未知维度";
 }
 
-static VA p_level;
+
 
 // 重设新名字
 static bool reNameByUuid(std::string uuid, std::string newName) {
@@ -72,9 +72,11 @@ THook2(_JS_GETSPSCQUEUE, VA, MSSYM_MD5_3b8fb7204bf8294ee636ba7272eec000,
 
 // 获取玩家初始化时地图基本信息
 THook2(_JS_PLAYERINIT, Player*, MSSYM_MD5_c4b0cddb50ed88e87acce18b5bd3fb8a,
-	Player* _this, VA level, __int64 a3, int a4, __int64 a5, __int64 a6, void* uuid, std::string& struuid, __int64* a9, __int64 a10, __int64 a11) {
-	p_level = level;
-	return original(_this, level, a3, a4, a5, a6, uuid, struuid, a9, a10, a11);
+	Player* _this, Level* this_Level, __int64 a3, int a4, __int64 a5, __int64 a6, void* uuid, std::string& struuid, __int64* a9, __int64 a10, __int64 a11) {
+	level = this_Level;
+	//加载计分板 - TODO
+
+	return original(_this, this_Level, a3, a4, a5, a6, uuid, struuid, a9, a10, a11);
 }
 
 
@@ -124,6 +126,14 @@ THook2(_JS_ONSERVERCMDOUTPUT, VA,
 	return original(handle, str, size);
 }
 */
+
+//获取计分板名称到计分板ID
+THook(VA,
+	MSSYM_MD5_ecded9d31b4a1c24ba985b0a377bef64,
+	VA _this, string* a2) {
+	cout << "sb name is: " << a2 << endl;
+	return original(_this, a2);
+}
 
 //玩家点火
 THook(bool,
@@ -190,6 +200,16 @@ THook(bool,
 		return original(_this, a2, a3, a4, a5, a6);
 	else {
 		return false;;
+	}
+}
+
+//Actor Move
+THook(void,
+	MSSYM_B1QA4moveB1AA5ActorB2AAE13UEAAXAEBVVec3B3AAAA1Z,
+	Actor* _this, Vec3* pos) {
+	cout << "Actor " << _this->getUniqueID();
+	if (Event::ActorMove(_this, pos)) {
+		original(_this, pos);
 	}
 }
 

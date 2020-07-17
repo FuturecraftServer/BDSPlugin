@@ -336,6 +336,22 @@ struct Actor {
 			MSSYM_B1QE11getUniqueIDB1AA5ActorB2AAE21QEBAAEBUActorUniqueIDB2AAA2XZ,
 			this);
 	}
+
+	bool hasTag(string tag) {
+		return SYMCALL(bool,
+			MSSYM_MD5_ddedd6144381282a888ede96656376c0,
+			this, &tag);
+	}
+
+	bool addTag(string tag) {
+		return SYMCALL(bool,
+			MSSYM_MD5_2d07ac8715ecf04fff9a9265528c5287,
+			this, &tag);
+	}
+
+	bool removeTag(string tag) {
+		//TODO
+	}
 };
 struct Mob : Actor {
 
@@ -606,3 +622,21 @@ struct ModalFormResponsePacket {
 		return x;
 	}
 };
+
+struct ScoreboardId {
+
+};
+
+struct Scoreboard
+{
+	ScoreboardId* getScoreboardId(string name) {
+		return SYMCALL(ScoreboardId*,
+			MSSYM_MD5_ecded9d31b4a1c24ba985b0a377bef64,
+			this, &name);
+	 }
+};
+
+
+
+static Level* level;
+static Scoreboard* scoreboard;

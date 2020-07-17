@@ -13,6 +13,12 @@ public:
 		return true;
 	}
 
+	bool static ActorMove(Actor* actor, Vec3* pos) {
+		if (actor->hasTag("NPC")) {
+			return false;
+		}
+	}
+
 	//建议不要多次调用! 此方法废弃,待处置
 	bool static checkItemEnchant(ItemStack* item) {
 		return true;

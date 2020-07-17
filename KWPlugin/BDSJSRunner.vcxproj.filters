@@ -105,6 +105,9 @@
     <ClCompile Include="Event.cpp">
       <Filter>Plugin</Filter>
     </ClCompile>
+    <ClCompile Include="NPC.cpp">
+      <Filter>Plugin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleIni\ini.syn">

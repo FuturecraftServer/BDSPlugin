@@ -187,6 +187,7 @@
     <ClCompile Include="Land.cpp" />
     <ClCompile Include="LockBox.cpp" />
     <ClCompile Include="Mainhoosk.cpp" />
+    <ClCompile Include="NPC.cpp" />
     <ClCompile Include="PlayerEvent.cpp" />
     <ClCompile Include="Prebuild.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
