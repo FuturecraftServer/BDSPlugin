@@ -1,14 +1,8 @@
 # FutureCraft 明日世界 插件
 
-采用了 Player 大佬的解决方案,纯 C++ 编写,效率高速! 
+这是一个废弃的项目,但这仅仅是开始......
 
-## 项目功能
-
-### 领地系统
-
-`/l buy` 即可购买脚下的区块
-
-`/l info` 即可查看脚下领地的信息
+新项目已搬迁至:https://github.com/FuturecraftServer/CSRPlugin
 
 
 
